@@ -1,0 +1,54 @@
+[
+  {
+    "idolos": [],
+    "nombre": "Juan Lopez",
+    "clave": "m6j0NI",
+    "ramos_pre": [],
+    "alumno": "NO",
+    "usuario": "jlopez"
+  },
+  {
+    "idolos": [],
+    "nombre": "Paulina Toro",
+    "clave": "KaEEkNjFz",
+    "ramos_pre": [],
+    "alumno": "NO",
+    "usuario": "ptoro"
+  },
+{
+    "disp": 77,
+    "eng": "NO",
+    "apr": "NO",
+    "curso": "Álgebra Lineal",
+    "sala_lab": "(Por Asignar)",
+    "hora_cat": "L-W-V:3",
+    "sala_cat": "CS-101",
+    "hora_ayud": "W:6",
+    "ofr": 77,
+    "ocu": 0,
+    "hora_lab": "W:5",
+    "cred": 10,
+    "sec": 1,
+    "sigla": "MAT1203",
+    "sala_ayud": "M1",
+    "campus": "San Joaquin",
+    "retiro": "SI",
+    "NRC": 14268,
+    "profesor": [
+      "Huerta Ivan",
+      "Becerra Carolina"
+    ]
+  },
+{
+    "sigla": "ICS2121",
+    "tipo": "I1",
+    "sec": 1,
+    "fecha": "28/08 - 18:30"
+  },
+  {
+    "sigla": "ICM2433",
+    "tipo": "I1",
+    "sec": 1,
+    "fecha": "8/09 - 18:30"
+  }
+]
