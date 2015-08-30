@@ -1,0 +1,28 @@
+Strings:
+p.split("r")#quita lo r en el string, retorna lista con el resto
+len(p)
+p.join(q)
+p.find(q)# q esta en p?retorna la primera posicion en la que esta
+p.replace("chao","hola")#reemplaza chao por hola si esta en el string
+p.strip()# quita espacios extra
+p.upper()
+p.lower()
+p.capitalize() primera mayuscula de la palabra
+p.count("a") retorna cuantas veces a esta en p
+s.isalpha()#dice si true si son alfabeticos
+ord("A")=65# me va a entregar el valor en la tabla ASCII
+chr(65)=A # me va a entregar la letra que corresponde
+
+
+Lista:(lista=p)
+p.append("r") #agrego a p en su ultimo espacio a r
+c=p[5:] #me da una lista con los valores de p[5] hasta p[len(p)]
+p.remove("r") #remueve la primera aparicion de r en la lista
+del p[i] #remueve el valor en la posicion i de la lista
+p.index("r") #retorna la primera posicion de r en p
+
+Dic:(dic=p)
+listakeys=list(p.keys())
+del p[key]
+p[key]=r #insertauna clave key con r asociado
+

@@ -1,6 +1,7 @@
 __author__ = 'JuanFrancisco'
-asdf=['"nombre"', ' "Juan Lopez",']
-linea=asdf[1][2:-2]
+asdf=['nombre', 'Juan Lopez']
+linea=asdf[1]
 linea2=asdf[0][1:-1]
+print(asdf.index('nombr'))
 print(linea)
 print(linea2)
