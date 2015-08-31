@@ -8,7 +8,7 @@ class Curso:
         self.horario=''
         self.seccion=seccion
         self.campus=campus
-        self.evaluaciones={}
+        self.evaluaciones=[]
         self.requisitos=''
         self.capacidad_max=capacidad_max
         self.creditos=creditos
@@ -45,13 +45,19 @@ class Horario:
         self.tipo=tipo
         pass
 class Evaluacion:
-    def __init__(self):
-        self.nombre=nombre
-        self.hora=hora
-        self.sala=sala
+    def __init__(self,sigla,tipo,sec,fecha):
+        fechayhora=fecha
+        fechaconhora=fechayhora.split(' - ')
+        if fechaconhora[1]=='NA':
+            self.hora='No asignada'
+        else:
+            self.hora=int(fechaconhora[1])
+        fecha=fechaconhora[0].split('/')
+        self.fecha=fecha
+        self.tipo=tipo
+        self.sec=sec
         self.sigla=sigla
-        pass
-def Menu():
+def Archivos():
     #leer cursos.txt
     todos_cursos=[]
     curso=Leearchivo.Archivo()
@@ -111,9 +117,11 @@ def Menu():
             sec_evaluacion=evaluaciones.diccionario[n]['sec']
             sigla_evaluacion=evaluaciones.diccionario[n]['sigla']
             if sigla_curso==sigla_evaluacion and sec_curso==sec_evaluacion:
-                todos_cursos[i].evaluaciones[evaluaciones.diccionario[n]['fecha']]=evaluaciones.diccionario[n]['tipo']
+                evaluacion=Evaluacion(sigla=sigla_evaluacion,tipo=evaluaciones.diccionario[n]['tipo'],sec=sec_evaluacion,fecha=evaluaciones.diccionario[n]['fecha'])
+                todos_cursos[i].evaluaciones.append(evaluacion)
     #leer personas
     lista_personas=[]
+    lista_alumnos=[]
     personas=Leearchivo.Archivo()
     personas.leer('personas.txt')
     for i in range(len(personas.diccionario)):
@@ -125,7 +133,13 @@ def Menu():
         usuario=personas.diccionario[i]['usuario']
         alum=Alumno(nombre=nombre,usuario=usuario,contrasena=clave,cursos_aprobados=ramos_pre,idolos=idolos,alumno=alumno)
         lista_personas.append(alum)
+        if alumno=='SI':
+            lista_alumnos.append(alum)
+    listas=[todos_cursos,lista_personas,lista_alumnos]
+    return listas
+
 #termine de indexar los archivos
+
 
 
 
