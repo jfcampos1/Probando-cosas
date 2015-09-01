@@ -6,7 +6,7 @@ class Archivo:
         self.diccionario = []
 
     def leer(self, nombre_archivo):
-        with open(nombre_archivo, mode='r') as arch:
+        with open(nombre_archivo, mode='r',encoding='utf8') as arch:
             arch.readline()
             principio = True
             lista = []
@@ -61,6 +61,8 @@ class Archivo:
                                 elif ultimos_dos == '",':
                                     nombre = linea2[1:-2]
                                     listita.append(nombre)
+                                elif ultimos_dos == '],':
+                                    lista_termina = False
                             diccionario[tag_limpio] = listita
                         elif ultimo == ',':
                             if len(linea) == 3:
@@ -73,10 +75,3 @@ class Archivo:
                         linea1 = arch.readline().strip()
             self.diccionario = lista
 
-    print(lista)
-
-
-agua = lista[0]['usuario']
-otro = lista[1]['ramos_pre']
-print(agua)
-print(otro)
