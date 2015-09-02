@@ -8,7 +8,6 @@ class Curso:
         self.sigla = sigla
         self.profesor = profesor
         self.lista_alumnos = []
-        self.horario = ''
         self.seccion = seccion
         self.campus = campus
         self.evaluaciones = []
@@ -22,22 +21,80 @@ class Curso:
         self.retiro = retiro
         self.apr = apr
         self.nombre = nombre
-        self.equiv = ''
+        self.equiv = []
 
-    def inscribir_ramo(self, nrc,usuario):
-        if self.disp==0:
-            return 'vacantes'
-        #faltan las demas restricciones, terminar con un else si cumple _todo
+    def inscribir_ramo(self, nrc, usuario):
+        todo = False
+        if self.disp != 0:
+            # poner las otras restricciones antes
+            cumple = True
+            if cumple == True:
+                requisitos = self.requisitos
+                if requisitos == 'No tiene':
+                    self.ocu = self.ocu + 1
+                    self.disp = self.disp - 1
+                    self.lista_alumnos.append(usuario)
+                    usuario.cursos_tomar.append(self)
+                else:
+                    requisitos = requisitos + '"'
+                    a = 0
+                    lista1 = []
+                    while a != len(requisitos):
+                        curso = ''
+                        if requisitos[a] == '(':
+                            lista = []
+                            while requisitos[a] != ')':
+                                curso = ''
+                                if requisitos[a] == 'o':
+                                    lista.append(curso)
+                                    lista.append('o')
+                                    curso = ''
+                                elif requisitos[a] == 'y':
+                                    lista.append(curso)
+                                    lista.append('y')
+                                    curso = ''
+                                elif requisitos[a + 1] == ')':
+                                    lista.append(curso)
+                                else:
+                                    curso += requisitos[a]
+                                a += 1
+                            lista1.append(lista)
+                        elif requisitos[a] == 'y':
+                            lista1.append(curso)
+                            lista1.append('y')
+                            curso = ''
+                        elif requisitos[a] == 'o':
+                            lista1.append(curso)
+                            lista1.append('o')
+                            curso = ''
+                        elif requisitos[a + 1] == '"':
+                            lista1.append(curso)
+                        else:
+                            curso += requisitos[a]
+                        a += 1
+                    # [['hola','o','chao','o','otro'],'y',[]]
+                    for i in lista1:
+                        if type(i) is list:
+                            nueva = []
+                            for n in range(len(i) - 1):
+                                if n % 2 == 0:
+                                    if i[n - 1] == 'o' and (i[n - 2] == usuario or nueva == i[n]):
+                                        pass
+                                        # Seguir idea
+
+
+
+
+
         else:
-            self.ocu = self.ocu + 1
-            self.disp=self.disp-1
+            return 'vacantes'
 
     def botar_ramo(self, nombre_alumno):
         for i in range(len(self.lista_alumnos)):
-            if nombre_alumno==self.lista_alumnos[i].nombre:
+            if nombre_alumno == self.lista_alumnos[i].nombre:
                 del self.lista_alumnos[i]
         self.ocu = self.ocu - 1
-        self.disp=self.disp + 1
+        self.disp = self.disp + 1
 
 
 class Alumno:
@@ -50,15 +107,36 @@ class Alumno:
         self.cursos_tomar = []
         self.idolos = idolos
         self.alumno = alumno
-    def botar_ramo(self,sigla_curso):
+
+    def botar_ramo(self, sigla_curso):
         for i in range(len(self.cursos_tomar)):
-            if self.cursos_tomar[i].sigla==sigla_curso:
+            if self.cursos_tomar[i].sigla == sigla_curso:
                 del self.cursos_tomar[i]
 
 
-
 class Horario:
-    def __init__(self, tipo):
+    def __init__(self, dic):
+        pass
+        if 'hora_cat' in dic:
+            hora_cat = dic['hora_cat']
+            if len(hora_cat) > 3:
+                hora = hora_cat.split(':').split('-')
+                hora = [hora[0].split('')]
+        if 'hora_ayud' in dic:
+            hora_ayud = dic['hora_ayud']
+            hora_salas['hora_ayud'] = hora_ayud
+        if 'hora_lab' in dic:
+            hora_lab = dic['hora_lab']
+            hora_salas['hora_lab'] = hora_lab
+        if 'sala_cat' in dic:
+            sala_cat = dic['sala_cat']
+            hora_salas['sala_cat'] = sala_cat
+        if 'sala_ayud' in dic:
+            sala_ayud = dic['sala_ayud']
+            hora_salas['sala_ayud'] = sala_ayud
+        if 'sala_lab' in dic[i]:
+            sala_lab = dic['sala_lab']
+            hora_salas['sala_lab'] = sala_lab
         self.tipo = tipo
         pass
 
@@ -102,35 +180,45 @@ def Archivos():
         disp = cursos_dic[i]['disp']
         cur = Curso(sigla=sigla, profesor=profesor, seccion=sec, campus=campus, capacidad_max=ofr, creditos=cred,
                     ocupados=ocu, disponibles=disp, nrc=nrc, eng=eng, apr=apr, retiro=retiro, nombre=nombre_curso)
+        hora_salas = {}
         if 'hora_cat' in cursos_dic[i]:
             hora_cat = cursos_dic[i]['hora_cat']
-            cur.hora_cat = hora_cat
+            hora_salas['hora_cat'] = hora_cat
         if 'hora_ayud' in cursos_dic[i]:
             hora_ayud = cursos_dic[i]['hora_ayud']
-            cur.hora_ayud = hora_ayud
+            hora_salas['hora_ayud'] = hora_ayud
         if 'hora_lab' in cursos_dic[i]:
             hora_lab = cursos_dic[i]['hora_lab']
-            cur.hora_lab = hora_lab
+            hora_salas['hora_lab'] = hora_lab
         if 'sala_cat' in cursos_dic[i]:
             sala_cat = cursos_dic[i]['sala_cat']
-            cur.sala_cat = sala_cat
+            hora_salas['sala_cat'] = sala_cat
         if 'sala_ayud' in cursos_dic[i]:
             sala_ayud = cursos_dic[i]['sala_ayud']
-            cur.sala_ayud = sala_ayud
+            hora_salas['sala_ayud'] = sala_ayud
         if 'sala_lab' in cursos_dic[i]:
             sala_lab = cursos_dic[i]['sala_lab']
-            cur.sala_lab = sala_lab
+            hora_salas['sala_lab'] = sala_lab
+        cur.hora = hora_salas
         todos_cursos.append(cur)
     # leer requisitos.txt
     requisito = Leearchivo.Archivo()
     requisito.leer('requisitos.txt')
+    equivalencias = {}
     for i in range(len(todos_cursos)):
         for n in range(len(requisito.diccionario)):
             sigla_curso = todos_cursos[i].sigla
             sigla_evaluacion = requisito.diccionario[n]['sigla']
             if sigla_curso == sigla_evaluacion:
                 todos_cursos[i].requisitos = requisito.diccionario[n]['prerreq']
-                todos_cursos[i].equiv = requisito.diccionario[n]['equiv']
+                if requisito.diccionario[n]['equiv'] == 'No tiene':
+                    equivalencias[sigla_curso] = []
+                else:
+                    str = requisito.diccionario[n]['equiv']
+                    str = str[1:-1]
+                    str = str.split(' o ')
+                    todos_cursos[i].equiv = str
+                    equivalencias[sigla_curso] = str
     # leer evaluaciones
 
     evaluaciones = Leearchivo.Archivo()
@@ -155,6 +243,14 @@ def Archivos():
         nombre = personas.diccionario[i]['nombre']
         clave = personas.diccionario[i]['clave']
         ramos_pre = personas.diccionario[i]['ramos_pre']
+        encontradas=[]
+        for z in ramos_pre:
+            if z in equivalencias:
+                equi = equivalencias[z]
+                for n in equi:
+                    encontradas.append(n)
+        for n in encontradas:
+            ramos_pre.append(n)
         alumno = personas.diccionario[i]['alumno']
         usuario = personas.diccionario[i]['usuario']
         alum = Alumno(nombre=nombre, usuario=usuario, contrasena=clave, cursos_aprobados=ramos_pre, idolos=idolos,
@@ -162,8 +258,8 @@ def Archivos():
         lista_personas.append(alum)
         if alumno == 'SI':
             lista_alumnos.append(alum)
+    algo=equivalencias
     listas = [todos_cursos, lista_personas, lista_alumnos]
     return listas
-
 
 # termine de indexar los archivos

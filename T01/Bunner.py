@@ -37,15 +37,18 @@ def Menu():
                 if numero==5:
                     print('Saliste con exito')
                 elif numero==1:
-                    ramo=input('Ingrese nrc del ramo a tomar:')
-                    tomado=1
+                    ramo=int(input('Ingrese nrc del ramo a tomar:'))
+                    tomado=0
                     for i in range(len(todos_cursos)):
                         if todos_cursos[i].NRC==ramo:
+                            tomado=1
                             resultado=todos_cursos[i].inscribir_ramo(ramo,usuario)
                             if resultado=='bien':
                                 print('Curso inscrito correctamente')
                             else:
                                 print('Curso no cumple {}'.format(resultado))
+                    if tomado==0:
+                        print('nrc no existe o fue mal ingresada')
                     #terminar el metodo, es bien largo
                 elif numero==2:
 

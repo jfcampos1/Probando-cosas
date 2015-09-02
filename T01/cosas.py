@@ -6,6 +6,10 @@ qwer='hola y panchito'
 a=qwer.replace('y','and')
 b=[int('05'),30]
 c=[int('08'),31]
-del b[1]
+b.append(c)
 print(b)
 print(a)
+str='(ICE1003 o ICE1513)'
+str=str[1:-1]
+str=str.split(' o ')
+print(str)
