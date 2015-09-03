@@ -35,10 +35,13 @@ class Curso:
                     self.disp = self.disp - 1
                     self.lista_alumnos.append(usuario)
                     usuario.cursos_tomar.append(self)
+                    return 'bien'
                 else:
-                    requisitos = requisitos + '"'
+                    requisitos = requisitos + '?'
                     a = 0
                     lista1 = []
+                    ramos_pre=usuario.cursos_aprobados
+                    curso=''
                     while a != len(requisitos):
                         if requisitos[a] == '(' and requisitos[a + 1] != 'c':
                             lista = []
@@ -76,43 +79,93 @@ class Curso:
                             lista1.append('o')
                             curso = ''
                         elif requisitos[a] == '?':
-                            lista1.append(curso)
+                            if curso!='':
+                                lista1.append(curso)
                         elif requisitos[a] == ' ':
                             pass
                         elif requisitos[a] == '(':
+                            curso=curso
                             a += 2
                         else:
                             curso += requisitos[a]
                         a += 1
-                        # [['hola','o','chao','o','otro'],'y',[]]
-
-                    for i in lista1:
-                        if type(i) is list:
+                    lista2=[]
+                    for i in range(len(lista1)):
+                        b=lista1[i]
+                        if type(b) == type([]):
                             nueva = []
-                            for n in range(len(i) - 1):
+                            for n in range(len(b) - 1):
                                 if n % 2 != 0:
-                                    if i[n] == 'o':
-                                        if i[n - 1] in usuario.cursos_aprobados or i[n + 1] in usuario.cursos_aprobados:
+                                    if b[n] == 'o':
+                                        if b[n - 1] in ramos_pre or b[n + 1] in ramos_pre:
                                             a = True
-                                            nueva.append(a)
-                                    elif i[n] == 'y':
-                                        if i[n - 1] in usuario.cursos_aprobados and i[n + 1] in usuario.cursos_aprobados:
+                                            if n>=3:
+                                                nueva.append('o')
+                                        else:
+                                            a=False
+                                            if n>=3:
+                                                nueva.append('o')
+                                        nueva.append(a)
+                                    elif b[n] == 'y':
+                                        if b[n - 1] in ramos_pre and b[n + 1] in ramos_pre:
                                             a = True
-                                            nueva.append(a)
+                                            if n>=3:
+                                                nueva.append('y')
+                                        else:
+                                            a=False
+                                            if n>=3:
+                                                nueva.append('y')
+                                        nueva.append(a)
+                            lista2.append(nueva)
+                        elif b=='o':
+                            lista2.append('o')
+                        elif b=='y':
+                            lista2.append('y')
+                        else:
+                            if b in ramos_pre:
+                                a=True
+                                lista2.append(a)
+                            else:
+                                a=False
+                                lista2.append(a)
+                    lista3=lista2
+                    for i in range(len(lista3)):
+                        listita=lista3[i]
+                        if type(listita) == type([]):
+                            if len(listita)>=3:
+                                for n in range(1,len(listita),2):
+                                    if listita[n]=='o':
+                                        listita[n+1]=listita[n-1] or listita[n+1]
+                                    else:
+                                        listita[n+1]=listita[n-1] and listita[n+1]
+                                lista3[i]=listita[n+1]
+                            else:
+                                lista3[i]=listita[0]
+                    ramo=lista3[0]
+                    for i in range(1,len(lista3),2):
+                        if lista3[i]=='o':
+                            ramo=ramo or lista3[i+1]
+                        else:
+                            ramo=ramo and lista3[i+1]
+                    if ramo==True:
+                        self.ocu = self.ocu + 1
+                        self.disp = self.disp - 1
+                        self.lista_alumnos.append(usuario)
+                        usuario.cursos_tomar.append(self)
+                        #cumple requisito
+                        return 'bien'
+                    else:
+                        return 'No cumple requisitos'
+        else:
+            return 'vacantes'
 
-                                        pass
-                        # Seguir idea
 
-else:
-return 'vacantes'
-
-
-def botar_ramo(self, nombre_alumno):
-    for i in range(len(self.lista_alumnos)):
-        if nombre_alumno == self.lista_alumnos[i].nombre:
-            del self.lista_alumnos[i]
-    self.ocu = self.ocu - 1
-    self.disp = self.disp + 1
+    def botar_ramo(self, nombre_alumno):
+        for i in range(len(self.lista_alumnos)):
+            if nombre_alumno == self.lista_alumnos[i].nombre:
+                del self.lista_alumnos[i]
+        self.ocu = self.ocu - 1
+        self.disp = self.disp + 1
 
 
 class Alumno:
