@@ -40,11 +40,11 @@ class Curso:
                     a = 0
                     lista1 = []
                     while a != len(requisitos):
-                        curso = ''
-                        if requisitos[a] == '(':
+                        if requisitos[a] == '(' and requisitos[a + 1] != 'c':
                             lista = []
+                            curso = ''
+                            a += 1
                             while requisitos[a] != ')':
-                                curso = ''
                                 if requisitos[a] == 'o':
                                     lista.append(curso)
                                     lista.append('o')
@@ -53,48 +53,66 @@ class Curso:
                                     lista.append(curso)
                                     lista.append('y')
                                     curso = ''
-                                elif requisitos[a + 1] == ')':
-                                    lista.append(curso)
+                                elif requisitos[a] == '(':
+                                    a += 2
+
+                                elif requisitos[a] == ' ':
+                                    pass
                                 else:
                                     curso += requisitos[a]
                                 a += 1
+                            if requisitos[a] == ')':
+                                lista.append(curso)
                             lista1.append(lista)
+                            curso = ''
                         elif requisitos[a] == 'y':
-                            lista1.append(curso)
+                            if curso != '':
+                                lista1.append(curso)
                             lista1.append('y')
                             curso = ''
                         elif requisitos[a] == 'o':
-                            lista1.append(curso)
+                            if curso != '' and curso != ')':
+                                lista1.append(curso)
                             lista1.append('o')
                             curso = ''
-                        elif requisitos[a + 1] == '"':
+                        elif requisitos[a] == '?':
                             lista1.append(curso)
+                        elif requisitos[a] == ' ':
+                            pass
+                        elif requisitos[a] == '(':
+                            a += 2
                         else:
                             curso += requisitos[a]
                         a += 1
-                    # [['hola','o','chao','o','otro'],'y',[]]
+                        # [['hola','o','chao','o','otro'],'y',[]]
+
                     for i in lista1:
                         if type(i) is list:
                             nueva = []
                             for n in range(len(i) - 1):
-                                if n % 2 == 0:
-                                    if i[n - 1] == 'o' and (i[n - 2] == usuario or nueva == i[n]):
+                                if n % 2 != 0:
+                                    if i[n] == 'o':
+                                        if i[n - 1] in usuario.cursos_aprobados or i[n + 1] in usuario.cursos_aprobados:
+                                            a = True
+                                            nueva.append(a)
+                                    elif i[n] == 'y':
+                                        if i[n - 1] in usuario.cursos_aprobados and i[n + 1] in usuario.cursos_aprobados:
+                                            a = True
+                                            nueva.append(a)
+
                                         pass
-                                        # Seguir idea
+                        # Seguir idea
+
+else:
+return 'vacantes'
 
 
-
-
-
-        else:
-            return 'vacantes'
-
-    def botar_ramo(self, nombre_alumno):
-        for i in range(len(self.lista_alumnos)):
-            if nombre_alumno == self.lista_alumnos[i].nombre:
-                del self.lista_alumnos[i]
-        self.ocu = self.ocu - 1
-        self.disp = self.disp + 1
+def botar_ramo(self, nombre_alumno):
+    for i in range(len(self.lista_alumnos)):
+        if nombre_alumno == self.lista_alumnos[i].nombre:
+            del self.lista_alumnos[i]
+    self.ocu = self.ocu - 1
+    self.disp = self.disp + 1
 
 
 class Alumno:
@@ -243,7 +261,7 @@ def Archivos():
         nombre = personas.diccionario[i]['nombre']
         clave = personas.diccionario[i]['clave']
         ramos_pre = personas.diccionario[i]['ramos_pre']
-        encontradas=[]
+        encontradas = []
         for z in ramos_pre:
             if z in equivalencias:
                 equi = equivalencias[z]
@@ -258,7 +276,7 @@ def Archivos():
         lista_personas.append(alum)
         if alumno == 'SI':
             lista_alumnos.append(alum)
-    algo=equivalencias
+    algo = equivalencias
     listas = [todos_cursos, lista_personas, lista_alumnos]
     return listas
 

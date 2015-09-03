@@ -8,6 +8,7 @@ def Menu():
     hora=[int(hora[0]),int(hora[1])]
     log_in=''
     correcto=False
+    usuario=[]
     while correcto!=True:
         log_in=input('Ingrese usuario o 0 para salir: ')
         if log_in=='0':
