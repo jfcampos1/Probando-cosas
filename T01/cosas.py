@@ -5,11 +5,11 @@ linea2=asdf[0][1:-1]
 qwer='hola y panchito'
 a=qwer.replace('y','and')
 b=[int('05'),30]
+b=b[0]*100+b[1]
 c=[int('08'),31]
-b.append(c)
 print(b)
 print(a)
-requisitos='MAT1600?'
+requisitos='(FIS1503 y MAT1203) o (MAT1202 y MAT1620(c)) o (FIS1513(c) y MAT1512(c)) o FIS1513(c) o ICE1513(c)?'
 ramos_pre=[
       "IEE2123",
       "IEE1133",
@@ -142,6 +142,7 @@ for i in range(len(lista3)):
     listita=lista3[i]
     if type(listita) == type([]):
         if len(listita)>=3:
+            n=0
             for n in range(1,len(listita),2):
                 if listita[n]=='o':
                     listita[n+1]=listita[n-1] or listita[n+1]
@@ -163,7 +164,16 @@ print(lista1)
 print(lista2)
 print(lista3)
 print(algo)
-print(b)
+
+cosa='W-M:6,7'
+hora = cosa.split(':')
+dias=hora[0].split('-')
+hora = hora[1].split(',')
+horas=[dias]+[hora]
+print(dias)
+print(hora)
+print(horas)
 
 
-print(9%2)
+
+print(427/10)

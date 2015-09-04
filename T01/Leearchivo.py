@@ -6,7 +6,7 @@ class Archivo:
         self.diccionario = []
 
     def leer(self, nombre_archivo):
-        with open(nombre_archivo, mode='r',encoding='utf8') as arch:
+        with open(nombre_archivo, mode='r', encoding='utf8') as arch:
             arch.readline()
             principio = True
             lista = []
@@ -74,4 +74,3 @@ class Archivo:
                             diccionario[tag_limpio] = int(valor_con1)
                         linea1 = arch.readline().strip()
             self.diccionario = lista
-
