@@ -50,6 +50,8 @@ ramos_pre=[
     ]
 a = 0
 b=len(requisitos)
+print(len(ramos_pre))
+print(ramos_pre[35])
 lista1 = []
 curso=''
 while a != len(requisitos):
