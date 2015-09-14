@@ -1,5 +1,6 @@
 __author__ = 'JuanFrancisco'
 import sistema
+import datetime
 
 
 class Nodo:
@@ -35,13 +36,16 @@ class ListaLigada:
     def posicion(self, nodo):
         nodo_actual = self.cabeza
         a = 0
+        b=-1
         while nodo_actual:
             if nodo == nodo_actual.valor:
-                return a
-            else:
-                nodo_actual = nodo_actual.siguiente
-                a += 1
-        return False
+                b=a
+            nodo_actual = nodo_actual.siguiente
+            a += 1
+        if b!=-1:
+            return b
+        else:
+            return False
 
     def __repr__(self):
         rep = ''
@@ -62,7 +66,10 @@ def menu():
     puertos = ListaLigada()
     conexion_ocupada=ListaLigada()
     a = 0
-    while punto_actual != punto_final:
+    while punto_actual[0] != punto_final:
+        robot=sistema.preguntar_puerto_robot()
+        if robot==punto_actual[0]:
+            print('Atrapado, Te desconecto bla bla bla')
         print(punto_actual)
         conexciones= sistema.posibles_conexiones()
         pos=puertos.posicion(punto_actual[0])
@@ -81,7 +88,10 @@ def menu():
             puertos.agregar_nodo(punto_actual[0])
             print(conexciones)
             hacer_conexcion = sistema.hacer_conexion(0)
+            conexion_ocupada.agregar_nodo(0)
             punto_actual = sistema.preguntar_puerto_actual()
+    print('saliste',punto_actual,punto_final,a)
 
-
+t=datetime.datetime.now()
 menu()
+print(datetime.datetime.now()-t)
