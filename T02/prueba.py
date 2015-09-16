@@ -52,6 +52,7 @@ l = ListaLigada()
 l.agregar_nodo(2)
 l.agregar_nodo(4)
 l.agregar_nodo(7)
+l.cabeza.siguiente.valor=1
 print(l.posicion(2))
 print(l.obtener(3))
 print(l.obtener(1))
