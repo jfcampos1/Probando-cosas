@@ -33,7 +33,7 @@ class ListaLigada:
         else:
             return nodo.valor
 
-    def posicion(self, nodo, conexion_ocupada):
+    def posicion(self, nodo, conexion_ocupada,tipo_conexion):
         nodo_actual = self.cabeza
         a = 0
         b = -1
@@ -42,7 +42,7 @@ class ListaLigada:
                 if b == -1:
                     b = a
                 else:
-                    if conexion_ocupada.obtener(a) > conexion_ocupada.obtener(b):
+                    if conexion_ocupada.obtener(a) > conexion_ocupada.obtener(b) and tipo_conexion.obtener(a)!=-1:
                         b = a
             nodo_actual = nodo_actual.siguiente
             a += 1
@@ -85,7 +85,7 @@ class ListaLigada:
 
 
 def camino(punto_inicio, punto_final):
-    print(punto_final, punto_inicio)
+    print(punto_inicio,punto_final)
     punto_actual = sistema.preguntar_puerto_actual()
     puertos = ListaLigada()
     conexion_ocupada = ListaLigada()
@@ -96,16 +96,14 @@ def camino(punto_inicio, punto_final):
     b = 0
     while punto_actual[0] != punto_final:
         robot = sistema.preguntar_puerto_robot()  # hasta ahora no se ocupa
-        print(punto_actual)
         conexciones = sistema.posibles_conexiones()
         numero_conexciones.agregar_nodo(conexciones)
-        pos = puertos.posicion(punto_actual[0], conexion_ocupada)
+        pos = puertos.posicion(punto_actual[0], conexion_ocupada,tipo_conexcion)
         if pos is not False:
             puertos.agregar_nodo(punto_actual[0])
             conec = conexion_ocupada.obtener(pos)
             print('se repite', punto_actual[0])
             a += 1
-            print(conexciones)
             if conec + 1 > conexciones - 1:
                 conec = -1
             sistema.hacer_conexion(conec + 1)
@@ -113,7 +111,6 @@ def camino(punto_inicio, punto_final):
             punto_actual = sistema.preguntar_puerto_actual()
         else:
             puertos.agregar_nodo(punto_actual[0])
-            print(conexciones)
             sistema.hacer_conexion(0)
             conexion_ocupada.agregar_nodo(0)
             punto_actual = sistema.preguntar_puerto_actual()
@@ -137,15 +134,15 @@ def camino(punto_inicio, punto_final):
     return las_listas
 
 
-def rellernar_el_mapa(la_lista):
-    puertos = la_lista.obtener(0)
-    conexion_ocupada = la_lista.obtener(1)
-    numero_conexciones = la_lista.obtener(2)
-    tipo_conexion = la_lista.obtener(3)
+def rellernar_el_mapa(lista):
+    puertos = lista.obtener(0)
+    conexion_ocupada = lista.obtener(1)
+    numero_conexciones = lista.obtener(2)
+    tipo_conexion = lista.obtener(3)
     todos_nodos = puertos.cabeza
     nodo = puertos.cabeza
     while todos_nodos:
-        pos = puertos.posicion(todos_nodos.valor, conexion_ocupada)
+        pos = puertos.posicion(todos_nodos.valor, conexion_ocupada,tipo_conexion)
         ultima_conexion = conexion_ocupada.obtener(pos)
         max_conexiones = numero_conexciones.obtener(pos)
         if ultima_conexion == max_conexiones - 1:
@@ -159,55 +156,72 @@ def rellernar_el_mapa(la_lista):
                 numconec = ListaLigada()
                 tip = ListaLigada()
                 punto_actual = sistema.preguntar_puerto_actual()
-                while nodo.valor == todos_nodos.valor:
+                print('acaaaaaaaaaaaaaaaaaaaaaaaaa')
+                while nodo.valor != todos_nodos.valor:
                     sistema.hacer_conexion(conexion_ocupada.obtener(a))
                     punto_actual = sistema.preguntar_puerto_actual()
                     if punto_actual[0] == nodo.siguiente.valor:
-                        nodos.agregar_nodo(nodo)
+                        print('pase por aqui',a)
+                        nodos.agregar_nodo(nodo.valor)
                         conec.agregar_nodo(conexion_ocupada.obtener(a))
                         numconec.agregar_nodo(numero_conexciones.obtener(a))
                         tip.agregar_nodo(tipo_conexion.obtener(a))
                         nodo = nodo.siguiente
                         tipo = tipo.siguiente
+
                         a += 1
                     elif tipo_conexion.obtener(a) == -1:
-                        camino(nodo.valor, punto_actual[0])
+                        print('Ooooooh')
+                        camino(punto_actual[0],nodo.siguiente.valor)
                         nodo = nodo.siguiente
                         tipo = tipo.siguiente
                         nodos = ListaLigada()
                         conec = ListaLigada()
                         numconec = ListaLigada()
                         tip = ListaLigada()
+
                         a += 1
                     else:
-                        tipo_conexion.valor = 1
-                        nodos.agregar_nodo(nodo)
+                        print('por acaaaaaaaaaaaaaaaaaa')
+                        nodos.agregar_nodo(nodo.valor)
                         conec.agregar_nodo(conexion_ocupada.obtener(a))
                         numconec.agregar_nodo(numero_conexciones.obtener(a))
-                        tip.agregar_nodo(tipo_conexion.obtener(a))
+                        tip.agregar_nodo(1)
                         nodos.agregar_nodo(punto_actual[0])
-                        conec.agregar_nodo(0)
+                        conec.agregar_nodo(-1)
                         numconec.agregar_nodo(sistema.posibles_conexiones())
                         tip.agregar_nodo(-1)
-                        camino(punto_actual[0],nodo.cabeza.valor)
-                        tipo = tipo.cabeza
-                        nodo = nodo.cabeza
-                tips=tip.cabeza
-                b=0
-                while tips:
-                    puertos.agregar_nodo(nodos.obtener(b))
-                    conexion_ocupada.agregar_nodo(conec.obtener(b))
-                    numero_conexciones.agregar_nodo(numconec.obtener(b))
-                    tipo_conexion.agregar_nodo(tip.obtener(b))
-                    b+=1
-                    tips=tips.siguiente
+                        camino(punto_actual[0],puertos.cabeza.valor)
+                        tipo = tipo_conexion.cabeza
+                        nodo = puertos.cabeza
+                sistema.hacer_conexion(conexion_ocupada.obtener(pos)+1)
+                punto_actual = sistema.preguntar_puerto_actual()
+                if punto_actual[1]==True:
+                    pass
+                else:
+                    print('aquiiiiiiiiiiiiiiiiiii')
+                    nodos.agregar_nodo(nodo.valor)
+                    conec.agregar_nodo(conexion_ocupada.obtener(pos)+1)
+                    numconec.agregar_nodo(numero_conexciones.obtener(a))
+                    tip.agregar_nodo(0)
+                    nodos.agregar_nodo(punto_actual[0])
+                    conec.agregar_nodo(-1)
+                    numconec.agregar_nodo(sistema.posibles_conexiones())
+                    tip.agregar_nodo(-1)
+                    tips=tip.cabeza
+                    b=0
+                    while tips:
+                        puertos.agregar_nodo(nodos.obtener(b))
+                        conexion_ocupada.agregar_nodo(conec.obtener(b))
+                        numero_conexciones.agregar_nodo(numconec.obtener(b))
+                        tipo_conexion.agregar_nodo(tip.obtener(b))
+                        b+=1
+                        tips=tips.siguiente
                 camino(punto_actual[0],puertos.cabeza.valor)
                 nodo =puertos.cabeza
-                pos = puertos.posicion(todos_nodos.valor, conexion_ocupada)
+                pos = puertos.posicion(todos_nodos.valor, conexion_ocupada,tipo_conexion)
                 ultima_conexion=conexion_ocupada.obtener(pos)
-
-
-        todos_nodos = todos_nodos.siguiente
+            todos_nodos = todos_nodos.siguiente
 
 
 def menu():
