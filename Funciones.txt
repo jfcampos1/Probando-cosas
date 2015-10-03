@@ -26,3 +26,9 @@ listakeys=list(p.keys())
 del p[key]
 p[key]=r #insertauna clave key con r asociado
 
+Archivos:
+with open(nombre_archivo,'r') as arch:
+linea=readline()
+linea.strip() #elimina los \n de la linea
+
+
