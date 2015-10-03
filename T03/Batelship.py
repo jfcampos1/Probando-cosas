@@ -51,8 +51,9 @@ class Vehiculo:
 
 
 class CrearVehiculos:
-    def __init__(self):
+    def __init__(self, nombre):
         self.vehiculos = []
+        self.nombre_jugador = nombre
 
     def crear(self):
         todas_armas = [['Misil UGM-133 Trident II', 'Trident II', 5, [1, 1], 'Siempre'],
@@ -142,13 +143,11 @@ class Tablero:
                 r += j + ' '
             print(r)
 
-    def ataque(self, arma, vehiculos_atacados):
+    def ataque(self, arma, vehiculos_atacados,vehiculos_atacantes):
         area = arma.area
         if arma.sobrenombre == 'Paralizer':
-            self.mostrar_tablero(self.aire, vehiculos_atacados)  # borrar esto despues
             mapa = self.aire
         else:
-            self.mostrar_tablero(self.agua, vehiculos_atacados)  # borrar esto despues
             mapa = self.agua
         print('\nEl ataque {} es de area {} x {}, ingrese una cordenada'.format(arma.sobrenombre, area[0], area[1]))
         fila, columna = self.inputs_cordenadas(mapa)
@@ -173,7 +172,7 @@ class Tablero:
                         danadas += 1
                         destruido = mapa[fila][i].recibir_dano(arma)
                         if destruido is True:
-                            print('Barco {} destruido ')
+                            print('Barco {} destruido '.format(mapa[fila][i].pieza))
                             self.mostrar_cordenadas(mapa, mapa[fila][i])
                 print('Casillas que dieron con algun blanco: {}'.format(danadas))
             elif lugar == 2:
@@ -268,7 +267,10 @@ class Tablero:
                         for i in range(fila - 3, fila):
                             for n in range(columna - 3, columna):
                                 print(mapa[i][n].pieza, (i, n))
-
+                    elif lugar2 == 2:
+                        for i in range(fila - 3, fila):
+                            for n in range(columna, columna + 3):
+                                print(mapa[i][n].pieza, (i, n))
             elif lugar == 2:
                 if fila + 1 > len(mapa):
                     return False
@@ -287,7 +289,13 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        pass
+                        for i in range(fila, fila + 3):
+                            for n in range(columna - 3, columna):
+                                print(mapa[i][n].pieza, (i, n))
+                    elif lugar2 == 2:
+                        for i in range(fila, fila + 3):
+                            for n in range(columna, columna + 3):
+                                print(mapa[i][n].pieza, (i, n))
             elif lugar == 3:
                 if columna - 1 < 0:
                     return False
@@ -306,7 +314,13 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        pass
+                        for i in range(fila - 3, fila):
+                            for n in range(columna - 3, columna):
+                                print(mapa[i][n].pieza, (i, n))
+                    elif lugar2 == 2:
+                        for i in range(fila, fila + 3):
+                            for n in range(columna - 3, columna):
+                                print(mapa[i][n].pieza, (i, n))
             elif lugar == 4:
                 if columna + 1 > len(mapa):
                     return False
@@ -325,12 +339,29 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        pass
-
-
-
-
-                        # importa el orden hacer excepcion para el puerto
+                        for i in range(fila - 3, fila):
+                            for n in range(columna, columna + 3):
+                                print(mapa[i][n].pieza, (i, n))
+                    elif lugar2 == 2:
+                        for i in range(fila, fila + 3):
+                            for n in range(columna, columna + 3):
+                                print(mapa[i][n].pieza, (i, n))
+        else:
+            try:
+                resultado=False
+                if arma.sobrenombre == 'Trident II':
+                    resultado=mapa[fila][columna].recibir_dano(arma)
+                elif arma.sobrenombre=='Minuteman III':
+                    resultado=mapa[fila][columna].recibir_dano(arma)
+                elif arma.sobrenombre=='Kamikaze':
+                    resultado=mapa[fila][columna].recibir_dano(arma)
+                    vehiculos_atacantes[5].activo=False
+                if resultado is True:
+                    print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                    self.mostrar_cordenadas(mapa, mapa[fila][columna])
+            except AttributeError:
+                print('0 Barcos alcanzados')
+                                # importa el orden hacer excepcion para el puerto
 
     def mostrar_cordenadas(self, aire_o_agua, barco):
         mapa = aire_o_agua
@@ -584,7 +615,7 @@ class Tablero:
                 a = naves[i]
                 if a.barco is True:
                     print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
-                    b = self.inputs(self.agua, a)
+                    b = self.agregar_barcos(self.agua, a)
                     self.mostrar_tablero(self.agua, vehi)
                     vehi.mostrar_vehiculos(False)
                     if b is not True:
@@ -592,7 +623,7 @@ class Tablero:
                         print('Barco no puede ponerse en estos cuadrantes')
                 else:
                     print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
-                    b = self.inputs(self.aire, a)
+                    b = self.agregar_barcos(self.aire, a)
                     self.mostrar_tablero(agua_o_tierra=self.aire, embarcaciones=vehi)
                     vehi.mostrar_vehiculos(True)
                     if b is not True:
@@ -615,12 +646,12 @@ class Menu:
             pass
             # mostrar_tablero()
 
-    def correr(self):
-        vehi = CrearVehiculos()
-        vehi.crear()
-        table = Tablero(5, 6)
+    def correr(self, jugador1, tablero1, jugador2, tablero2):
+        vehi = jugador1
+        table = tablero1
+        vehi2 = jugador2
+        tablero2 = tablero2
         table.mostrar_tablero(table.agua, vehi)
-        # table.agregar_vehiculo(vehi)
         # table.mejorar(vehi)
         menu1 = 0
         while menu1 != 3:
@@ -668,13 +699,90 @@ class Menu:
                         resultado = table.mejorar(vehi)
                         if resultado is True:
                             f = False
+                    elif elegido.ataques[opcion].sobrenombre == 'Napalm':
+                        mapa=tablero2.agua
+                        fila, columna = tablero2.inputs_cordenadas(mapa)
+                        resultado=mapa[fila][columna].recibir_dano(elegido.ataques[opcion])
+                        if resultado is True:
+                            print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                            tablero2.mostrar_cordenadas(mapa, mapa[fila][columna])
+                        f=False
                     else:
-                        print('aca')
-                    print(opcion)
+                        tablero2.ataque(elegido.ataques[opcion], vehi2,vehi)
+                        f=False
                     algo = input()
                 elif menu1 == 2:
                     pass
+                elif menu1 == 3:
+                    print('Jugador {} se a rendido'.format(vehi.nombre_jugador))
+                    return True
+            menu1 = 3
 
 
-Menu().correr()
+import random
+
+
+def personavspersona():
+    terminar = False
+    nombre1 = input('Nombre jugador 1: ')
+    vehi1 = CrearVehiculos(nombre1)
+    vehi1.crear()
+    table1 = Tablero(5, 6)
+    nombre2 = input('Nombre jugador 2: ')
+    vehi2 = CrearVehiculos(nombre2)
+    vehi2.crear()
+    table2 = Tablero(5, 6)
+    numero = random.randint(1, 2)
+    if numero == 1:
+        print('Turno jugador {} de poner sus vehiculos'.format(vehi1.nombre_jugador))
+        # table1.agregar_vehiculo(vehi1)
+        print('Turno jugador {} de poner sus vehiculos'.format(vehi2.nombre_jugador))
+        # table2.agregar_vehiculo(vehi2)
+        vehiculos = vehi1
+        tablero = table1
+        vehiculos2 = vehi2
+        tablero2 = table2
+        while terminar is False:
+            print('Turno jugador {}: '.format(vehiculos.nombre_jugador))
+            resultado = Menu().correr(vehiculos, tablero, vehiculos2, tablero2)
+            if resultado == True:
+                terminar = True
+            elif vehiculos == vehi1:
+                vehiculos = vehi2
+                tablero = table2
+                vehiculos2 = vehi1
+                tablero2 = table1
+            elif vehiculos == vehi2:
+                vehiculos = vehi1
+                tablero = table1
+                vehiculos2 = vehi2
+                tablero2 = table2
+    else:
+        print('Turno jugador {} de poner sus vehiculos'.format(vehi2.nombre_jugador))
+        # table2.agregar_vehiculo(vehi2)
+        print('Turno jugador {} de poner sus vehiculos'.format(vehi1.nombre_jugador))
+        # table1.agregar_vehiculo(vehi1)
+        vehiculos = vehi2
+        tablero = table2
+        vehiculos2 = vehi1
+        tablero2 = table1
+        while terminar is False:
+            print('Turno jugador {}: '.format(vehiculos.nombre_jugador))
+            resultado = Menu().correr(vehiculos, tablero, vehiculos2, tablero2)
+            if resultado == True:
+                terminar = True
+            elif vehiculos == vehi1:
+                vehiculos = vehi2
+                tablero = table2
+                vehiculos2 = vehi1
+                tablero2 = table1
+            elif vehiculos == vehi2:
+                vehiculos = vehi1
+                tablero = table1
+                vehiculos2 = vehi2
+                tablero2 = table2
+    print('Fin del juego')
+
+
+personavspersona()
 # ver Lab 9 vuelo
