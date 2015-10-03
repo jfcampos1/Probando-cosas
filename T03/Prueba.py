@@ -1,6 +1,6 @@
 __author__ = 'JuanFrancisco'
 agua = [1, 2, 3]
-a = '2'
+a = 'a'
 b = a.upper()
 jugo = [a, b]
 agua += (jugo)

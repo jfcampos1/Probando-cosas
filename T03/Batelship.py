@@ -20,6 +20,7 @@ class Vehiculo:
         self.ataques = Ataques
         self.barco = agua
         self.activo = True
+        self.habilitado = 0
 
     def recibir_dano(self, arma):
         self.resistencia -= arma.dano
@@ -55,7 +56,7 @@ class CrearVehiculos:
 
     def crear(self):
         todas_armas = [['Misil UGM-133 Trident II', 'Trident II', 5, [1, 1], 'Siempre'],
-                       ['Misil de crucero BGM-109 Tomahawk', 'Tomahawk', 3, 'linea', 3],
+                       ['Misil de crucero BGM-109 Tomahawk', 'Tomahawk', 3, [1, 'n'], 3],
                        ['Napalm', 'Napalm', 5, [1, 1], 8],
                        ['Misil Balistico Intercontinental Minuteman III', 'Minuteman III', 15, [1, 1], 3],
                        ['Kamikaze', 'Kamikaze', 10000, [1, 1], 1],
@@ -88,32 +89,32 @@ class CrearVehiculos:
                     r += ': Vida ' + str(a.resistencia) + ' [Activo] Ataques Disponibles: ' + b
                 elif a.activo is True:
                     r += ' [Activo] Ataques Disponibles: ' + b
+                elif a.barco is False:
+                    r += ' [Deshabilitado] ' + str(a.habilitado)
                 else:
                     r += ' [Destruido]'
-                print(r)
             elif avion is True:
                 if a.barco is False and a.activo is True:
                     r += ' [Activo] Ataques Disponibles: ' + b
                 elif a.barco is True:
-                    r=''
+                    r = ''
                 else:
-                    r += ' [Destruido]'
-                print(r)
+                    r += ' [Deshabilitado] ' + str(a.habilitado)
             else:
                 if a.barco is True and a.activo is True and (avion == 'Todos' or avion is False):
                     r += ': Vida ' + str(a.resistencia) + ' [Activo] Ataques Disponibles: ' + b
                 elif a.activo is not True:
                     r += ' [Destruido]'
                 else:
-                    r=''
+                    r = ''
+            if r != '':
                 print(r)
-
 
 
 class Tablero:
     def __init__(self, filas, columnas):
         lista = []
-        lista2=[]
+        lista2 = []
         for i in range(filas):
             lista.append([''] * columnas)
             lista2.append([''] * columnas)
@@ -141,14 +142,205 @@ class Tablero:
                 r += j + ' '
             print(r)
 
-    def ataque(self, arma):
+    def ataque(self, arma, vehiculos_atacados):
         area = arma.area
-        self.mostrar_tablero(self.agua)
-        print('\nEl ataque es de area {} x {}, ingrese una cordenada'.format(area[0], area[1]))
-        cordenada_fila = input('Fila: ')
-        cordenada_columna = input('Columna: ')
+        if arma.sobrenombre == 'Paralizer':
+            self.mostrar_tablero(self.aire, vehiculos_atacados)  # borrar esto despues
+            mapa = self.aire
+        else:
+            self.mostrar_tablero(self.agua, vehiculos_atacados)  # borrar esto despues
+            mapa = self.agua
+        print('\nEl ataque {} es de area {} x {}, ingrese una cordenada'.format(arma.sobrenombre, area[0], area[1]))
+        fila, columna = self.inputs_cordenadas(mapa)
+        if arma.sobrenombre == 'Tomahawk':
+            c = True
+            lugar = 0
+            while c is True:
+                try:
+                    lugar = int(input('Ingrese direccion del ataque:\n[1] Horizontal\n'
+                                      '[2] Vertical\t'))
+                    if 0 < lugar <= 2:
+                        c = False
+                    if c is True:
+                        print('Ingrese direccion dentro del rango de opciones')
+                except ValueError:
+                    print('Ingrese un numero no letras')
+                    c = True
+            if lugar == 1:
+                danadas = 0
+                for i in range(len(mapa[0])):
+                    if mapa[fila][i] != '':
+                        danadas += 1
+                        destruido = mapa[fila][i].recibir_dano(arma)
+                        if destruido is True:
+                            print('Barco {} destruido ')
+                            self.mostrar_cordenadas(mapa, mapa[fila][i])
+                print('Casillas que dieron con algun blanco: {}'.format(danadas))
+            elif lugar == 2:
+                danadas = 0
+                for i in range(len(mapa)):
+                    if mapa[i][columna] != '':
+                        danadas += 1
+                        destruido = mapa[i][columna].recibir_dano(arma)
+                        if destruido is True:
+                            print('Barco {} destruido ')
+                            self.mostrar_cordenadas(mapa, mapa[i][columna])
+                print('Casillas que dieron con algun blanco: {}'.format(danadas))
+        elif arma.sobrenombre == 'Paralizer':
+            c = True
+            lugar = 0
+            while c is True:
+                try:
+                    lugar = int(input('Ingrese direccion de largo de la siguiente cordenada:\n[1] Arriba\n'
+                                      '[2] Abajo\n[3] Izquierda\n[4] Derecha\t'))
+                    if 0 < lugar <= 4:
+                        c = False
+                    if c is True:
+                        print('Ingrese direccion dentro del rango de opciones')
+                except ValueError:
+                    print('Ingrese un numero no letras')
+                    c = True
+            if lugar == 1:
+                if fila - 1 < 0:
+                    return False
+                if mapa[fila][columna] == vehiculos_atacados[4] and mapa[fila - 1][columna] == \
+                        vehiculos_atacados[4]:
+                    print('Ataque fue un excitoso')
+                    vehiculos_atacados[4].habilitado = 5
+                    vehiculos_atacados[4].activo = False
+            elif lugar == 2:
+                if fila + 1 > len(mapa):
+                    return False
+                if mapa[fila][columna] == vehiculos_atacados[4] and mapa[fila + 1][columna] == \
+                        vehiculos_atacados[4]:
+                    print('Ataque fue un excitoso')
+                    vehiculos_atacados[4].habilitado = 5
+                    vehiculos_atacados[4].activo = False
+            elif lugar == 3:
+                if columna - 1 < 0:
+                    return False
+                if mapa[fila][columna - 1] == vehiculos_atacados[4] and mapa[fila][columna] == \
+                        vehiculos_atacados[4]:
+                    print('Ataque fue un excitoso')
+                    vehiculos_atacados[4].habilitado = 5
+                    vehiculos_atacados[4].activo = False
+            elif lugar == 4:
+                if columna + 1 > len(mapa):
+                    return False
+                if mapa[fila][columna + 1] == vehiculos_atacados[4] and mapa[fila][columna] == \
+                        vehiculos_atacados[4]:
+                    print('Ataque fue un excitoso')
+                    vehiculos_atacados[4].habilitado = 5
+                    vehiculos_atacados[4].activo = False
+            return True
+        elif arma.sobrenombre == 'Explorar':
+            c = True
+            lugar = 0
+            while c is True:
+                try:
+                    lugar = int(input('Ingrese direccion de largo de la siguiente cordenada:\n[1] Arriba\n'
+                                      '[2] Abajo\n[3] Izquierda\n[4] Derecha\t'))
+                    if 0 < lugar <= 4:
+                        c = False
+                    if c is True:
+                        print('Ingrese direccion dentro del rango de opciones')
+                except ValueError:
+                    print('Ingrese un numero no letras')
+                    c = True
+            if lugar == 1:
+                if fila - 1 < 0:
+                    return False
+                else:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Izquierda\n[2] Derecha\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        for i in range(fila - 3, fila):
+                            for n in range(columna - 3, columna):
+                                print(mapa[i][n].pieza, (i, n))
 
-        # importa el orden hacer excepcion para el puerto
+            elif lugar == 2:
+                if fila + 1 > len(mapa):
+                    return False
+                else:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Izquierda\n[2] Derecha\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        pass
+            elif lugar == 3:
+                if columna - 1 < 0:
+                    return False
+                else:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Arriba\n[2] Abajo\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        pass
+            elif lugar == 4:
+                if columna + 1 > len(mapa):
+                    return False
+                else:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Arriba\n[2] Abajo\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        pass
+
+
+
+
+                        # importa el orden hacer excepcion para el puerto
+
+    def mostrar_cordenadas(self, aire_o_agua, barco):
+        mapa = aire_o_agua
+        r = ''
+        for i in range(len(mapa)):
+            for n in range(len(mapa[0])):
+                if mapa[i][n] == barco:
+                    r += ', (' + str(chr(i + 65)) + ',' + str(n + 1) + ') '
+        print('Cordenadas del barco destruido:')
+        print(r)
 
     def mejorar(self, naves):
         b = True
@@ -162,7 +354,7 @@ class Tablero:
                         resultado = True
                 except TypeError:
                     pass
-            naves.mostrar_vehiculos()
+            naves.mostrar_vehiculos('Todos')
             if resultado is False:
                 print('No tiene barcos que necesiten repararse')
                 return False
@@ -175,157 +367,224 @@ class Tablero:
             else:
                 print('Barco no reparable')
 
+    def lugares(self, filas, columnas, mapa, fila, columna):
+        libre = True
+        for z in range(filas, fila):
+            for n in range(columnas, columna):
+                if mapa[z][n] != '':
+                    libre = False
+                print(z, n)
+        if filas < 0 or columnas < 0:
+            libre = False
+            print('Fuera de rango del mapa')
+        return libre
+
+    def inputs_cordenadas(self, mapas):
+        mapa = mapas
+        d = True
+        fila = -1
+        while d is True:
+            fila = input('Ingrese la fila: ')
+            fila = ord(fila.upper()) - 65
+            if fila < 0 or fila > len(mapa) - 1:
+                print('Ingrese una letra correspondiente')
+
+            else:
+                d = False
+        c = True
+        columna = -1
+        while c is True:
+            try:
+                columna = int(input('Ingrese la columna: ')) - 1
+                if 0 <= columna < len(mapa[0]):
+                    c = False
+                if c is True:
+                    print('Ingrese columna dentro del rango')
+            except ValueError:
+                print('Ingrese un numero no letras')
+                c = True
+        return fila, columna
+
+    def agregar_barcos(self, mapas, barco):
+        a = barco
+        mapa = mapas
+        fila, columna = self.inputs_cordenadas(mapa)
+        if a.area == [1, 1]:
+            if mapa[fila][columna] == '':
+                mapa[fila][columna] = a
+                return True
+            else:
+                return False
+        elif mapa[fila][columna] == '':
+            c = True
+            lugar = 0
+            while c is True:
+                try:
+                    lugar = int(input('Ingrese direccion de largo de la siguiente cordenada:\n[1] Arriba\n'
+                                      '[2] Abajo\n[3] Izquierda\n[4] Derecha\t'))
+                    if 0 < lugar <= 4:
+                        c = False
+                    if c is True:
+                        print('Ingrese direccion dentro del rango de opciones')
+                except ValueError:
+                    print('Ingrese un numero no letras')
+                    c = True
+            if lugar == 1:
+                libre = self.lugares(fila - a.area[0] + 1, columna, mapa, fila + 1, columna + 1)
+                if libre is False:
+                    return False
+                elif a.area[1] >= 2:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Izquierda\n[2] Derecha\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        libre2 = self.lugares(fila - a.area[0], columna - a.area[1], mapa, fila + 1, columna + 1)
+                        if libre2 is True:
+                            for z in range(a.area[1]):
+                                for n in range(a.area[0]):
+                                    mapa[fila - n][columna - z] = a
+                            return True
+                    elif lugar2 == 2:
+                        libre2 = self.lugares(fila - a.area[0] + 1, columna, mapa, fila + 1, columna + a.area[1])
+                        if libre2 is True:
+                            for z in range(a.area[1]):
+                                for n in range(a.area[0]):
+                                    mapa[fila - n][columna + z] = a
+                            return True
+                elif libre is True:
+                    for z in range(a.area[0]):
+                        mapa[fila - z][columna] = a
+                    return True
+            elif lugar == 2:
+                libre = self.lugares(fila, columna, mapa, fila + a.area[0], columna + 1)
+                if libre is False:
+                    return False
+                if a.area[1] >= 2:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Izquierda\n[2] Derecha\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        libre2 = self.lugares(fila, columna - a.area[1], mapa, fila + a.area[0], columna + 1)
+                        if libre2 is True:
+                            for z in range(a.area[1]):
+                                for n in range(a.area[0]):
+                                    mapa[fila + n][columna - z] = a
+                            return True
+                    elif lugar2 == 2:
+                        libre2 = self.lugares(fila, columna, mapa, fila + a.area[0], columna + a.area[1])
+                        if libre2 is True:
+                            for z in range(a.area[1]):
+                                for n in range(a.area[0]):
+                                    mapa[fila + n][columna + z] = a
+                            return True
+                elif libre is True:
+                    for z in range(a.area[0]):
+                        mapa[fila + z][columna] = a
+                    return True
+            elif lugar == 3:
+                libre = self.lugares(fila, columna - a.area[0] + 1, mapa, fila + 1, columna + 1)
+                if libre is False:
+                    return False
+                if a.area[1] >= 2:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Arriba\n[2] Abajo\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        libre2 = self.lugares(fila - a.area[1] + 1, columna - a.area[0] + 1, mapa, fila + 1,
+                                              columna + 1)
+                        if libre2 is True:
+                            for z in range(a.area[0]):
+                                for n in range(a.area[1]):
+                                    mapa[fila - n][columna - z] = a
+                            return True
+                    elif lugar2 == 2:
+                        libre2 = self.lugares(fila, columna - a.area[0] + 1, mapa, fila + a.area[1], columna + 1)
+                        if libre2 is True:
+                            for z in range(a.area[0]):
+                                for n in range(a.area[1]):
+                                    mapa[fila - n][columna + z] = a
+                            return True
+                elif libre is True:
+                    for z in range(a.area[0]):
+                        mapa[fila][columna - z] = a
+                    return True
+            elif lugar == 4:
+                libre = self.lugares(fila, columna, mapa, fila + 1, columna + a.area[0])
+                if libre is False:
+                    return False
+                if a.area[1] >= 2:
+                    c = True
+                    lugar2 = 0
+                    while c is True:
+                        try:
+                            lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
+                                               '[1] Arriba\n[2] Abajo\t'))
+                            if 0 < lugar2 <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese direccion dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero no letras')
+                            c = True
+                    if lugar2 == 1:
+                        libre2 = self.lugares(fila - a.area[1], columna, mapa, fila + 1, columna + a.area[0])
+                        if libre2 is True:
+                            for z in range(a.area[0]):
+                                for n in range(a.area[1]):
+                                    mapa[fila - n][columna + z] = a
+                            return True
+                    elif lugar2 == 2:
+                        libre2 = self.lugares(fila, columna, mapa, fila + a.area[1], columna + a.area[0])
+                        if libre2 is True:
+                            for z in range(a.area[0]):
+                                for n in range(a.area[1]):
+                                    mapa[fila + n][columna + z] = a
+                            return True
+                elif libre is True:
+                    for z in range(a.area[0]):
+                        mapa[fila][columna + z] = a
+                    return True
+
     def agregar_vehiculo(self, vehi):
         naves = vehi.vehiculos
         for i in range(len(naves)):
             b = False
+            a = naves[i]
             while b is False:
                 a = naves[i]
-
-                def lugares(filas, columnas, mapa, fila, columna):
-                    libre = True
-                    for z in range(filas, fila):
-                        for n in range(columnas, columna):
-                            if mapa[z][n] != '':
-                                libre = False
-                            print(z, n)
-                    if filas < 0 or columnas < 0:
-                        libre = False
-                        print('Fuera de rango del mapa')
-                    return libre
-
-                def inputs(mapas):
-                    mapa = mapas
-                    d = True
-                    fila = -1
-                    while d is True:
-                        fila = input('Ingrese la fila: ')
-                        fila = ord(fila.upper()) - 65
-                        if fila < 0 or fila > len(mapa) - 1:
-                            print('Ingrese una letra correspondiente')
-
-                        else:
-                            d = False
-                    c = True
-                    columna = -1
-                    while c is True:
-                        try:
-                            columna = int(input('Ingrese la columna: ')) - 1
-                            if columna < len(mapa[0]):
-                                c = False
-                            if c is True:
-                                print('Ingrese columna dentro del rango')
-                        except ValueError:
-                            print('Ingrese un numero no letras')
-                            c = True
-                    if mapa[fila][columna] == '':
-                        lugar = int(input('Ingrese direccion de largo de la siguiente cordenada:\n[1] Arriba\n'
-                                          '[2] Abajo\n[3] Izquierda\n[4] Derecha\t'))
-                        if lugar == 1:
-                            libre = lugares(fila - a.area[0] + 1, columna, mapa, fila + 1, columna + 1)
-                            if libre is False:
-                                return False
-                            elif a.area[1] >= 2:
-                                lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
-                                                   '[1] Izquierda\n[2] Derecha\t'))
-                                if lugar2 == 1:
-                                    libre2 = lugares(fila - a.area[0], columna - a.area[1], mapa, fila + 1, columna + 1)
-                                    if libre2 is True:
-                                        for z in range(a.area[1]):
-                                            for n in range(a.area[0]):
-                                                mapa[fila - n][columna - z] = a
-                                        return True
-                                elif lugar2 == 2:
-                                    libre2 = lugares(fila - a.area[0] + 1, columna, mapa, fila + 1, columna + a.area[1])
-                                    if libre2 is True:
-                                        for z in range(a.area[1]):
-                                            for n in range(a.area[0]):
-                                                mapa[fila - n][columna + z] = a
-                                        return True
-                            elif libre is True:
-                                for z in range(a.area[0]):
-                                    mapa[fila - z][columna] = a
-                                return True
-                        elif lugar == 2:
-                            libre = lugares(fila, columna, mapa, fila + a.area[0], columna + 1)
-                            if libre is False:
-                                return False
-                            if a.area[1] >= 2:
-                                lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
-                                                   '[1] Izquierda\n[2] Derecha\t'))
-                                if lugar2 == 1:
-                                    libre2 = lugares(fila, columna - a.area[1], mapa, fila + a.area[0], columna + 1)
-                                    if libre2 is True:
-                                        for z in range(a.area[1]):
-                                            for n in range(a.area[0]):
-                                                mapa[fila + n][columna - z] = a
-                                        return True
-                                elif lugar2 == 2:
-                                    libre2 = lugares(fila, columna, mapa, fila + a.area[0], columna + a.area[1])
-                                    if libre2 is True:
-                                        for z in range(a.area[1]):
-                                            for n in range(a.area[0]):
-                                                mapa[fila + n][columna + z] = a
-                                        return True
-                            elif libre is True:
-                                for z in range(a.area[0]):
-                                    mapa[fila + z][columna] = a
-                                return True
-                        elif lugar == 3:
-                            libre = lugares(fila, columna - a.area[0]+1, mapa, fila + 1, columna+1)
-                            if libre is False:
-                                return False
-                            if a.area[1] >= 2:
-                                lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
-                                                   '[1] Arriba\n[2] Abajo\t'))
-                                if lugar2 == 1:
-                                    libre2 = lugares(fila - a.area[1]+1, columna - a.area[0]+1, mapa, fila + 1,
-                                                     columna + 1)
-                                    if libre2 is True:
-                                        for z in range(a.area[0]):
-                                            for n in range(a.area[1]):
-                                                mapa[fila - n][columna - z] = a
-                                        return True
-                                elif lugar2 == 2:
-                                    libre2 = lugares(fila, columna - a.area[0]+1, mapa, fila + a.area[1], columna + 1)
-                                    if libre2 is True:
-                                        for z in range(a.area[0]):
-                                            for n in range(a.area[1]):
-                                                mapa[fila - n][columna + z] = a
-                                        return True
-                            elif libre is True:
-                                for z in range(a.area[0]):
-                                    mapa[fila][columna - z] = a
-                                return True
-                        elif lugar == 4:
-                            libre = lugares(fila, columna, mapa, fila + 1, columna + a.area[0])
-                            if libre is False:
-                                return False
-                            if a.area[1] >= 2:
-                                lugar2 = int(input('Ingrese direccion de ancho de la siguiente cordenada:\n'
-                                                   '[1] Arriba\n[2] Abajo\t'))
-                                if lugar2 == 1:
-                                    libre2 = lugares(fila - a.area[1], columna, mapa, fila + 1, columna + a.area[0])
-                                    if libre2 is True:
-                                        for z in range(a.area[0]):
-                                            for n in range(a.area[1]):
-                                                mapa[fila - n][columna + z] = a
-                                        return True
-                                elif lugar2 == 2:
-                                    libre2 = lugares(fila, columna, mapa, fila + a.area[1], columna + a.area[0])
-                                    if libre2 is True:
-                                        for z in range(a.area[0]):
-                                            for n in range(a.area[1]):
-                                                mapa[fila + n][columna + z] = a
-                                        return True
-                            elif libre is True:
-                                for z in range(a.area[0]):
-                                    mapa[fila][columna + z] = a
-                                return True
-
                 if a.barco is True:
                     print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
-                    b = inputs(self.agua)
+                    b = self.inputs(self.agua, a)
                     self.mostrar_tablero(self.agua, vehi)
                     vehi.mostrar_vehiculos(False)
                     if b is not True:
@@ -333,15 +592,14 @@ class Tablero:
                         print('Barco no puede ponerse en estos cuadrantes')
                 else:
                     print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
-                    b = inputs(self.aire)
+                    b = self.inputs(self.aire, a)
                     self.mostrar_tablero(agua_o_tierra=self.aire, embarcaciones=vehi)
                     vehi.mostrar_vehiculos(True)
                     if b is not True:
                         b = False
                         print('Avion no puede ponerse en estos cuadrantes')
-
-
-# hacer preguntas de si arriba o abajo :D
+            print('{} Ingresado correctamente'.format(a.pieza))
+        print('Termino excitosamente de pocisionar los vehiculos\n')
 
 
 class Menu:
@@ -362,52 +620,60 @@ class Menu:
         vehi.crear()
         table = Tablero(5, 6)
         table.mostrar_tablero(table.agua, vehi)
-        table.agregar_vehiculo(vehi)
+        # table.agregar_vehiculo(vehi)
         # table.mejorar(vehi)
         menu1 = 0
         while menu1 != 3:
             Menu().mostrar(1)
             c = True
-            while c == True:
-                try:
-                    menu1 = int(input('Seleccione accion a tomar:\t'))
-                    c = False
-                except ValueError:
-                    print('Ingrese un numero de la lista no letras')
-                    c = True
-            if menu1 == 1:
-                print('Seleccione Vehiculo a ocupar:')
-                b = True
-                vehi.mostrar_vehiculos('Todos')
-                selec = 0
-                while b == True:
+            f = True
+            while f is True:
+                while c is True:
                     try:
-                        selec = int(input())
-                        b = False
+                        menu1 = int(input('Seleccione accion a tomar:\t'))
+                        c = False
                     except ValueError:
                         print('Ingrese un numero de la lista no letras')
-                        b = True
-                elegido = vehi.vehiculos[selec - 1]
-                print('Seleccione ataque a ocupar:')
-                orden = elegido.mostrar_ataques()
-                b = True
-                ataque = -1
-                while b is True:
-                    try:
-                        ataque = int(input())  # que este dentro del rango de opciones
-                        b = False
-                    except ValueError:
-                        print('Ingrese un numero de la lista no letras')
-                        b = True
-                opcion = orden[ataque - 1][1]
-                if elegido.ataques[opcion].sobrenombre == 'Kit de Ingenieros':  # Devolverse a elegir accion
-                    resultado = table.mejorar(vehi)
-                else:
-                    print('aca')
-                print(opcion)
-                algo = input()
-            elif menu1 == 2:
-                pass
+                        c = True
+                if menu1 == 1:
+                    print('Seleccione Vehiculo a ocupar:')
+                    b = True
+                    vehi.mostrar_vehiculos('Todos')
+                    selec = 0
+                    while b == True:
+                        try:
+                            selec = int(input())
+                            b = False
+                        except ValueError:
+                            print('Ingrese un numero de la lista no letras')
+                            b = True
+                    elegido = vehi.vehiculos[selec - 1]
+                    orden = []
+                    b = True
+                    ataque = -1
+                    while b is True:
+                        try:
+                            print('Seleccione ataque a ocupar:')
+                            orden = elegido.mostrar_ataques()
+                            ataque = int(input())
+                            if 0 < ataque <= len(orden):
+                                b = False
+                            else:
+                                print('Fuera de rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero de la lista no letras')
+                            b = True
+                    opcion = orden[ataque - 1][1]
+                    if elegido.ataques[opcion].sobrenombre == 'Kit de Ingenieros':
+                        resultado = table.mejorar(vehi)
+                        if resultado is True:
+                            f = False
+                    else:
+                        print('aca')
+                    print(opcion)
+                    algo = input()
+                elif menu1 == 2:
+                    pass
 
 
 Menu().correr()
