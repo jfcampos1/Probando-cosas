@@ -8,7 +8,9 @@ class Armas:
         self.dano = lista[2]
         self.area = lista[3]
         self.disponibilidad = lista[4]
+        self.turno_desactivado = None
         self.inutil = False
+        self.cordenadas_napalm = []
 
 
 class Vehiculo:
@@ -41,7 +43,7 @@ class Vehiculo:
         orden = []
         a = 1
         for i in range(len(self.ataques)):
-            if self.ataques[i].inutil != True:
+            if self.ataques[i].inutil is False:
                 r = '[' + str(a) + '] ' + self.ataques[i].nombre
                 print(r)
                 orden2 = [a, i]
@@ -57,7 +59,7 @@ class CrearVehiculos:
 
     def crear(self):
         todas_armas = [['Misil UGM-133 Trident II', 'Trident II', 5, [1, 1], 'Siempre'],
-                       ['Misil de crucero BGM-109 Tomahawk', 'Tomahawk', 3, [1, 'n'], 3],
+                       ['Misil de crucero BGM-109 Tomahawk', 'Tomahawk', 5, [1, 'n'], 3],
                        ['Napalm', 'Napalm', 5, [1, 1], 8],
                        ['Misil Balistico Intercontinental Minuteman III', 'Minuteman III', 15, [1, 1], 3],
                        ['Kamikaze', 'Kamikaze', 10000, [1, 1], 1],
@@ -68,7 +70,7 @@ class CrearVehiculos:
                                                          Armas(todas_armas[6])])
         b = Vehiculo('Buque de Guerra', True, [3, 2], 60, [Armas(todas_armas[0]), Armas(todas_armas[1]),
                                                            Armas(todas_armas[6])])
-        c = Vehiculo('Lancha', True, [2, 1], 1, [Armas(todas_armas[6])])
+        c = Vehiculo('Lancha', True, [2, 1], 10, [Armas(todas_armas[6])])
         d = Vehiculo('Puerto', True, [4, 2], 80, [Armas(todas_armas[0]), Armas(todas_armas[5]), Armas(todas_armas[6])])
         e = Vehiculo('Avion explorador', False, [2, 2], None, [Armas(todas_armas[7])])
         f = Vehiculo('Kamikaze IXXI', False, [1, 1], None, [Armas(todas_armas[4])])
@@ -78,7 +80,6 @@ class CrearVehiculos:
 
     def mostrar_vehiculos(self, avion):
         for i in range(len(self.vehiculos)):
-            r = ''
             a = self.vehiculos[i]
             r = '[' + str(i + 1) + '] ' + a.pieza
             b = ''
@@ -111,16 +112,63 @@ class CrearVehiculos:
             if r != '':
                 print(r)
 
+    def mostrar_vehiculos_activos(self):
+        orden = []
+        a = 1
+        for i in range(len(self.vehiculos)):
+            if self.vehiculos[i].activo is True:
+                r = '[' + str(a) + '] ' + self.vehiculos[i].pieza
+                print(r)
+                orden2 = [a, i]
+                orden.append(orden2)
+                a += 1
+        return orden
+
+    def habilitar_explorador(self):
+        self.vehiculos[4].habilitado -= 1
+        if self.vehiculos[4].habilitado <= 0:
+            self.vehiculos[4].activo = True
+
+    def revisar_si_gano(self):
+        a = [0, 1, 3]
+        todos = False
+        for i in a:
+            if self.vehiculos[i].activo is True:
+                todos = True
+        return todos
+
 
 class Tablero:
     def __init__(self, filas, columnas):
         lista = []
         lista2 = []
+        lista3 = []
         for i in range(filas):
             lista.append([''] * columnas)
             lista2.append([''] * columnas)
         self.agua = lista
         self.aire = lista2
+        self.radar_acumulado = lista3
+        self.lista_radar = []
+
+    def agregar_radar(self, danadas, destruidas):
+        lista = []
+        for i in range(len(self.agua)):
+            lista.append([''] * len(self.agua[0]))
+        try:
+            for i, n, j, z in danadas:
+                self.radar_acumulado[i][n] = [j, z]
+                lista[i][n] = [j, z]
+        except TypeError:
+            self.radar_acumulado[danadas[0]][danadas[1]] = [danadas[2], danadas[3]]
+            lista[danadas[0]][danadas[1]] = [danadas[2], danadas[3]]
+        for i in destruidas:
+            for n in range(len(lista)):
+                for z in range(len(lista[0])):
+                    if i == lista[n][z][0]:
+                        lista[n][z] = ''
+                        self.radar_acumulado[n][z] = ''
+        self.lista_radar.append(lista)
 
     def mostrar_tablero(self, agua_o_tierra, embarcaciones):
         mapa = agua_o_tierra
@@ -143,7 +191,31 @@ class Tablero:
                 r += j + ' '
             print(r)
 
-    def ataque(self, arma, vehiculos_atacados,vehiculos_atacantes):
+    def mostrar_radar(self, numero, embarcaciones):
+        if numero == -1:
+            mapa = self.radar_acumulado
+            print('  Radar acumulado  ')
+        else:
+            mapa = self.lista_radar[numero]
+            print('  Radar ataque {}'.format(numero + 1))
+        r = ' '
+        for i in range(len(mapa[0])):
+            r += ' ' + str(i + 1)
+        print(r)
+        for i in range(len(mapa)):
+            r = chr(65 + i) + ' '
+            for j in mapa[i]:
+                for z in range(len(embarcaciones.vehiculos)):
+                    if j == '':
+                        j = '0'
+                    elif embarcaciones.vehiculos[z] == j[0] and j[1] == 1:
+                        j = str(z + 1)
+                    elif j[1] == 0:
+                        j = 'x'
+                r += j + ' '
+            print(r)
+
+    def ataque(self, arma, vehiculos_atacados, vehiculos_atacantes, tablero_atacante):
         area = arma.area
         if arma.sobrenombre == 'Paralizer':
             mapa = self.aire
@@ -165,26 +237,29 @@ class Tablero:
                 except ValueError:
                     print('Ingrese un numero no letras')
                     c = True
+            danadas = []
+            destruidas = []
             if lugar == 1:
-                danadas = 0
                 for i in range(len(mapa[0])):
                     if mapa[fila][i] != '':
-                        danadas += 1
+                        danadas += [fila, i, mapa[fila][i], 0]
                         destruido = mapa[fila][i].recibir_dano(arma)
                         if destruido is True:
+                            destruidas.append(mapa[fila][i])
                             print('Barco {} destruido '.format(mapa[fila][i].pieza))
                             self.mostrar_cordenadas(mapa, mapa[fila][i])
-                print('Casillas que dieron con algun blanco: {}'.format(danadas))
+                print('Casillas que dieron con algun blanco: {}'.format(len(danadas)))
             elif lugar == 2:
-                danadas = 0
                 for i in range(len(mapa)):
                     if mapa[i][columna] != '':
-                        danadas += 1
+                        danadas += [i, columna, mapa[i][columna], 0]
                         destruido = mapa[i][columna].recibir_dano(arma)
                         if destruido is True:
-                            print('Barco {} destruido ')
+                            destruidas.append(mapa[i][columna])
+                            print('Barco {} destruido '.format(mapa[fila][i].pieza))
                             self.mostrar_cordenadas(mapa, mapa[i][columna])
-                print('Casillas que dieron con algun blanco: {}'.format(danadas))
+                print('Casillas que dieron con algun blanco: {}'.format(len(danadas)))
+            tablero_atacante.agregar_radar(danadas, destruidas)
         elif arma.sobrenombre == 'Paralizer':
             c = True
             lugar = 0
@@ -204,7 +279,7 @@ class Tablero:
                     return False
                 if mapa[fila][columna] == vehiculos_atacados[4] and mapa[fila - 1][columna] == \
                         vehiculos_atacados[4]:
-                    print('Ataque fue un excitoso')
+                    print('Ataque fue un excito')
                     vehiculos_atacados[4].habilitado = 5
                     vehiculos_atacados[4].activo = False
             elif lugar == 2:
@@ -212,7 +287,7 @@ class Tablero:
                     return False
                 if mapa[fila][columna] == vehiculos_atacados[4] and mapa[fila + 1][columna] == \
                         vehiculos_atacados[4]:
-                    print('Ataque fue un excitoso')
+                    print('Ataque fue un excito')
                     vehiculos_atacados[4].habilitado = 5
                     vehiculos_atacados[4].activo = False
             elif lugar == 3:
@@ -220,7 +295,7 @@ class Tablero:
                     return False
                 if mapa[fila][columna - 1] == vehiculos_atacados[4] and mapa[fila][columna] == \
                         vehiculos_atacados[4]:
-                    print('Ataque fue un excitoso')
+                    print('Ataque fue un excito')
                     vehiculos_atacados[4].habilitado = 5
                     vehiculos_atacados[4].activo = False
             elif lugar == 4:
@@ -228,7 +303,7 @@ class Tablero:
                     return False
                 if mapa[fila][columna + 1] == vehiculos_atacados[4] and mapa[fila][columna] == \
                         vehiculos_atacados[4]:
-                    print('Ataque fue un excitoso')
+                    print('Ataque fue un excito')
                     vehiculos_atacados[4].habilitado = 5
                     vehiculos_atacados[4].activo = False
             return True
@@ -246,6 +321,7 @@ class Tablero:
                 except ValueError:
                     print('Ingrese un numero no letras')
                     c = True
+            descubiertas = []
             if lugar == 1:
                 if fila - 1 < 0:
                     return False
@@ -266,11 +342,21 @@ class Tablero:
                     if lugar2 == 1:
                         for i in range(fila - 3, fila):
                             for n in range(columna - 3, columna):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
                     elif lugar2 == 2:
                         for i in range(fila - 3, fila):
                             for n in range(columna, columna + 3):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
             elif lugar == 2:
                 if fila + 1 > len(mapa):
                     return False
@@ -291,11 +377,21 @@ class Tablero:
                     if lugar2 == 1:
                         for i in range(fila, fila + 3):
                             for n in range(columna - 3, columna):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
                     elif lugar2 == 2:
                         for i in range(fila, fila + 3):
                             for n in range(columna, columna + 3):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
             elif lugar == 3:
                 if columna - 1 < 0:
                     return False
@@ -316,11 +412,21 @@ class Tablero:
                     if lugar2 == 1:
                         for i in range(fila - 3, fila):
                             for n in range(columna - 3, columna):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
                     elif lugar2 == 2:
                         for i in range(fila, fila + 3):
                             for n in range(columna - 3, columna):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
             elif lugar == 4:
                 if columna + 1 > len(mapa):
                     return False
@@ -341,27 +447,43 @@ class Tablero:
                     if lugar2 == 1:
                         for i in range(fila - 3, fila):
                             for n in range(columna, columna + 3):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
                     elif lugar2 == 2:
                         for i in range(fila, fila + 3):
                             for n in range(columna, columna + 3):
-                                print(mapa[i][n].pieza, (i, n))
+                                try:
+                                    print(mapa[i][n].pieza, (i, n))
+                                    vista = [i, n, mapa[i][n], 1]
+                                    descubiertas.append(vista)
+                                except AttributeError:
+                                    pass
+            tablero_atacante.agregar_radar(descubiertas, [])
         else:
             try:
-                resultado=False
+                resultado = False
+                descubiertas = [fila, columna, mapa[fila][columna], 0]
                 if arma.sobrenombre == 'Trident II':
-                    resultado=mapa[fila][columna].recibir_dano(arma)
-                elif arma.sobrenombre=='Minuteman III':
-                    resultado=mapa[fila][columna].recibir_dano(arma)
-                elif arma.sobrenombre=='Kamikaze':
-                    resultado=mapa[fila][columna].recibir_dano(arma)
-                    vehiculos_atacantes[5].activo=False
+                    resultado = mapa[fila][columna].recibir_dano(arma)
+                elif arma.sobrenombre == 'Minuteman III':
+                    resultado = mapa[fila][columna].recibir_dano(arma)
+                elif arma.sobrenombre == 'Kamikaze':
+                    resultado = mapa[fila][columna].recibir_dano(arma)
+                    vehiculos_atacantes[5].activo = False
+                print('1 Barco alcanzado en las cordenadas {},{}'.format(chr(fila + 65), str(columna + 1)))
+                destruidas = []
                 if resultado is True:
                     print('Barco {} destruido '.format(mapa[fila][columna].pieza))
                     self.mostrar_cordenadas(mapa, mapa[fila][columna])
+                    destruidas.append(mapa[fila][columna])
+                tablero_atacante.agregar_radar(descubiertas, destruidas)
             except AttributeError:
                 print('0 Barcos alcanzados')
-                                # importa el orden hacer excepcion para el puerto
+                tablero_atacante.agregar_radar([], [])
 
     def mostrar_cordenadas(self, aire_o_agua, barco):
         mapa = aire_o_agua
@@ -369,7 +491,7 @@ class Tablero:
         for i in range(len(mapa)):
             for n in range(len(mapa[0])):
                 if mapa[i][n] == barco:
-                    r += ', (' + str(chr(i + 65)) + ',' + str(n + 1) + ') '
+                    r += ' (' + str(chr(i + 65)) + ',' + str(n + 1) + ') '
         print('Cordenadas del barco destruido:')
         print(r)
 
@@ -393,21 +515,20 @@ class Tablero:
             barco = naves.vehiculos[a - 1]
             if barco.activo is True:
                 barco.reparar()
-                b = False
                 print('Barco raparado')
+                return True
             else:
                 print('Barco no reparable')
 
     def lugares(self, filas, columnas, mapa, fila, columna):
         libre = True
+        if filas < 0 or columnas < 0 or len(mapa) < fila or len(mapa[0]) < columna:
+            print('Fuera de rango del mapa')
+            return False
         for z in range(filas, fila):
             for n in range(columnas, columna):
                 if mapa[z][n] != '':
                     libre = False
-                print(z, n)
-        if filas < 0 or columnas < 0:
-            libre = False
-            print('Fuera de rango del mapa')
         return libre
 
     def inputs_cordenadas(self, mapas):
@@ -415,7 +536,7 @@ class Tablero:
         d = True
         fila = -1
         while d is True:
-            fila = input('Ingrese la fila: ')
+            fila = str(input('Ingrese la fila: '))
             fila = ord(fila.upper()) - 65
             if fila < 0 or fila > len(mapa) - 1:
                 print('Ingrese una letra correspondiente')
@@ -563,7 +684,7 @@ class Tablero:
                         if libre2 is True:
                             for z in range(a.area[0]):
                                 for n in range(a.area[1]):
-                                    mapa[fila - n][columna + z] = a
+                                    mapa[fila + n][columna - z] = a
                             return True
                 elif libre is True:
                     for z in range(a.area[0]):
@@ -588,7 +709,7 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        libre2 = self.lugares(fila - a.area[1], columna, mapa, fila + 1, columna + a.area[0])
+                        libre2 = self.lugares(fila - a.area[1] + 1, columna, mapa, fila, columna + a.area[0])
                         if libre2 is True:
                             for z in range(a.area[0]):
                                 for n in range(a.area[1]):
@@ -614,18 +735,18 @@ class Tablero:
             while b is False:
                 a = naves[i]
                 if a.barco is True:
-                    print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
-                    b = self.agregar_barcos(self.agua, a)
                     self.mostrar_tablero(self.agua, vehi)
                     vehi.mostrar_vehiculos(False)
+                    print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
+                    b = self.agregar_barcos(self.agua, a)
                     if b is not True:
                         b = False
                         print('Barco no puede ponerse en estos cuadrantes')
                 else:
-                    print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
-                    b = self.agregar_barcos(self.aire, a)
                     self.mostrar_tablero(agua_o_tierra=self.aire, embarcaciones=vehi)
                     vehi.mostrar_vehiculos(True)
+                    print('El {} es de dimensiones {} x {}\nIngrese un cordenada'.format(a.pieza, a.area[0], a.area[1]))
+                    b = self.agregar_barcos(self.aire, a)
                     if b is not True:
                         b = False
                         print('Avion no puede ponerse en estos cuadrantes')
@@ -639,21 +760,33 @@ class Menu:
 
     def mostrar(self, numero):
         if numero == 1:
-            print('[1] Atacar, mover o repararse\n[2] Mostrar radar\n[3] Rendirse')
+            print('[1] Atacar o repararse\n[2] Mostrar radar\n[3] Mover\n[4] Rendirse')
         elif numero == 2:
             print('[1] Radar de Ataques\n[2] Radar de defensa\n[3] Salir de radar')
         elif numero == 3:
-            pass
-            # mostrar_tablero()
+            print('[1] Mostrar radar acumulado\n[2] Mostrar radar turno en especifico')
 
-    def correr(self, jugador1, tablero1, jugador2, tablero2):
+    def correr(self, jugador1, tablero1, jugador2, tablero2, turno_actual):
         vehi = jugador1
         table = tablero1
         vehi2 = jugador2
         tablero2 = tablero2
         table.mostrar_tablero(table.agua, vehi)
-        # table.mejorar(vehi)
+        table.mostrar_tablero(table.cielo, vehi)
+        vehi.habilitar_explorador()
         menu1 = 0
+        for i in vehi.vehiculos:
+            for n in range(len(i.ataques)):
+                if i.ataques[n].inutil is True:
+                    if i.ataques[n].sobrenombre == 'Napalm' and turno_actual - i.ataques[n].turno_desactivado == 1:
+                        mapa = tablero2.agua
+                        [fila, columna] = i.ataques[n].cordenadas_napalm
+                        resultado = mapa[fila][columna].recibir_dano(i.ataques[n])  # try except
+                        if resultado is True:
+                            print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                            tablero2.mostrar_cordenadas(mapa, mapa[fila][columna])
+                    if turno_actual - i.ataques[n].turno_desactivado == i.ataques[n].disponibilidad:
+                        i.ataques[n].inutil = False
         while menu1 != 3:
             Menu().mostrar(1)
             c = True
@@ -662,7 +795,10 @@ class Menu:
                 while c is True:
                     try:
                         menu1 = int(input('Seleccione accion a tomar:\t'))
-                        c = False
+                        if 0 < menu1 <= 4:
+                            c = False
+                        if c is True:
+                            print('Ingrese un numero dentro del rango de opciones')
                     except ValueError:
                         print('Ingrese un numero de la lista no letras')
                         c = True
@@ -674,7 +810,10 @@ class Menu:
                     while b == True:
                         try:
                             selec = int(input())
-                            b = False
+                            if 0 < selec <= 7:
+                                b = False
+                            if b is True:
+                                print('Ingrese un numero dentro del rango de opciones')
                         except ValueError:
                             print('Ingrese un numero de la lista no letras')
                             b = True
@@ -698,53 +837,204 @@ class Menu:
                     if elegido.ataques[opcion].sobrenombre == 'Kit de Ingenieros':
                         resultado = table.mejorar(vehi)
                         if resultado is True:
+                            elegido.ataques[opcion].inutil = True
+                            elegido.ataques[opcion].turno_desactivado = turno_actual
                             f = False
                     elif elegido.ataques[opcion].sobrenombre == 'Napalm':
-                        mapa=tablero2.agua
+                        mapa = tablero2.agua
                         fila, columna = tablero2.inputs_cordenadas(mapa)
-                        resultado=mapa[fila][columna].recibir_dano(elegido.ataques[opcion])
+                        resultado = mapa[fila][columna].recibir_dano(elegido.ataques[opcion])
                         if resultado is True:
                             print('Barco {} destruido '.format(mapa[fila][columna].pieza))
                             tablero2.mostrar_cordenadas(mapa, mapa[fila][columna])
-                        f=False
+                        elegido.ataques[opcion].inutil = True
+                        elegido.ataques[opcion].turno_desactivado = turno_actual
+                        elegido.ataques[opcion].cordenadas_napalm = [fila, columna]
+                        f = False
                     else:
-                        tablero2.ataque(elegido.ataques[opcion], vehi2,vehi)
-                        f=False
-                    algo = input()
+                        tablero2.ataque(elegido.ataques[opcion], vehi2, vehi, table)
+                        if elegido.ataques[opcion].disponibilidad != 'Siempre':
+                            elegido.ataques[opcion].inutil = True
+                            elegido.ataques[opcion].turno_desactivado = turno_actual
+                        f = False
                 elif menu1 == 2:
-                    pass
+                    Menu().mostrar(3)
+                    c = True
+                    menu = 0
+                    while c is True:
+                        try:
+                            menu = int(input('\t'))
+                            if 0 < menu <= 2:
+                                c = False
+                            if c is True:
+                                print('Ingrese un numero dentro del rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero de la lista no letras')
+                            c = True
+                    if menu == 1:
+                        table.mostrar_radar(-1, vehi)
+                        vehi2.mostrar_vehiculos_activos()
+                    elif menu == 2:
+                        c = True
+                        menu = 0
+                        print('Eliga radar a ver de {} ataques en ataque:'.format(len(table.lista_radar)))
+                        while c is True:
+                            try:
+                                menu = int(input('\t'))
+                                if 0 < menu <= len(table.lista_radar):
+                                    c = False
+                                if c is True:
+                                    print('Ingrese un numero dentro del rango de opciones')
+                            except ValueError:
+                                print('Ingrese un numero de la lista no letras')
+                                c = True
+                        table.mostrar_radar(menu - 1, vehi)
+                        vehi2.mostrar_vehiculos_activos()
                 elif menu1 == 3:
+                    orden = []
+                    b = True
+                    ataque = -1
+                    while b is True:
+                        try:
+                            print('Seleccione vehiculo a mover:')
+                            orden = vehi.mostrar_vehiculos_activos()
+                            ataque = int(input())
+                            if 0 < ataque <= len(orden):
+                                b = False
+                            else:
+                                print('Fuera de rango de opciones')
+                        except ValueError:
+                            print('Ingrese un numero de la lista no letras')
+                            b = True
+                    opcion = orden[ataque - 1][1]
+                    mapa = []
+                    if opcion < 4:
+                        mapa = table.agua
+                    else:
+                        mapa = table.aire
+                    opcion = vehi.vehiculos[opcion]
+                    if opcion.pieza == 'Lancha':
+                        fila, columna = table.inputs_cordenadas(table.agua)
+                        if mapa[fila][columna] == '':
+                            for i in range(len(mapa)):
+                                for n in range(len(mapa[0])):
+                                    if mapa[i][n] == opcion:
+                                        mapa[i][n] = ''
+                            mapa[fila][columna] = opcion
+                            print('Movimiento excitoso')
+                            f = False
+                        else:
+                            print('Movimiento no permitido')
+                            f = True
+                    else:
+                        c = True
+                        lugar = 0
+                        while c is True:
+                            try:
+                                lugar = int(input('Ingrese direccion de largo de la siguiente cordenada:\n[1] Arriba\n'
+                                                  '[2] Abajo\n[3] Izquierda\n[4] Derecha\t'))
+                                if 0 < lugar <= 4:
+                                    c = False
+                                if c is True:
+                                    print('Ingrese direccion dentro del rango de opciones')
+                            except ValueError:
+                                print('Ingrese un numero no letras')
+                                c = True
+                        b = True
+                        if lugar == 1:
+                            for i in range(len(mapa)):
+                                for n in range(len(mapa[0])):
+                                    if opcion == mapa[i][n]:
+                                        if (mapa[i - 1][n] != '' and mapa[i - 1][n] != opcion) or i - 1 < 0:
+                                            b = False
+                            if b is True:
+                                for i in range(len(mapa)):
+                                    for n in range(len(mapa[0])):
+                                        if opcion == mapa[i][n]:
+                                            mapa[i - 1][n] = opcion
+                                            mapa[i][n] = ''
+                                print('Movimiento excitoso')
+                        elif lugar == 2:
+                            for i in range(len(mapa)):
+                                for n in range(len(mapa[0])):
+                                    if opcion == mapa[i][n]:
+                                        if (mapa[i + 1][n] != '' and mapa[i + 1][n] != opcion) or i + 1 < len(mapa):
+                                            b = False
+                            if b is True:
+                                for i in reversed(range(len(mapa))):
+                                    for n in range(len(mapa[0])):
+                                        if opcion == mapa[i][n]:
+                                            mapa[i + 1][n] = opcion
+                                            mapa[i][n] = ''
+                                print('Movimiento excitoso')
+                        elif lugar == 3:
+                            for i in range(len(mapa)):
+                                for n in range(len(mapa[0])):
+                                    if opcion == mapa[i][n]:
+                                        if (mapa[i][n - 1] != '' and mapa[i][n - 1] != opcion) or n - 1 < 0:
+                                            b = False
+                            if b is True:
+                                for i in range(len(mapa)):
+                                    for n in range(len(mapa[0])):
+                                        if opcion == mapa[i][n]:
+                                            mapa[i][n - 1] = opcion
+                                            mapa[i][n] = ''
+                                print('Movimiento excitoso')
+                        elif lugar == 4:
+                            for i in range(len(mapa)):
+                                for n in range(len(mapa[0])):
+                                    if opcion == mapa[i][n]:
+                                        if (mapa[i][n - 1] != '' and mapa[i][n - 1] != opcion) or n - 1 < 0:
+                                            b = False
+                            if b is True:
+                                for i in range(len(mapa)):
+                                    for n in reversed(range(len(mapa[0]))):
+                                        if opcion == mapa[i][n]:
+                                            mapa[i][n + 1] = opcion
+                                            mapa[i][n] = ''
+                                print('Movimiento excitoso')
+                        if b is False:
+                            print('Movimiento no permitido')
+                        else:
+                            f = False
+                elif menu1 == 4:
                     print('Jugador {} se a rendido'.format(vehi.nombre_jugador))
                     return True
             menu1 = 3
+        resultado = vehi2.revisar_si_gano()
+        if resultado is False:
+            print('Jugador {} a ganado'.format(vehi.nombre_jugador))
+            return True
 
 
 import random
 
 
-def personavspersona():
+def personavspersona(largo, ancho):
     terminar = False
-    nombre1 = input('Nombre jugador 1: ')
+    nombre1 = str(input('Nombre jugador 1: '))
     vehi1 = CrearVehiculos(nombre1)
     vehi1.crear()
-    table1 = Tablero(5, 6)
-    nombre2 = input('Nombre jugador 2: ')
+    table1 = Tablero(largo, ancho)
+    nombre2 = str(input('Nombre jugador 2: '))
     vehi2 = CrearVehiculos(nombre2)
     vehi2.crear()
-    table2 = Tablero(5, 6)
+    table2 = Tablero(largo, ancho)
     numero = random.randint(1, 2)
+    a = 1
+    turno = 1
     if numero == 1:
         print('Turno jugador {} de poner sus vehiculos'.format(vehi1.nombre_jugador))
-        # table1.agregar_vehiculo(vehi1)
+        table1.agregar_vehiculo(vehi1)
         print('Turno jugador {} de poner sus vehiculos'.format(vehi2.nombre_jugador))
-        # table2.agregar_vehiculo(vehi2)
+        table2.agregar_vehiculo(vehi2)
         vehiculos = vehi1
         tablero = table1
         vehiculos2 = vehi2
         tablero2 = table2
         while terminar is False:
             print('Turno jugador {}: '.format(vehiculos.nombre_jugador))
-            resultado = Menu().correr(vehiculos, tablero, vehiculos2, tablero2)
+            resultado = Menu().correr(vehiculos, tablero, vehiculos2, tablero2, turno)
             if resultado == True:
                 terminar = True
             elif vehiculos == vehi1:
@@ -757,18 +1047,23 @@ def personavspersona():
                 tablero = table1
                 vehiculos2 = vehi2
                 tablero2 = table2
+            if a == 1:
+                a += 1
+            else:
+                a = 1
+                turno += 1
     else:
         print('Turno jugador {} de poner sus vehiculos'.format(vehi2.nombre_jugador))
-        # table2.agregar_vehiculo(vehi2)
+        table2.agregar_vehiculo(vehi2)
         print('Turno jugador {} de poner sus vehiculos'.format(vehi1.nombre_jugador))
-        # table1.agregar_vehiculo(vehi1)
+        table1.agregar_vehiculo(vehi1)
         vehiculos = vehi2
         tablero = table2
         vehiculos2 = vehi1
         tablero2 = table1
         while terminar is False:
             print('Turno jugador {}: '.format(vehiculos.nombre_jugador))
-            resultado = Menu().correr(vehiculos, tablero, vehiculos2, tablero2)
+            resultado = Menu().correr(vehiculos, tablero, vehiculos2, tablero2, turno)
             if resultado == True:
                 terminar = True
             elif vehiculos == vehi1:
@@ -781,8 +1076,33 @@ def personavspersona():
                 tablero = table1
                 vehiculos2 = vehi2
                 tablero2 = table2
+            if a == 1:
+                a += 1
+            else:
+                a = 1
+                turno += 1
     print('Fin del juego')
 
 
-personavspersona()
+def juego():
+    print('BattleSheep')
+    print('Ingrese el tamano del tablero a ocupar, tiene que ser mayor a uno de 7x7:')
+    c = True
+    largo = 0
+    ancho = 0
+    while c is True:
+        try:
+            largo = int(input('Largo: '))
+            ancho = int(input('Ancho: '))
+            if 6 < largo and 6 < ancho:
+                c = False
+            if c is True:
+                print('Ingrese largo y ancho mayor o igual a 5')
+        except ValueError:
+            print('Ingrese un numero no letras')
+            c = True
+    personavspersona(largo, ancho)
+
+
+juego()
 # ver Lab 9 vuelo

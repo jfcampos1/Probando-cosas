@@ -1,12 +1,11 @@
 __author__ = 'JuanFrancisco'
-agua = [1, 2, 3]
-a = 'a'
-b = a.upper()
-jugo = [a, b]
-agua += (jugo)
-print(ord(b)-65)
-for i in range(2,5):
-    print(i)
+agua = [1, 2]
+a = 0
+print(chr(a+65))
+for i,n in agua:
+    print('soy',i)
+    print('soy el 2: ',n)
+
 
 
 
