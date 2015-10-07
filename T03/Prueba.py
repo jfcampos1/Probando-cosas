@@ -2,10 +2,8 @@ __author__ = 'JuanFrancisco'
 agua = [1, 2]
 a = 0
 print(chr(a+65))
-for i,n in agua:
-    print('soy',i)
-    print('soy el 2: ',n)
 
+print(agua[3])
 
 
 
