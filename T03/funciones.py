@@ -132,11 +132,11 @@ def personavscomputador(largo, ancho):
     if numero == 1:
         print('Turno jugador {} de poner sus vehiculos'.format(vehi1.nombre_jugador))
         table1.agregar_vehiculo(vehi1)
-        table2.agregar_vehiculo(vehi2)  # hacer algun metodo
+        table2.posicionar_robot(vehi2)
         while terminar is False:
             print('Turno jugador {}: '.format(vehi1.nombre_jugador))
             resultado = menu.Menu().correr(vehi1, table1, vehi2, table2, turno)
-            # "computador"
+            menu.Menu().computador(table2,table1,vehi2,vehi1)
             if resultado is True:
                 terminar = True
                 vehi1.mostrar_estadisticas(turno)
@@ -147,13 +147,11 @@ def personavscomputador(largo, ancho):
                 a = 1
                 turno += 1
     else:
-        table2.agregar_vehiculo(vehi2)  # metodo computador
+        table2.posicionar_robot(vehi2)
         print('Turno jugador {} de poner sus vehiculos'.format(vehi1.nombre_jugador))
         table1.agregar_vehiculo(vehi1)
         while terminar is False:
-            for i in range(20):  # Para generar espacio entre un jugador y otro
-                print('')
-            input('Aprete enter cuando le pase el juego al otro jugador:')
+            menu.Menu().computador(table2,table1,vehi2,vehi1)
             print('Turno jugador {}: '.format(vehi1.nombre_jugador))
             # computador
             resultado = menu.Menu().correr(vehi1, table1, vehi2, table2, turno)

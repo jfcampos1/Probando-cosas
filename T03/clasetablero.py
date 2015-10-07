@@ -1,4 +1,5 @@
 __author__ = 'JuanFrancisco'
+import random
 
 
 class Tablero:
@@ -61,9 +62,9 @@ class Tablero:
     def verificar_destruidos(self):
         for i in range(len(self.agua)):
             for n in range(len(self.agua[0])):
-                if self.agua[i][n]!='':
+                if self.agua[i][n] != '':
                     if self.agua[i][n].activo is False:
-                        self.agua[i][n]=''
+                        self.agua[i][n] = ''
 
     def mostrar_radar(self, numero, embarcaciones):
         if numero == -1:
@@ -131,7 +132,7 @@ class Tablero:
             elif lugar == 2:
                 for i in range(len(mapa)):
                     if mapa[i][columna] != '':
-                        algo= [i, columna, mapa[i][columna], 0]
+                        algo = [i, columna, mapa[i][columna], 0]
                         danadas.append(algo)
                         destruido = mapa[i][columna].recibir_dano(arma)
                         if destruido is True:
@@ -387,7 +388,74 @@ class Tablero:
                 if mapa[i][n] != '':
                     a = [i, n]
                     posibles_lugares.append(a)
-        pass
+        if len(posibles_lugares) > 0:
+            lugar = random.randrange(len(posibles_lugares))
+            if len(posibles_lugares) == 1:
+                fila= posibles_lugares[0][0]
+                columna=posibles_lugares[0][1]
+            else:
+                fila, columna = posibles_lugares[lugar]
+            descubiertas = [fila, columna, mapa[fila][columna], 0]
+            try:
+                resultado = mapa[fila][columna].recibir_dano(vehiculos_robot.vehiculos[0].ataques[0])
+                destruidas = []
+                if resultado is True:
+                    print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                    self.mostrar_cordenadas(mapa, mapa[fila][columna])
+                    destruidas.append(mapa[fila][columna])
+                tablero_atacante.agregar_radar(descubiertas, destruidas)
+                vehiculos_jugador.ataque_excitoso([1], vehiculos_robot.vehiculos[0].ataques[0])
+                return True
+            except AttributeError:
+                print('0 Barcos alcanzados')
+                tablero_atacante.agregar_radar([], [])
+        else:
+            mapa = self.agua
+            fila = random.randrange(len(mapa))
+            columna = random.randrange(len(mapa[0]))
+            descubiertas = [fila, columna, mapa[fila][columna], 0]
+            try:
+                resultado = mapa[fila][columna].recibir_dano(vehiculos_robot.vehiculos[0].ataques[0])
+                destruidas = []
+                if resultado is True:
+                    print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                    self.mostrar_cordenadas(mapa, mapa[fila][columna])
+                    destruidas.append(mapa[fila][columna])
+                tablero_atacante.agregar_radar(descubiertas, destruidas)
+                vehiculos_jugador.ataque_excitoso([1], vehiculos_robot.vehiculos[0].ataques[0])
+                return True
+            except AttributeError:
+                tablero_atacante.agregar_radar([], [])
+
+    def posicionar_robot(self, vehi):
+        for i in range(len(vehi.vehiculos)):
+            naves = vehi.vehiculos
+            a = naves[i]
+            b = True
+            while b is True:
+                if a.barco is True:
+                    mapa = self.agua
+                    fila = random.randrange(len(mapa))
+                    columna = random.randrange(len(mapa[0]))
+                    libre2 = self.lugares_computador(fila, columna, mapa, fila + a.area[1], columna + a.area[0])
+                    if libre2 is True:
+                        for z in range(a.area[0]):
+                            for n in range(a.area[1]):
+                                mapa[fila + n][columna + z] = a
+                        b=False
+                    else:
+                        b = True
+                else:
+                    mapa = self.aire
+                    fila = random.randrange(len(mapa))
+                    columna = random.randrange(len(mapa[0]))
+                    libre2 = self.lugares_computador(fila, columna, mapa, fila + a.area[1], columna + a.area[0])
+                    if libre2 is True:
+                        for z in range(a.area[0]):
+                            for n in range(a.area[1]):
+                                mapa[fila + n][columna + z] = a
+                    else:
+                        b = False
 
     def mostrar_cordenadas(self, aire_o_agua, barco):
         mapa = aire_o_agua
@@ -448,6 +516,16 @@ class Tablero:
                     libre = False
         return libre
 
+    def lugares_computador(self, filas, columnas, mapa, fila, columna):
+        libre = True
+        if filas < 0 or columnas < 0 or len(mapa) < fila or len(mapa[0]) < columna:
+            return False
+        for z in range(filas, fila):
+            for n in range(columnas, columna):
+                if mapa[z][n] != '':
+                    libre = False
+        return libre
+
     def inputs_cordenadas(self, mapas):
         mapa = mapas
         d = True
@@ -460,7 +538,7 @@ class Tablero:
                     print('Ingrese una letra correspondiente')
                 else:
                     d = False
-            except SyntaxError:
+            except (SyntaxError, TypeError):
                 print('Ingrese un letra correspondiente')
         c = True
         columna = -1

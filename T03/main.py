@@ -34,8 +34,7 @@ def juego():
     if player == 1:
         funciones.personavspersona(largo, ancho)
     elif player == 2:
-        pass
-        # computador
+        funciones.personavscomputador(largo,ancho)
 
 
 juego()

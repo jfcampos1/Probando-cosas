@@ -1,10 +1,8 @@
 __author__ = 'JuanFrancisco'
-agua = [1, 2]
-a = 0
-print(chr(a+65))
+import random
 
-print(agua[3])
-
+fila=random.randrange(4)
+print(fila)
 
 
 

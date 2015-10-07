@@ -1,4 +1,5 @@
 __author__ = 'JuanFrancisco'
+import random
 
 
 class Menu:
@@ -49,6 +50,13 @@ class Menu:
                             table.agregar_radar([], [])
                     if turno_actual - i.ataques[n].turno_desactivado == i.ataques[n].disponibilidad:
                         i.ataques[n].inutil = False
+        explorador = vehi2.vehiculos[4].ataques[0]
+        if explorador.inutil is True:
+            if turno_actual - explorador.turno_desactivado == 1 or turno_actual - explorador.turno_desactivado == 0:
+                posibilidad = random.randrange(100)
+                if posibilidad < 50:
+                    print('Fuiste espiado: \n')
+                    tablero2.mostrar_cordenada(tablero2.agua, vehi2.vehiculos[4])
         tablero2.verificar_destruidos()
         table.mostrar_tablero(table.agua, vehi)
         table.mostrar_tablero(table.aire, vehi)
@@ -223,7 +231,12 @@ class Menu:
                                         mapa[i][n] = ''
                             mapa[fila][columna] = opcion
                             print('Movimiento exitoso')
-                            vehi.movimientos[opcion] += 1
+                            try:
+                                numero1 = vehi.movimientos[opcion]
+                                numero1 += 1
+                                vehi.movimientos[opcion] = numero1
+                            except KeyError:
+                                vehi.movimientos[opcion] = 1
                             f = False
                         else:
                             print('Movimiento no permitido')
@@ -332,4 +345,114 @@ class Menu:
         resultado = vehi2.revisar_si_gano()
         if resultado is False:
             print('Jugador {} a ganado'.format(vehi.nombre_jugador))
+            return True
+
+    def computador(self, tablero_computador, tablero_jugador, vehi_c, vehi_jugador):
+        b = True
+        while b is True:
+            accion = random.randint(1, 2)
+            if accion == 1:
+                tablero_jugador.ataque_computador(tablero_computador, vehi_c, vehi_jugador)
+                b=False
+            elif accion == 2:
+                vehiculo = random.randint(0, 3)
+                opcion = vehi_c.vehiculos[vehiculo]
+                direccion = random.randint(1, 4)
+                mapa = tablero_computador.agua
+                if opcion.pieza == 'Lancha':
+                    fila = random.randrange(len(mapa))
+                    columna = random.randrange(len(mapa[0]))
+                    if mapa[fila][columna] == '':
+                        for i in range(len(mapa)):
+                            for n in range(len(mapa[0])):
+                                if mapa[i][n] == opcion:
+                                    mapa[i][n] = ''
+                        mapa[fila][columna] = opcion
+                        try:
+                            numero1 = vehi_c.movimientos[opcion]
+                            numero1 += 1
+                            vehi_c.movimientos[opcion] = numero1
+                        except KeyError:
+                            vehi_c.movimientos[opcion] = 1
+                        b = False
+                    else:
+                        b = True
+                else:
+                    if direccion == 1:
+                        for i in range(len(mapa)):
+                            for n in range(len(mapa[0])):
+                                if opcion == mapa[i][n]:
+                                    if (mapa[i - 1][n] != '' and mapa[i - 1][n] != opcion) or i - 1 < 0:
+                                        b = False
+                        if b is True:
+                            for i in range(len(mapa)):
+                                for n in range(len(mapa[0])):
+                                    if opcion == mapa[i][n]:
+                                        mapa[i - 1][n] = opcion
+                                        mapa[i][n] = ''
+                            try:
+                                numero1 = vehi_c.movimientos[opcion]
+                                numero1 += 1
+                                vehi_c.movimientos[opcion] = numero1
+                            except KeyError:
+                                vehi_c.movimientos[opcion] = 1
+                    elif direccion == 2:
+                        for i in range(len(mapa)):
+                            for n in range(len(mapa[0])):
+                                if opcion == mapa[i][n]:
+                                    if (mapa[i + 1][n] != '' and mapa[i + 1][n] != opcion) or i + 1 > len(mapa):
+                                        b = False
+                        if b is True:
+                            for i in reversed(range(len(mapa))):
+                                for n in range(len(mapa[0])):
+                                    if opcion == mapa[i][n]:
+                                        mapa[i + 1][n] = opcion
+                                        mapa[i][n] = ''
+                            try:
+                                numero1 = vehi_c.movimientos[opcion]
+                                numero1 += 1
+                                vehi_c.movimientos[opcion] = numero1
+                            except KeyError:
+                                vehi_c.movimientos[opcion] = 1
+                    elif direccion == 3:
+                        for i in range(len(mapa)):
+                            for n in range(len(mapa[0])):
+                                if opcion == mapa[i][n]:
+                                    if (mapa[i][n - 1] != '' and mapa[i][n - 1] != opcion) or n - 1 < 0:
+                                        b = False
+                        if b is True:
+                            for i in range(len(mapa)):
+                                for n in range(len(mapa[0])):
+                                    if opcion == mapa[i][n]:
+                                        mapa[i][n - 1] = opcion
+                                        mapa[i][n] = ''
+                            try:
+                                numero1 = vehi_c.movimientos[opcion]
+                                numero1 += 1
+                                vehi_c.movimientos[opcion] = numero1
+                            except KeyError:
+                                vehi_c.movimientos[opcion] = 1
+                    elif direccion == 4:
+                        for i in range(len(mapa)):
+                            for n in range(len(mapa[0])):
+                                if opcion == mapa[i][n]:
+                                    if (mapa[i][n + 1] != '' and mapa[i][n + 1] != opcion) or n + 1 > len(mapa[0]):
+                                        b = False
+                        if b is True:
+                            for i in range(len(mapa)):
+                                for n in reversed(range(len(mapa[0]))):
+                                    if opcion == mapa[i][n]:
+                                        mapa[i][n + 1] = opcion
+                                        mapa[i][n] = ''
+                            try:
+                                numero1 = vehi_c.movimientos[opcion]
+                                numero1 += 1
+                                vehi_c.movimientos[opcion] = numero1
+                            except KeyError:
+                                vehi_c.movimientos[opcion] = 1
+        tablero_computador.verificar_destruidos()
+        tablero_jugador.verificar_destruidos()
+        resultado = vehi_jugador.revisar_si_gano()
+        if resultado is False:
+            print('Jugador {} a ganado'.format(vehi_c.nombre_jugador))
             return True
