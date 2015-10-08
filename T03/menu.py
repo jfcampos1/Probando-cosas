@@ -176,7 +176,7 @@ class Menu:
                             print('Ingrese un numero de la lista no letras')
                             c = True
                     if menu == 1:
-                        table.mostrar_radar(-1, vehi)
+                        table.mostrar_radar(-1, vehi2)
                         vehi2.mostrar_vehiculos_activos()
                         print('-' * 40)
                         print('')
@@ -187,16 +187,18 @@ class Menu:
                         while c is True:
                             try:
                                 menu = int(input('\t'))
-                                if len(table.lista_radar) == 0:
-                                    c = False
                                 if 0 < menu <= len(table.lista_radar):
                                     c = False
                                 if c is True:
                                     print('Ingrese un numero dentro del rango de opciones')
                             except ValueError:
-                                print('Ingrese un numero de la lista no letras')
-                                c = True
-                        table.mostrar_radar(menu - 1, vehi)
+                                if len(table.lista_radar) == 0:
+                                    print('No hay radar para mostrar')
+                                    c = False
+                                else:
+                                    print('Ingrese un numero de la lista no letras')
+                                    c = True
+                        table.mostrar_radar(menu - 1, vehi2)
                         vehi2.mostrar_vehiculos_activos()
                         print('-' * 40)
                         print('')
@@ -349,6 +351,7 @@ class Menu:
 
     def computador(self, tablero_computador, tablero_jugador, vehi_c, vehi_jugador):
         b = True
+        tablero_computador.mostrar_tablero(tablero_computador.agua, vehi_c)
         while b is True:
             accion = random.randint(1, 2)
             if accion == 1:

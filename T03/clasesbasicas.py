@@ -189,6 +189,6 @@ class CrearVehiculos:
         for i in range(len(l_movimientos)):
             if c < self.movimientos[l_movimientos[i]]:
                 c = self.movimientos[l_movimientos[i]]
-                barco = lista[i].pieza
+                barco = l_movimientos[i].pieza
         r += barco + '\nCantidad de turnos: ' + str(turno)
         print(r)

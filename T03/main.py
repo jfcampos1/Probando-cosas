@@ -4,7 +4,7 @@ import funciones
 
 def juego():
     print('BattleSheep')
-    print('Ingrese el tamano del tablero a ocupar, tiene que ser mayor a uno de 7x7:')
+    print('Ingrese el tamano del tablero a ocupar, tiene que ser mayor o igual a uno de 7x7:')
     c = True
     largo = 0
     ancho = 0

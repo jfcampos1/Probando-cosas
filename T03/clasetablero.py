@@ -80,18 +80,19 @@ class Tablero:
         for i in range(len(mapa)):
             r = chr(65 + i) + ' '
             for j in mapa[i]:
+                a = ''
                 if j == '':
-                    j = '0'
+                    a = '0'
                 else:
                     for z in range(len(embarcaciones.vehiculos)):
                         try:
                             if embarcaciones.vehiculos[z] == j[0] and j[1] == 1:
-                                j = str(z + 1)
+                                a = str(z + 1)
                             elif j[1] == 0:
-                                j = 'x'
+                                a = 'x'
                         except IndexError:
                             pass
-                r += j + ' '
+                r += a + ' '
             print(r)
 
     def ataque(self, arma, vehiculos_atacados, vehiculos_atacantes, tablero_atacante, turno):
@@ -140,7 +141,7 @@ class Tablero:
                             print('Barco {} destruido '.format(mapa[i][columna].pieza))
                             self.mostrar_cordenadas(mapa, mapa[i][columna])
                 print('Casillas que dieron con algun blanco: {}'.format(len(danadas)))
-            tablero_atacante.agregar_radar(danadas, destruidas)
+            tablero_atacante.agregar_radar([], destruidas)
             if len(danadas) > 0:
                 vehiculos_atacantes.ataque_excitoso(danadas, arma)
                 return True
@@ -231,19 +232,19 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        for i in range(fila - 3, fila):
-                            for n in range(columna - 3, columna):
+                        for i in range(fila - 3, fila+1):
+                            for n in range(columna - 3, columna+1):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
                                     pass
                     elif lugar2 == 2:
-                        for i in range(fila - 3, fila):
+                        for i in range(fila - 3, fila+1):
                             for n in range(columna, columna + 3):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
@@ -267,9 +268,9 @@ class Tablero:
                             c = True
                     if lugar2 == 1:
                         for i in range(fila, fila + 3):
-                            for n in range(columna - 3, columna):
+                            for n in range(columna - 3, columna+1):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
@@ -278,7 +279,7 @@ class Tablero:
                         for i in range(fila, fila + 3):
                             for n in range(columna, columna + 3):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
@@ -301,19 +302,19 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        for i in range(fila - 3, fila):
-                            for n in range(columna - 3, columna):
+                        for i in range(fila - 3, fila+1):
+                            for n in range(columna - 3, columna+1):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
                                     pass
                     elif lugar2 == 2:
                         for i in range(fila, fila + 3):
-                            for n in range(columna - 3, columna):
+                            for n in range(columna - 3, columna+1):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
@@ -336,10 +337,10 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        for i in range(fila - 3, fila):
+                        for i in range(fila - 3, fila+1):
                             for n in range(columna, columna + 3):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
@@ -348,7 +349,7 @@ class Tablero:
                         for i in range(fila, fila + 3):
                             for n in range(columna, columna + 3):
                                 try:
-                                    print(mapa[i][n].pieza, (i, n))
+                                    print(mapa[i][n].pieza, (chr(65 + i), n))
                                     vista = [i, n, mapa[i][n], 1]
                                     descubiertas.append(vista)
                                 except AttributeError:
@@ -391,8 +392,8 @@ class Tablero:
         if len(posibles_lugares) > 0:
             lugar = random.randrange(len(posibles_lugares))
             if len(posibles_lugares) == 1:
-                fila= posibles_lugares[0][0]
-                columna=posibles_lugares[0][1]
+                fila = posibles_lugares[0][0]
+                columna = posibles_lugares[0][1]
             else:
                 fila, columna = posibles_lugares[lugar]
             descubiertas = [fila, columna, mapa[fila][columna], 0]
@@ -407,7 +408,6 @@ class Tablero:
                 vehiculos_jugador.ataque_excitoso([1], vehiculos_robot.vehiculos[0].ataques[0])
                 return True
             except AttributeError:
-                print('0 Barcos alcanzados')
                 tablero_atacante.agregar_radar([], [])
         else:
             mapa = self.agua
@@ -442,7 +442,7 @@ class Tablero:
                         for z in range(a.area[0]):
                             for n in range(a.area[1]):
                                 mapa[fila + n][columna + z] = a
-                        b=False
+                        b = False
                     else:
                         b = True
                 else:
@@ -454,8 +454,9 @@ class Tablero:
                         for z in range(a.area[0]):
                             for n in range(a.area[1]):
                                 mapa[fila + n][columna + z] = a
-                    else:
                         b = False
+                    else:
+                        b = True
 
     def mostrar_cordenadas(self, aire_o_agua, barco):
         mapa = aire_o_agua

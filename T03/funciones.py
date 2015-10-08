@@ -54,6 +54,8 @@ def personavspersona(largo, ancho):
             if resultado is True:
                 terminar = True
                 vehiculos.mostrar_estadisticas(turno)
+                print('-' * 40)
+                print('')
                 vehiculos2.mostrar_estadisticas(turno)
             elif vehiculos == vehi1:
                 vehiculos = vehi2
@@ -91,6 +93,8 @@ def personavspersona(largo, ancho):
             if resultado is True:
                 terminar = True
                 vehiculos.mostrar_estadisticas(turno)
+                print('-' * 40)
+                print('')
                 vehiculos2.mostrar_estadisticas(turno)
             elif vehiculos == vehi1:
                 vehiculos = vehi2
@@ -140,6 +144,8 @@ def personavscomputador(largo, ancho):
             if resultado is True:
                 terminar = True
                 vehi1.mostrar_estadisticas(turno)
+                print('-' * 40)
+                print('')
                 vehi2.mostrar_estadisticas(turno)
             if a == 1:
                 a += 1
@@ -158,6 +164,8 @@ def personavscomputador(largo, ancho):
             if resultado is True:
                 terminar = True
                 vehi1.mostrar_estadisticas(turno)
+                print('-' * 40)
+                print('')
                 vehi2.mostrar_estadisticas(turno)
             if a == 1:
                 a += 1
