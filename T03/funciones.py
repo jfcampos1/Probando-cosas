@@ -140,7 +140,7 @@ def personavscomputador(largo, ancho):
         while terminar is False:
             print('Turno jugador {}: '.format(vehi1.nombre_jugador))
             resultado = menu.Menu().correr(vehi1, table1, vehi2, table2, turno)
-            menu.Menu().computador(table2,table1,vehi2,vehi1)
+            menu.Menu().computador(table2,table1,vehi2,vehi1,turno)
             if resultado is True:
                 terminar = True
                 vehi1.mostrar_estadisticas(turno)
@@ -157,7 +157,7 @@ def personavscomputador(largo, ancho):
         print('Turno jugador {} de poner sus vehiculos'.format(vehi1.nombre_jugador))
         table1.agregar_vehiculo(vehi1)
         while terminar is False:
-            menu.Menu().computador(table2,table1,vehi2,vehi1)
+            menu.Menu().computador(table2,table1,vehi2,vehi1,turno)
             print('Turno jugador {}: '.format(vehi1.nombre_jugador))
             # computador
             resultado = menu.Menu().correr(vehi1, table1, vehi2, table2, turno)

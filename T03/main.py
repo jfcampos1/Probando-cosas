@@ -23,7 +23,7 @@ def juego():
     player = 0
     while c is True:
         try:
-            player = int(input('Contra quien desea jugar:\n[1] Otro Jugador\n[2] Computador '))
+            player = int(input('Contra quien desea jugar:\n[1] Multiplayer\n[2] Computador '))
             if 0 < player <= 2:
                 c = False
             if c is True:

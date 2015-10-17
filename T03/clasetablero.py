@@ -232,8 +232,8 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        for i in range(fila - 3, fila+1):
-                            for n in range(columna - 3, columna+1):
+                        for i in range(fila - 3, fila + 1):
+                            for n in range(columna - 3, columna + 1):
                                 try:
                                     print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
@@ -241,7 +241,7 @@ class Tablero:
                                 except AttributeError:
                                     pass
                     elif lugar2 == 2:
-                        for i in range(fila - 3, fila+1):
+                        for i in range(fila - 3, fila + 1):
                             for n in range(columna, columna + 3):
                                 try:
                                     print(mapa[i][n].pieza, (chr(i + 65), n))
@@ -268,7 +268,7 @@ class Tablero:
                             c = True
                     if lugar2 == 1:
                         for i in range(fila, fila + 3):
-                            for n in range(columna - 3, columna+1):
+                            for n in range(columna - 3, columna + 1):
                                 try:
                                     print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
@@ -302,8 +302,8 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        for i in range(fila - 3, fila+1):
-                            for n in range(columna - 3, columna+1):
+                        for i in range(fila - 3, fila + 1):
+                            for n in range(columna - 3, columna + 1):
                                 try:
                                     print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
@@ -312,7 +312,7 @@ class Tablero:
                                     pass
                     elif lugar2 == 2:
                         for i in range(fila, fila + 3):
-                            for n in range(columna - 3, columna+1):
+                            for n in range(columna - 3, columna + 1):
                                 try:
                                     print(mapa[i][n].pieza, (chr(i + 65), n))
                                     vista = [i, n, mapa[i][n], 1]
@@ -337,7 +337,7 @@ class Tablero:
                             print('Ingrese un numero no letras')
                             c = True
                     if lugar2 == 1:
-                        for i in range(fila - 3, fila+1):
+                        for i in range(fila - 3, fila + 1):
                             for n in range(columna, columna + 3):
                                 try:
                                     print(mapa[i][n].pieza, (chr(i + 65), n))
@@ -381,7 +381,7 @@ class Tablero:
                 print('0 Barcos alcanzados')
                 tablero_atacante.agregar_radar([], [])
 
-    def ataque_computador(self, tablero_atacante, vehiculos_robot, vehiculos_jugador):
+    def ataque_computador(self, tablero_atacante, vehiculos_robot, vehiculos_jugador, turno_actual):
         mapa = tablero_atacante.radar_acumulado
         posibles_lugares = []
         for i in range(len(mapa)):
@@ -396,19 +396,137 @@ class Tablero:
                 columna = posibles_lugares[0][1]
             else:
                 fila, columna = posibles_lugares[lugar]
-            descubiertas = [fila, columna, mapa[fila][columna], 0]
-            try:
-                resultado = mapa[fila][columna].recibir_dano(vehiculos_robot.vehiculos[0].ataques[0])
-                destruidas = []
-                if resultado is True:
-                    print('Barco {} destruido '.format(mapa[fila][columna].pieza))
-                    self.mostrar_cordenadas(mapa, mapa[fila][columna])
-                    destruidas.append(mapa[fila][columna])
-                tablero_atacante.agregar_radar(descubiertas, destruidas)
-                vehiculos_jugador.ataque_excitoso([1], vehiculos_robot.vehiculos[0].ataques[0])
-                return True
-            except AttributeError:
-                tablero_atacante.agregar_radar([], [])
+            d = True
+            while d is True:
+                descubiertas = [fila, columna, mapa[fila][columna], 0]
+                ataque = random.randrange(5)
+                if ataque == 0:
+                    try:
+                        resultado = self.agua[fila][columna].recibir_dano(vehiculos_robot.vehiculos[0].ataques[0])
+                        destruidas = []
+                        if resultado is True:
+                            print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                            self.mostrar_cordenadas(mapa, mapa[fila][columna])
+                            destruidas.append(mapa[fila][columna])
+                        tablero_atacante.agregar_radar(descubiertas, destruidas)
+                        vehiculos_jugador.ataque_excitoso([1], vehiculos_robot.vehiculos[0].ataques[0])
+                        return True
+                    except AttributeError:
+                        tablero_atacante.agregar_radar([], [])
+                elif ataque == 1:
+                    mapa = self.agua
+                    if vehiculos_robot.vehiculos[0].ataques[1].inutil is False:
+                        try:
+                            descubiertas = [fila, columna, mapa[fila][columna], 0]
+                            resultado = mapa[fila][columna].recibir_dano(vehiculos_robot.vehiculos[0].ataques[1])
+                            destruidas = []
+                            if resultado is True:
+                                print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                                self.mostrar_cordenadas(mapa, mapa[fila][columna])
+                                destruidas.append(mapa[fila][columna])
+                            arma = vehiculos_robot.vehiculos[0].ataques[1]
+                            tablero_atacante.agregar_radar(descubiertas, destruidas)
+                            vehiculos_robot.ataque_excitoso([1], arma)
+                            arma.inutil = True
+                            arma.turno_desactivado = turno_actual
+                            if resultado is True:
+                                try:
+                                    numero1 = vehiculos_robot.ataques_exitosos_tipo[arma]
+                                    numero1 += 1
+                                    vehiculos_robot.ataques_exitosos_tipo[arma] = numero1
+                                except KeyError:
+                                    vehiculos_robot.ataques_exitosos_tipo[arma] = 1
+                            vehiculos_robot.numero_ataques += 1
+                        except AttributeError:
+                            tablero_atacante.agregar_radar([], [])
+                        d = False
+                elif ataque == 2:
+                    mapa = self.agua
+                    if vehiculos_robot.vehiculos[5].ataques[0].inutil is False:
+                        try:
+                            descubiertas = [fila, columna, mapa[fila][columna], 0]
+                            resultado = mapa[fila][columna].recibir_dano(vehiculos_robot.vehiculos[5].ataques[0])
+                            destruidas = []
+                            if resultado is True:
+                                print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                                self.mostrar_cordenadas(mapa, mapa[fila][columna])
+                                destruidas.append(mapa[fila][columna])
+                            arma = vehiculos_robot.vehiculos[5].ataques[0]
+                            tablero_atacante.agregar_radar(descubiertas, destruidas)
+                            vehiculos_robot.ataque_excitoso([1], arma)
+                            arma.inutil = True
+                            arma.turno_desactivado = turno_actual
+                            if resultado is True:
+                                try:
+                                    numero1 = vehiculos_robot.ataques_exitosos_tipo[arma]
+                                    numero1 += 1
+                                    vehiculos_robot.ataques_exitosos_tipo[arma] = numero1
+                                except KeyError:
+                                    vehiculos_robot.ataques_exitosos_tipo[arma] = 1
+                            vehiculos_robot.numero_ataques += 1
+                        except AttributeError:
+                            tablero_atacante.agregar_radar([], [])
+                        d = False
+                elif ataque == 3:
+                    mapa = self.agua
+                    if vehiculos_robot.vehiculos[6].ataques[0].inutil is False:
+                        try:
+                            descubiertas = [fila, columna, mapa[fila][columna], 0]
+                            resultado = mapa[fila][columna].recibir_dano(vehiculos_robot.vehiculos[6].ataques[0])
+                            destruidas = []
+                            if resultado is True:
+                                print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                                self.mostrar_cordenadas(mapa, mapa[fila][columna])
+                                destruidas.append(mapa[fila][columna])
+                            arma = vehiculos_robot.vehiculos[6].ataques[0]
+                            tablero_atacante.agregar_radar(descubiertas, destruidas)
+                            vehiculos_robot.ataque_excitoso([1], arma)
+                            arma.inutil = True
+                            arma.turno_desactivado = turno_actual
+                            if resultado is True:
+                                try:
+                                    numero1 = vehiculos_robot.ataques_exitosos_tipo[arma]
+                                    numero1 += 1
+                                    vehiculos_robot.ataques_exitosos_tipo[arma] = numero1
+                                except KeyError:
+                                    vehiculos_robot.ataques_exitosos_tipo[arma] = 1
+                            vehiculos_robot.numero_ataques += 1
+                        except AttributeError:
+                            tablero_atacante.agregar_radar([], [])
+                        d = False
+                elif ataque == 4:
+                    danadas = []
+                    destruidas = []
+                    lugar = random.randint(1, 2)
+                    mapa = self.agua
+                    if vehiculos_robot.vehiculos[1].ataques[1].inutil is False:
+                        arma = vehiculos_robot.vehiculos[1].ataques[1]
+                        if lugar == 1:
+                            for i in range(len(mapa[0])):
+                                if mapa[fila][i] != '':
+                                    algo = [fila, i, mapa[fila][i], 0]
+                                    danadas.append(algo)
+                                    destruido = mapa[fila][i].recibir_dano(arma)
+                                    if destruido is True:
+                                        destruidas.append(mapa[fila][i])
+                                        print('Barco {} destruido '.format(mapa[fila][i].pieza))
+                                        self.mostrar_cordenadas(mapa, mapa[fila][i])
+                            print('Casillas que dieron con algun blanco: {}'.format(len(danadas)))
+                        elif lugar == 2:
+                            for i in range(len(mapa)):
+                                if mapa[i][columna] != '':
+                                    algo = [i, columna, mapa[i][columna], 0]
+                                    danadas.append(algo)
+                                    destruido = mapa[i][columna].recibir_dano(arma)
+                                    if destruido is True:
+                                        destruidas.append(mapa[i][columna])
+                                        print('Barco {} destruido '.format(mapa[i][columna].pieza))
+                                        self.mostrar_cordenadas(mapa, mapa[i][columna])
+                            print('Casillas que dieron con algun blanco: {}'.format(len(danadas)))
+                        tablero_atacante.agregar_radar([], destruidas)
+                        if len(danadas) > 0:
+                            vehiculos_robot.ataque_excitoso(danadas, arma)
+                        d = False
         else:
             mapa = self.agua
             fila = random.randrange(len(mapa))

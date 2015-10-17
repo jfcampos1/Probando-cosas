@@ -27,7 +27,8 @@ class Menu:
                     if i.ataques[n].sobrenombre == 'Napalm' and turno_actual - i.ataques[n].turno_desactivado == 1:
                         try:
                             mapa = tablero2.agua
-                            [fila, columna] = i.ataques[n].cordenadas_napalm
+                            fila = i.ataques[n].cordenadas_napalm[0]
+                            columna = i.ataques[n].cordenadas_napalm[1]
                             resultado = mapa[fila][columna].recibir_dano(i.ataques[n])
                             if resultado is True:
                                 print('Barco {} destruido '.format(mapa[fila][columna].pieza))
@@ -349,14 +350,42 @@ class Menu:
             print('Jugador {} a ganado'.format(vehi.nombre_jugador))
             return True
 
-    def computador(self, tablero_computador, tablero_jugador, vehi_c, vehi_jugador):
+    def computador(self, tablero_computador, tablero_jugador, vehi_c, vehi_jugador, turno_actual):
         b = True
-        tablero_computador.mostrar_tablero(tablero_computador.agua, vehi_c)
+        for i in vehi_c.vehiculos:
+            for n in range(len(i.ataques)):
+                if i.ataques[n].inutil is True:
+                    if i.ataques[n].sobrenombre == 'Napalm' and turno_actual - i.ataques[n].turno_desactivado == 1:
+                        try:
+                            mapa = tablero_computador.agua
+                            fila = i.ataques[n].cordenadas_napalm[0]
+                            columna = i.ataques[n].cordenadas_napalm[1]
+                            resultado = mapa[fila][columna].recibir_dano(i.ataques[n])
+                            if resultado is True:
+                                print('Barco {} destruido '.format(mapa[fila][columna].pieza))
+                                tablero_computador.mostrar_cordenadas(mapa, mapa[fila][columna])
+                            print('1 Barco alcanzado en las cordenadas {},{}'.format(chr(fila + 65), str(columna + 1)))
+                            vehi_c.ataque_excitoso([1], i.ataques[n])
+                            try:
+                                numero1 = vehi_c.ataques_exitosos_tipo[i]
+                                numero1 += 1
+                                vehi_c.ataques_exitosos_tipo[i] = numero1
+                            except KeyError:
+                                vehi_c.ataques_exitosos_tipo[i] = 1
+                            vehi_c.numero_ataques += 1
+                            resultado = vehi_jugador.revisar_si_gano()
+                            if resultado is False:
+                                print('Jugador {} a ganado'.format(vehi_c.nombre_jugador))
+                                return True
+                        except IndexError:
+                            tablero_computador.agregar_radar([], [])
+                    if turno_actual - i.ataques[n].turno_desactivado == i.ataques[n].disponibilidad:
+                        i.ataques[n].inutil = False
         while b is True:
             accion = random.randint(1, 2)
             if accion == 1:
-                tablero_jugador.ataque_computador(tablero_computador, vehi_c, vehi_jugador)
-                b=False
+                tablero_jugador.ataque_computador(tablero_computador, vehi_c, vehi_jugador, turno_actual)
+                b = False
             elif accion == 2:
                 vehiculo = random.randint(0, 3)
                 opcion = vehi_c.vehiculos[vehiculo]
