@@ -3,11 +3,12 @@ __author__ = 'JuanFrancisco'
 from clases import Calle, Casa
 from gui.gui import GrillaSimulacion
 
+
 def nuevo_mapa(app):
     with open('mapa fix.txt', 'r', encoding='utf8') as arch:
-        dimension=arch.readline().strip()
-        dimension=dimension.split('x')
-        grilla_simulacion = GrillaSimulacion(app,rows=int(dimension[0]),cols=(int(dimension[1])+1))
+        dimension = arch.readline().strip()
+        dimension = dimension.split('x')
+        grilla_simulacion = GrillaSimulacion(app, rows=int(dimension[0]), cols=(int(dimension[1]) + 1))
         linea1 = arch.readline().strip()
         lista_vacios = []
         lista_casas = []
@@ -16,11 +17,11 @@ def nuevo_mapa(app):
         principio = True
         mapa_calles = []
         for i in range(int(dimension[0])):
-            mapa_calles.append([''] * (int(dimension[1])+1))
+            mapa_calles.append([''] * (int(dimension[1]) + 1))
         while principio is True:
             lista = linea1.split(' ')
             cordenadas = lista[0].split(',')
-            cordenadas_bien = [int(cordenadas[0])+1, int(cordenadas[1])+1]
+            cordenadas_bien = [int(cordenadas[0]) + 1, int(cordenadas[1]) + 1]
             if lista[1] == 'calle':
                 grilla_simulacion.agregar_calle(cordenadas_bien[0], cordenadas_bien[1])
                 calle = Calle(lista[2], cordenadas_bien)
@@ -35,12 +36,12 @@ def nuevo_mapa(app):
                         lista_calle_salida.append(calle)
                     elif lista[2] == 'derecha':
                         lista_calle_entrada.append(calle)
-                elif int(cordenadas[0]) == 19:
+                elif int(cordenadas[0]) == int(dimension[0]):
                     if lista[2] == 'abajo':
                         lista_calle_salida.append(calle)
                     elif lista[2] == 'arriba':
                         lista_calle_entrada.append(calle)
-                elif int(cordenadas[1]) == 19:
+                elif int(cordenadas[1]) == int(dimension[1]):
                     if lista[2] == 'derecha':
                         lista_calle_salida.append(calle)
                     elif lista[2] == 'izquierda':
@@ -55,6 +56,60 @@ def nuevo_mapa(app):
             linea1 = arch.readline().strip()
             if linea1 == '':
                 principio = False
-        grilla_simulacion.show()
-        grilla_simulacion.actualizar()
-        return lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida,grilla_simulacion
+        encontrar_esquinas(mapa_calles, lista_calle_entrada, lista_calle_salida)
+        return lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla_simulacion
+
+
+def encontrar_esquinas(mapa, listas_entradas, listas_salidas):
+    esquinas = []
+    for i in range(len(mapa)):
+        for n in range(len(mapa[0])):
+            if mapa[i][n] != '':
+                if mapa[i][n].direccion == 'abajo':
+                    if mapa[i][n] in listas_salidas:
+                        pass
+                    elif mapa[i + 1][n] != '':
+                        if mapa[i + 1][n].direccion != 'abajo':
+                            esquinas.append(mapa[i + 1][n])
+                            if mapa[i + 1][n] in listas_salidas:
+                                pass
+                            elif mapa[i + 2][n] != '':
+                                if mapa[i + 2][n] != 'abajo':
+                                    esquinas.append(mapa[i + 2][n])
+                    elif mapa[i][n] in listas_salidas:
+                        pass
+                elif mapa[i][n].direccion == 'arriba':
+                    if mapa[i][n] in listas_salidas:
+                        pass
+                    elif mapa[i - 1][n] != '':
+                        if mapa[i - 1][n].direccion != 'arriba':
+                            esquinas.append(mapa[i - 1][n])
+                            if mapa[i - 1][n] in listas_salidas:
+                                pass
+                            elif mapa[i - 2][n] != '':
+                                if mapa[i - 2][n].direccion != 'arriba':
+                                    esquinas.append(mapa[i - 2][n])
+                elif mapa[i][n].direccion == 'derecha':
+                    if mapa[i][n] in listas_salidas:
+                        pass
+                    elif mapa[i][n + 1] != '':
+                        if mapa[i][n + 1].direccion != 'derecha':
+                            esquinas.append(mapa[i][n + 1])
+                            if mapa[i][n + 1] in listas_salidas:
+                                pass
+                            elif mapa[i][n + 2] != '':
+                                if mapa[i][n + 2].direccion != 'derecha':
+                                    esquinas.append(mapa[i][n + 2])
+                elif mapa[i][n].direccion == 'izquierda':
+                    if mapa[i][n] in listas_salidas:
+                        pass
+                    elif mapa[i][n - 1] != '':
+                        if mapa[i][n - 1].direccion != 'izquierda':
+                            esquinas.append(mapa[i][n - 1])
+                            if mapa[i][n - 1] in listas_salidas:
+                                pass
+                            elif mapa[i][n - 2] != '':
+                                if mapa[i][n - 2].direccion != 'izquierda':
+                                    esquinas.append(mapa[i][n - 2])
+    for i in esquinas:
+        print(i.cordenadas[0],i.cordenadas[1])

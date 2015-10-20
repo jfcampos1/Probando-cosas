@@ -2,7 +2,6 @@ __author__ = 'JuanFrancisco'
 
 from collections import deque
 from random import expovariate, randint, randrange
-from time import sleep
 
 from PyQt4 import QtGui
 
@@ -44,72 +43,38 @@ class Simulacion:
     def run(self):
         app = QtGui.QApplication([])
         lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla = nuevo_mapa(app)
+        grilla.show()
         entradas = len(lista_calle_entrada)
         print(entradas)
         rand = randrange(entradas)
         print(rand)
-        cordenadas = lista_calle_entrada[rand].cordenadas
+        cordenadas = lista_calle_entrada[3].cordenadas
         auto = Vehiculo('auto', self.tiempo_simulacion, cordenadas)
-        grilla.agregar_auto(cordenadas[0], cordenadas[1], 0, False)
-        sleep(50)
+        grilla.agregar_convertible(cordenadas[0], cordenadas[1], 90, False)  # al momento del random
+        #  hacer posibilidades y que ocupe solo ese
+        rand = randrange(entradas)
+        cordenadas = lista_calle_entrada[0].cordenadas
+        auto2 = Vehiculo('auto', self.tiempo_simulacion, cordenadas)
+        grilla.agregar_convertible(cordenadas[0], cordenadas[1], 90, False)
+        grilla.actualizar()
+        lista_calle_entrada[rand].mostrar_tablero(mapa_calles)
         self.proximo_auto(self.tasa_llegada)
-
         while self.tiempo_simulacion < self.tiempo_maximo_sim:
-            # lista_calle_entrada[rand].mostrar_tablero(mapa_calles)
-            # calle=mapa_calles[auto.cordenadas_vehiculo[1]-1][auto.cordenadas_vehiculo[0]-1]
-            # calle.siguiente_calle(mapa_calles,lista_calle_salida,grilla,auto)
-            if (self.planta.ocupado and
-                        self.tiempo_proximo_auto < self.tiempo_atencion) or (not self.planta.ocupado):
-
-                self.tiempo_simulacion = self.tiempo_proximo_auto
-
-            else:
-
-                self.tiempo_simulacion = self.tiempo_atencion
-
-            print('[SIMULACION] tiempo: {0} min'.format(self.tiempo_simulacion))
-
-            if self.tiempo_simulacion == self.tiempo_proximo_auto:
-                tipo = randint(1, 10)
-                if tipo <= 2:
-                    self.cola_espera.append(Vehiculo('taxi', self.tiempo_simulacion, [0, 1]))
-                else:
-                    self.cola_espera.append(Vehiculo('auto', self.tiempo_simulacion, [0, 1]))
-                self.proximo_auto(self.tasa_llegada)
-
-                print('[COLA] Llega {0} en tiempo simulacion: {1} min.'.format(
-                    self.cola_espera[-1].tipo, self.tiempo_simulacion))
-
-                if (not self.planta.ocupado) and (len(self.cola_espera) > 0):
-                    proximo_vehiculo = self.cola_espera.popleft()  # sacamos un auto en la cola de atencion
-                    self.planta.pasar_vehiculo(proximo_vehiculo)  # y lo pasamos a la planta
-
-                    self.tiempo_atencion = self.tiempo_simulacion + self.planta.tiempo_revision
-
-                    print('[PLANTA] Entra {0} con un tiempo de atencion esperado de {1} min.'. \
-                          format(self.planta.tarea_actual.tipo, self.planta.tiempo_revision))
-
-            else:
-
-                #
-                print('[PLANTA] Sale: {0} a los {1} min.'.format(
-                    self.planta.tarea_actual.tipo, self.tiempo_simulacion))
-
-                self.tiempo_espera += self.tiempo_simulacion - self.planta.tarea_actual.tiempo_llegada
-                self.planta.tarea_actual = None
-                self.vehiculos_atendidos += 1
-            sleep(5)
-
+            grilla.tiempo_intervalo = 1
+            print(auto.cordenadas_vehiculo[0] - 1,auto.cordenadas_vehiculo[1] - 1)
+            calle = mapa_calles[auto.cordenadas_vehiculo[0] - 1][auto.cordenadas_vehiculo[1] - 1]
+            calle.siguiente_calle(mapa_calles, lista_calle_salida, grilla, auto)
+            calle2 = mapa_calles[auto2.cordenadas_vehiculo[0] - 1][auto2.cordenadas_vehiculo[1] - 1]
+            calle2.siguiente_calle(mapa_calles, lista_calle_salida, grilla, auto2)
+            grilla.actualizar()
+            self.tiempo_simulacion+=1
+        app.exec_()
         print()
         print('Estadisticas:')
-        print('Tiempo total atencion {0} min.'.format(self.tiempo_atencion))
-        print('Total de vehiculos atendidos: {0}'.format(self.vehiculos_atendidos))
-        print('Tiempo promedio de espera {0} min.'.format(round(self.tiempo_espera / self.vehiculos_atendidos)))
-        app.exec_()
 
 
 if __name__ == '__main__':
     vehiculos = {'taxi': 1.0 / 8, 'auto': 1.0 / 15, 'camioneta': 1.0 / 20}
     tasa_llegada_vehiculos = 1 / 5
-    s = Simulacion(50, tasa_llegada_vehiculos, vehiculos)
+    s = Simulacion(30, tasa_llegada_vehiculos, vehiculos)
     s.run()
