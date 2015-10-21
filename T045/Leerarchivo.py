@@ -56,11 +56,11 @@ def nuevo_mapa(app):
             linea1 = arch.readline().strip()
             if linea1 == '':
                 principio = False
-        encontrar_esquinas(mapa_calles, lista_calle_entrada, lista_calle_salida)
-        return lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla_simulacion
+    esquinas = encontrar_esquinas(mapa_calles, lista_calle_salida)
+    return lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla_simulacion, esquinas
 
 
-def encontrar_esquinas(mapa, listas_entradas, listas_salidas):
+def encontrar_esquinas(mapa, listas_salidas):
     esquinas = []
     for i in range(len(mapa)):
         for n in range(len(mapa[0])):
@@ -76,8 +76,16 @@ def encontrar_esquinas(mapa, listas_entradas, listas_salidas):
                             elif mapa[i + 2][n] != '':
                                 if mapa[i + 2][n] != 'abajo':
                                     esquinas.append(mapa[i + 2][n])
-                    elif mapa[i][n] in listas_salidas:
+                    if i - 1 < 0:
                         pass
+                    elif mapa[i - 1][n] != '':
+                        if mapa[i - 1][n].direccion != 'abajo':
+                            esquinas.append(mapa[i - 1][n])
+                            if i - 2 < 0:
+                                pass
+                            elif mapa[i - 2][n] != '':
+                                if mapa[i - 2][n].direccion != 'abajo':
+                                    esquinas.append(mapa[i - 2][n])
                 elif mapa[i][n].direccion == 'arriba':
                     if mapa[i][n] in listas_salidas:
                         pass
@@ -89,6 +97,16 @@ def encontrar_esquinas(mapa, listas_entradas, listas_salidas):
                             elif mapa[i - 2][n] != '':
                                 if mapa[i - 2][n].direccion != 'arriba':
                                     esquinas.append(mapa[i - 2][n])
+                    if i + 1 > len(mapa):
+                        pass
+                    elif mapa[i + 1][n] != '':
+                        if mapa[i + 1][n].direccion != 'arriba':
+                            esquinas.append(mapa[i + 1][n])
+                            if i + 2 > len(mapa):
+                                pass
+                            elif mapa[i + 2][n] != '':
+                                if mapa[i + 2][n] != 'arriba':
+                                    esquinas.append(mapa[i + 2][n])
                 elif mapa[i][n].direccion == 'derecha':
                     if mapa[i][n] in listas_salidas:
                         pass
@@ -100,6 +118,16 @@ def encontrar_esquinas(mapa, listas_entradas, listas_salidas):
                             elif mapa[i][n + 2] != '':
                                 if mapa[i][n + 2].direccion != 'derecha':
                                     esquinas.append(mapa[i][n + 2])
+                    if n - 1 < 0:
+                        pass
+                    elif mapa[i][n - 1] != '':
+                        if mapa[i][n - 1].direccion != 'derecha':
+                            esquinas.append(mapa[i][n - 1])
+                            if n - 2 < 0:
+                                pass
+                            elif mapa[i][n - 2] != '':
+                                if mapa[i][n - 2].direccion != 'derecha':
+                                    esquinas.append(mapa[i][n - 2])
                 elif mapa[i][n].direccion == 'izquierda':
                     if mapa[i][n] in listas_salidas:
                         pass
@@ -111,5 +139,14 @@ def encontrar_esquinas(mapa, listas_entradas, listas_salidas):
                             elif mapa[i][n - 2] != '':
                                 if mapa[i][n - 2].direccion != 'izquierda':
                                     esquinas.append(mapa[i][n - 2])
-    for i in esquinas:
-        print(i.cordenadas[0],i.cordenadas[1])
+                    if n + 1 > len(mapa[0]):
+                        pass
+                    elif mapa[i][n + 1] != '':
+                        if mapa[i][n + 1].direccion != 'izquierda':
+                            esquinas.append(mapa[i][n + 1])
+                            if n + 2 > len(mapa[0]):
+                                pass
+                            elif mapa[i][n + 2] != '':
+                                if mapa[i][n + 2].direccion != 'izquierda':
+                                    esquinas.append(mapa[i][n + 2])
+    return esquinas

@@ -42,7 +42,7 @@ class Simulacion:
 
     def run(self):
         app = QtGui.QApplication([])
-        lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla = nuevo_mapa(app)
+        lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla,esquinas = nuevo_mapa(app)
         grilla.show()
         entradas = len(lista_calle_entrada)
         print(entradas)
@@ -61,7 +61,6 @@ class Simulacion:
         self.proximo_auto(self.tasa_llegada)
         while self.tiempo_simulacion < self.tiempo_maximo_sim:
             grilla.tiempo_intervalo = 1
-            print(auto.cordenadas_vehiculo[0] - 1,auto.cordenadas_vehiculo[1] - 1)
             calle = mapa_calles[auto.cordenadas_vehiculo[0] - 1][auto.cordenadas_vehiculo[1] - 1]
             calle.siguiente_calle(mapa_calles, lista_calle_salida, grilla, auto)
             calle2 = mapa_calles[auto2.cordenadas_vehiculo[0] - 1][auto2.cordenadas_vehiculo[1] - 1]
@@ -78,3 +77,4 @@ if __name__ == '__main__':
     tasa_llegada_vehiculos = 1 / 5
     s = Simulacion(30, tasa_llegada_vehiculos, vehiculos)
     s.run()
+
