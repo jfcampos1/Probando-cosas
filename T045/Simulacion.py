@@ -6,7 +6,7 @@ from random import expovariate, randint, randrange
 from PyQt4 import QtGui
 
 from clases import Vehiculo
-from Leerarchivo import nuevo_mapa
+from Leerarchivo import nuevo_mapa,cantidad_calles
 
 
 class Taller:
@@ -44,27 +44,21 @@ class Simulacion:
         app = QtGui.QApplication([])
         lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla,esquinas = nuevo_mapa(app)
         grilla.show()
+        cantidad_vehiculos_max=cantidad_calles(mapa_calles)//2
         entradas = len(lista_calle_entrada)
-        print(entradas)
-        rand = randrange(entradas)
-        print(rand)
-        cordenadas = lista_calle_entrada[3].cordenadas
-        auto = Vehiculo('auto', self.tiempo_simulacion, cordenadas)
-        grilla.agregar_convertible(cordenadas[0], cordenadas[1], 90, False)  # al momento del random
-        #  hacer posibilidades y que ocupe solo ese
-        rand = randrange(entradas)
-        cordenadas = lista_calle_entrada[0].cordenadas
-        auto2 = Vehiculo('auto', self.tiempo_simulacion, cordenadas)
-        grilla.agregar_convertible(cordenadas[0], cordenadas[1], 90, False)
         grilla.actualizar()
-        lista_calle_entrada[rand].mostrar_tablero(mapa_calles)
         self.proximo_auto(self.tasa_llegada)
         while self.tiempo_simulacion < self.tiempo_maximo_sim:
             grilla.tiempo_intervalo = 1
-            calle = mapa_calles[auto.cordenadas_vehiculo[0] - 1][auto.cordenadas_vehiculo[1] - 1]
-            calle.siguiente_calle(mapa_calles, lista_calle_salida, grilla, auto)
-            calle2 = mapa_calles[auto2.cordenadas_vehiculo[0] - 1][auto2.cordenadas_vehiculo[1] - 1]
-            calle2.siguiente_calle(mapa_calles, lista_calle_salida, grilla, auto2)
+            if cantidad_vehiculos_max>len(Vehiculo.cantidad_autos):
+                rand = randrange(entradas)
+                cordenadas = lista_calle_entrada[rand].cordenadas
+                auto2 = Vehiculo('auto', self.tiempo_simulacion, cordenadas)
+                Vehiculo.cantidad_autos.append(auto2)
+                grilla.agregar_convertible(cordenadas[0], cordenadas[1], 90, False)
+            for i in Vehiculo.cantidad_autos:
+                calle = mapa_calles[i.cordenadas_vehiculo[0] - 1][i.cordenadas_vehiculo[1] - 1]
+                calle.siguiente_calle(mapa_calles, lista_calle_salida, grilla, i,esquinas)
             grilla.actualizar()
             self.tiempo_simulacion+=1
         app.exec_()
