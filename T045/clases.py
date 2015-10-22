@@ -1,5 +1,5 @@
 __author__ = 'JuanFrancisco'
-from random import uniform, randrange
+from random import uniform, randrange, expovariate
 
 
 class Calle:
@@ -7,6 +7,7 @@ class Calle:
         self.direccion = direccion
         self.cordenadas = cordenadas  # cordenadas con +1
         self.ocupado = None
+        self.evento = False
 
     def mostrar_tablero(self, mapa):
         mapa = mapa
@@ -24,174 +25,205 @@ class Calle:
                 r += j + ' '
             print(r)
 
-    # def simplifica_siguiente_calle(self, mapa, grilla, numero, x, y, auto):
-    #     if numero == 1:
-    #         if mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0] + (1 * y)] != '':
-    #             if mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0] + (1 * y)].direccion == 'arriba':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0] - 1, self.cordenadas[1], 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0] - 1, self.cordenadas[1]]
-    #             elif mapa[self.cordenadas[1]][self.cordenadas[0] + (1 * y)].direccion == 'abajo' or \
-    #                             mapa[self.cordenadas[1] + 1][self.cordenadas[0] + (1 * y)].direccion == 'abajo':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0] + 1, self.cordenadas[1], 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0] + 1, self.cordenadas[1]]
-    #             else:
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0] - 1, self.cordenadas[1], 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0] - 1, self.cordenadas[1]]
-    #         elif mapa[self.cordenadas[1]][self.cordenadas[0] + (1 * y)] != '':
-    #             if mapa[self.cordenadas[1]][self.cordenadas[0] + (1 * y)].direccion == 'arriba':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0] - 1, self.cordenadas[1], 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0] - 1, self.cordenadas[1]]
-    #             elif mapa[self.cordenadas[1]][self.cordenadas[0] + (1 * y)].direccion == 'abajo':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0] + 1, self.cordenadas[1], 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0] + 1, self.cordenadas[1]]
-    #             else:
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0] + 1, self.cordenadas[1], 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0] + 1, self.cordenadas[1]]
-    #     elif numero == 2:
-    #         if mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0] + (1 * y)] != '':
-    #             if mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0] + (1 * y)].direccion == 'derecha':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] + 1, 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] + 1]
-    #             elif mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0] + (1 * y)].direccion == 'izquierda':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] - 1, 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] - 1]
-    #             else:
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] - 1, 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] - 1]
-    #         elif mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0]] != '':
-    #             if mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0]].direccion == 'derecha':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] + 1, 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] + 1]
-    #             elif mapa[self.cordenadas[1] + (1 * x)][self.cordenadas[0]].direccion == 'izquierda':
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] - 1, 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] - 1]
-    #             else:
-    #                 grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-    #                 grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] + 1, 0, False)
-    #                 auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] + 1]
-
-    def siguiente_calle(self, mapa, lista_salida, grilla, auto, esquinas):
+    def siguiente_calle(self, mapa, lista_salida, grilla, auto, esquinas, especial):
         if self.direccion == 'izquierda':
             if mapa[self.cordenadas[0] - 1][self.cordenadas[1] - 1] in lista_salida:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                del auto
-            elif mapa[self.cordenadas[0] - 1][self.cordenadas[1] - 2] in esquinas:
-                lugares_doblar = self.doblar_esquinas(mapa, esquinas)
-                calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                if especial == 1:
+                    return False
+                else:
+                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                    Vehiculo.cantidad_autos.remove(auto)
+                    self.ocupado = None
+                    del auto
+            else:
                 b = 0
                 espejo = False
-                if calle_elegida.direccion == 'abajo':
-                    b = 90
-                elif calle_elegida.direccion == 'arriba':
-                    b = -90
-                    espejo = False
-                elif calle_elegida.direccion == 'izquierda':
-                    b = 0
+                corde = []
+                if mapa[self.cordenadas[0] - 1][self.cordenadas[1] - 2] in esquinas:
+                    lugares_doblar = self.doblar_esquinas(1, mapa, esquinas)
+                    calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
+                    corde = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
+                    if calle_elegida.direccion == 'abajo':
+                        b = 90
+                    elif calle_elegida.direccion == 'arriba':
+                        b = -90
+                    elif calle_elegida.direccion == 'izquierda':
+                        b = 0
+                        espejo = True
+                elif mapa[self.cordenadas[0] - 1][self.cordenadas[1] - 2] == '':
                     espejo = True
-                grilla.agregar_convertible(calle_elegida.cordenadas[0], calle_elegida.cordenadas[1], b, espejo)
-                auto.cordenadas_vehiculo = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
-            else:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] - 1, 0, True)
-                auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] - 1]
+                    if mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 2] != '':
+                        corde = [self.cordenadas[0] - 1, self.cordenadas[1] - 1]
+                    elif mapa[self.cordenadas[0]][self.cordenadas[1] - 2] != '':
+                        corde = [self.cordenadas[0] + 1, self.cordenadas[1] - 1]
+                else:
+                    espejo = True
+                    corde = [self.cordenadas[0], self.cordenadas[1] - 1]
+                if especial == 1:
+                    return mapa[corde[0] - 1][corde[1] - 1]
+                else:
+                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                    self.ocupado = None
+                    auto.cordenadas_vehiculo = [corde[0], corde[1]]
+                    mapa[corde[0] - 1][corde[1] - 1].ocupado = auto
+                    if auto.tipo == 'sedan':
+                        grilla.agregar_sedan(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'camioneta':
+                        grilla.agregar_pickup(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'convertible':
+                        grilla.agregar_convertible(corde[0], corde[1], b, espejo)
         elif self.direccion == 'derecha':
             if mapa[self.cordenadas[0] - 1][self.cordenadas[1] - 1] in lista_salida:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                del auto
-            elif mapa[self.cordenadas[0] - 1][self.cordenadas[1]] in esquinas:
-                lugares_doblar = self.doblar_esquinas(mapa, esquinas)
-                calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                if especial == 1:
+                    return False
+                else:
+                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                    Vehiculo.cantidad_autos.remove(auto)
+                    self.ocupado = None
+                    del auto
+            else:
                 b = 0
                 espejo = False
-                if calle_elegida.direccion == 'abajo':
-                    b = 90
-                elif calle_elegida.direccion == 'derecha':
-                    b = 0
-                    espejo = False
-                elif calle_elegida.direccion == 'arriba':
-                    b = -90
-                    espejo = False
-                grilla.agregar_convertible(calle_elegida.cordenadas[0], calle_elegida.cordenadas[1], b, espejo)
-                auto.cordenadas_vehiculo = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
-            else:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                grilla.agregar_convertible(self.cordenadas[0], self.cordenadas[1] + 1, 0, False)
-                auto.cordenadas_vehiculo = [self.cordenadas[0], self.cordenadas[1] + 1]
+                corde = []
+                if mapa[self.cordenadas[0] - 1][self.cordenadas[1]] in esquinas:
+                    lugares_doblar = self.doblar_esquinas(1, mapa, esquinas)
+                    calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
+                    corde = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
+                    if calle_elegida.direccion == 'abajo':
+                        b = 90
+                    elif calle_elegida.direccion == 'derecha':
+                        b = 0
+                        espejo = False
+                    elif calle_elegida.direccion == 'arriba':
+                        b = -90
+                        espejo = False
+                elif mapa[self.cordenadas[0] - 1][self.cordenadas[1]] == '':
+                    if mapa[self.cordenadas[0] - 2][self.cordenadas[1]] != '':
+                        corde = [self.cordenadas[0] - 1, self.cordenadas[1] + 1]
+                    elif mapa[self.cordenadas[0]][self.cordenadas[1]] != '':
+                        corde = [self.cordenadas[0] + 1, self.cordenadas[1] + 1]
+                else:
+                    corde = [self.cordenadas[0], self.cordenadas[1] + 1]
+                if especial == 1:
+                    return mapa[corde[0] - 1][corde[1] - 1]
+                else:
+                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                    self.ocupado = None
+                    auto.cordenadas_vehiculo = [corde[0], corde[1]]
+                    mapa[corde[0] - 1][corde[1] - 1].ocupado = auto
+                    if auto.tipo == 'sedan':
+                        grilla.agregar_sedan(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'camioneta':
+                        grilla.agregar_pickup(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'convertible':
+                        grilla.agregar_convertible(corde[0], corde[1], b, espejo)
         elif self.direccion == 'arriba':
             if mapa[self.cordenadas[0] - 1][self.cordenadas[1] - 1] in lista_salida:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                del auto
-            elif mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 1] in esquinas:
-                lugares_doblar = self.doblar_esquinas(mapa, esquinas)
-                calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                b = 0
-                espejo = False
-                if calle_elegida.direccion == 'arriba':
-                    b = -90
-                    espejo = False
-                elif calle_elegida.direccion == 'derecha':
-                    b = 0
-                    espejo = False
-                elif calle_elegida.direccion == 'izquierda':
-                    b = 0
-                    espejo = True
-                grilla.agregar_convertible(calle_elegida.cordenadas[0], calle_elegida.cordenadas[1], b, espejo)
-                auto.cordenadas_vehiculo = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
-            elif mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 1] == '':
-                if mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 2] != '':
+                if especial == 1:
+                    return False
+                else:
                     grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                    grilla.agregar_convertible(self.cordenadas[0] - 1, self.cordenadas[1] - 1, -90, False)
-                    auto.cordenadas_vehiculo = [self.cordenadas[0] - 1, self.cordenadas[1] - 1]
-                elif mapa[self.cordenadas[0] - 2][self.cordenadas[1]] != '':
-                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                    grilla.agregar_convertible(self.cordenadas[0] - 1, self.cordenadas[1] + 1, -90, False)
-                    auto.cordenadas_vehiculo = [self.cordenadas[0] - 1, self.cordenadas[1] + 1]
+                    Vehiculo.cantidad_autos.remove(auto)
+                    self.ocupado = None
+                    del auto
             else:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                grilla.agregar_convertible(self.cordenadas[0] - 1, self.cordenadas[1], -90, False)
-                auto.cordenadas_vehiculo = [self.cordenadas[0] - 1, self.cordenadas[1]]
+                b = -90
+                espejo = False
+                corde = []
+                if mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 1] in esquinas:
+                    lugares_doblar = self.doblar_esquinas(1, mapa, esquinas)
+                    calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
+                    corde = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
+                    if calle_elegida.direccion == 'arriba':
+                        b = -90
+                        espejo = False
+                    elif calle_elegida.direccion == 'derecha':
+                        b = 0
+                        espejo = False
+                    elif calle_elegida.direccion == 'izquierda':
+                        b = 0
+                        espejo = True
+                elif mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 1] == '':
+                    if mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 2] != '':
+                        corde = [self.cordenadas[0] - 1, self.cordenadas[1] - 1]
+                    elif mapa[self.cordenadas[0] - 2][self.cordenadas[1]] != '':
+                        corde = [self.cordenadas[0] - 1, self.cordenadas[1] + 1]
+                else:
+                    corde = [self.cordenadas[0] - 1, self.cordenadas[1]]
+                if especial == 1:
+                    return mapa[corde[0] - 1][corde[1] - 1]
+                else:
+                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                    self.ocupado = None
+                    auto.cordenadas_vehiculo = [corde[0], corde[1]]
+                    mapa[corde[0] - 1][corde[1] - 1].ocupado = auto
+                    if auto.tipo == 'sedan':
+                        grilla.agregar_sedan(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'camioneta':
+                        grilla.agregar_pickup(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'convertible':
+                        grilla.agregar_convertible(corde[0], corde[1], b, espejo)
         elif self.direccion == 'abajo':
             if mapa[self.cordenadas[0] - 1][self.cordenadas[1] - 1] in lista_salida:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                del auto
-            elif mapa[self.cordenadas[0]][self.cordenadas[1] - 1] in esquinas:
-                lugares_doblar = self.doblar_esquinas(mapa, esquinas)
-                calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                b = 0
-                espejo = False
-                if calle_elegida.direccion == 'abajo':
-                    b = 90
-                elif calle_elegida.direccion == 'derecha':
-                    b = 0
-                    espejo = False
-                elif calle_elegida.direccion == 'izquierda':
-                    b = 0
-                    espejo = True
-                grilla.agregar_convertible(calle_elegida.cordenadas[0], calle_elegida.cordenadas[1], b, espejo)
-                auto.cordenadas_vehiculo = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
+                if especial == 1:
+                    return False
+                else:
+                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                    Vehiculo.cantidad_autos.remove(auto)
+                    self.ocupado = None
+                    del auto
             else:
-                grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
-                grilla.agregar_convertible(self.cordenadas[0] + 1, self.cordenadas[1], 90, False)
-                auto.cordenadas_vehiculo = [self.cordenadas[0] + 1, self.cordenadas[1]]
+                b = 90
+                espejo = False
+                corde = []
+                if mapa[self.cordenadas[0]][self.cordenadas[1] - 1] in esquinas:
+                    lugares_doblar = self.doblar_esquinas(1, mapa, esquinas)
+                    calle_elegida = lugares_doblar[randrange(len(lugares_doblar))]
+                    corde = [calle_elegida.cordenadas[0], calle_elegida.cordenadas[1]]
+                    if calle_elegida.direccion == 'abajo':
+                        b = 90
+                    elif calle_elegida.direccion == 'derecha':
+                        b = 0
+                        espejo = False
+                    elif calle_elegida.direccion == 'izquierda':
+                        b = 0
+                        espejo = True
+                elif mapa[self.cordenadas[0]][self.cordenadas[1] - 1] == '':
+                    if mapa[self.cordenadas[0]][self.cordenadas[1] - 2] != '':
+                        corde = [self.cordenadas[0], self.cordenadas[1] - 1]
+                    elif mapa[self.cordenadas[0]][self.cordenadas[1]] != '':
+                        corde = [self.cordenadas[0], self.cordenadas[1] + 1]
+                else:
+                    corde = [self.cordenadas[0] + 1, self.cordenadas[1]]
+                if especial == 1:
+                    return mapa[corde[0] - 1][corde[1] - 1]
+                else:
+                    grilla.quitar_imagen(self.cordenadas[0], self.cordenadas[1])
+                    self.ocupado = None
+                    auto.cordenadas_vehiculo = [corde[0], corde[1]]
+                    mapa[corde[0] - 1][corde[1] - 1].ocupado = auto
+                    if auto.tipo == 'sedan':
+                        grilla.agregar_sedan(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'camioneta':
+                        grilla.agregar_pickup(corde[0], corde[1], b, espejo)
+                    elif auto.tipo == 'convertible':
+                        grilla.agregar_convertible(corde[0], corde[1], b, espejo)
 
-    def doblar_esquinas(self, mapa, esquinas):
+    def doblar_esquinas(self, inverso, mapa, esquinas):
         lugares_cambio = []
-        if self.direccion == 'abajo':
+        direc = ''
+        if inverso == 1:
+            direc = self.direccion
+        elif inverso == 2:
+            if self.direccion == 'arriba':
+                direc = 'abajo'
+            elif self.direccion == 'abajo':
+                direc = 'arriba'
+            elif self.direccion == 'izquierda':
+                direc = 'derecha'
+            elif self.direccion == 'derecha':
+                direc = 'izquierda'
+        if direc == 'abajo':
             posibles_lugares = []
             if self.cordenadas[1] - 2 < 0:
                 if mapa[self.cordenadas[0]][self.cordenadas[1]] in esquinas:
@@ -224,20 +256,35 @@ class Calle:
                                         (self.cordenadas[0] + 1, self.cordenadas[1] + 1),
                                         (self.cordenadas[0] + 2, self.cordenadas[1] - 1),
                                         (self.cordenadas[0] + 2, self.cordenadas[1])]
-            for i in range(len(posibles_lugares)):
-                j, n = posibles_lugares[i]
-                if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
-                    if mapa[j][n] != '':
-                        if i < 2:
-                            if mapa[j][n].direccion == 'izquierda':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 2 <= i <= 3:
-                            if mapa[j][n].direccion == 'derecha':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 3 < i <= 5:
-                            if mapa[j][n].direccion == 'abajo':
-                                lugares_cambio.append(mapa[j][n])
-        elif self.direccion == 'arriba':
+            if inverso == 1:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'izquierda':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'derecha':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'abajo':
+                                    lugares_cambio.append(mapa[j][n])
+            elif inverso == 2:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'derecha':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'izquierda':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'arriba':
+                                    lugares_cambio.append(mapa[j][n])
+        elif direc == 'arriba':
             posibles_lugares = []
             if self.cordenadas[1] - 2 < 0:
                 if mapa[self.cordenadas[0] - 2][self.cordenadas[1]] in esquinas:
@@ -270,20 +317,35 @@ class Calle:
                                         (self.cordenadas[0] - 3, self.cordenadas[1] + 1),
                                         (self.cordenadas[0] - 4, self.cordenadas[1] - 1),
                                         (self.cordenadas[0] - 4, self.cordenadas[1])]
-            for i in range(len(posibles_lugares)):
-                j, n = posibles_lugares[i]
-                if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
-                    if mapa[j][n] != '':
-                        if i < 2:
-                            if mapa[j][n].direccion == 'izquierda':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 2 <= i <= 3:
-                            if mapa[j][n].direccion == 'derecha':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 3 < i <= 5:
-                            if mapa[j][n].direccion == 'arriba':
-                                lugares_cambio.append(mapa[j][n])
-        elif self.direccion == 'izquierda':
+            if inverso == 1:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'izquierda':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'derecha':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'arriba':
+                                    lugares_cambio.append(mapa[j][n])
+            elif inverso == 2:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'derecha':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'izquierda':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'abajo':
+                                    lugares_cambio.append(mapa[j][n])
+        elif direc == 'izquierda':
             posibles_lugares = []
             if self.cordenadas[0] >= len(mapa):
                 if mapa[self.cordenadas[0] - 2][self.cordenadas[1] - 2] in esquinas:
@@ -316,22 +378,36 @@ class Calle:
                                         (self.cordenadas[0] - 1, self.cordenadas[1] - 4),
                                         (self.cordenadas[0], self.cordenadas[1] - 3),
                                         (self.cordenadas[0], self.cordenadas[1] - 2)]
-            for i in range(len(posibles_lugares)):
-                j, n = posibles_lugares[i]
-                if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
-                    if mapa[j][n] != '':
-                        if i < 2:
-                            if mapa[j][n].direccion == 'arriba':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 2 <= i <= 3:
-                            if mapa[j][n].direccion == 'izquierda':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 3 < i <= 5:
-                            if mapa[j][n].direccion == 'abajo':
-                                lugares_cambio.append(mapa[j][n])
-        elif self.direccion == 'derecha':
+            if inverso == 1:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'arriba':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'izquierda':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'abajo':
+                                    lugares_cambio.append(mapa[j][n])
+            elif inverso == 2:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'abajo':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'derecha':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'arriba':
+                                    lugares_cambio.append(mapa[j][n])
+        elif direc == 'derecha':
             posibles_lugares = []
-            print(self.cordenadas[0], self.cordenadas[1])
             if self.cordenadas[0] >= len(mapa):
                 if mapa[self.cordenadas[0] - 2][self.cordenadas[1]] in esquinas:
                     posibles_lugares = [(self.cordenadas[0] - 3, self.cordenadas[1]),
@@ -363,20 +439,47 @@ class Calle:
                                         (self.cordenadas[0] - 1, self.cordenadas[1] + 2),
                                         (self.cordenadas[0], self.cordenadas[1]),
                                         (self.cordenadas[0], self.cordenadas[1] + 1)]
-            for i in range(len(posibles_lugares)):
-                j, n = posibles_lugares[i]
-                if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
-                    if mapa[j][n] != '':
-                        if i < 2:
-                            if mapa[j][n].direccion == 'arriba':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 2 <= i <= 3:
-                            if mapa[j][n].direccion == 'derecha':
-                                lugares_cambio.append(mapa[j][n])
-                        elif 3 < i <= 5:
-                            if mapa[j][n].direccion == 'abajo':
-                                lugares_cambio.append(mapa[j][n])
+            if inverso == 1:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'arriba':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'derecha':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'abajo':
+                                    lugares_cambio.append(mapa[j][n])
+            elif inverso == 2:
+                for i in range(len(posibles_lugares)):
+                    j, n = posibles_lugares[i]
+                    if 0 <= n < len(mapa[0]) and 0 <= j < len(mapa):
+                        if mapa[j][n] != '':
+                            if i < 2:
+                                if mapa[j][n].direccion == 'abajo':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 2 <= i <= 3:
+                                if mapa[j][n].direccion == 'izquierda':
+                                    lugares_cambio.append(mapa[j][n])
+                            elif 3 < i <= 5:
+                                if mapa[j][n].direccion == 'arriba':
+                                    lugares_cambio.append(mapa[j][n])
         return lugares_cambio
+
+    def ir_destino(self, mapa, auto, esquinas, camino=[]):
+        if self == mapa[auto.cordenadas_vehiculo[0] - 1][auto.cordenadas_vehiculo[1] - 1]:
+            return None
+        else:
+            if self.direccion == 'arriba':
+                calle = mapa[self.cordenadas[0]][self.cordenadas[1] - 1]
+                if calle in esquinas:
+                    posibles_lugares=calle.doblar_esquinas(2, mapa, esquinas)
+
+                camino.append(calle)
+                calle.ir_destino(mapa, auto, esquinas, camino=camino)
 
 
 class Casa:
@@ -392,15 +495,29 @@ class Casa:
 
 
 class Vehiculo:
-    tipo_auto = {'auto': 0, 'taxi': 0}
     cantidad_autos = []
 
     def __init__(self, tipo, tiempo_llegada, cordenadas):
         self.tipo = tipo
-        self.tipo_vehiculo = Vehiculo.tipo_auto[tipo]
         self.tiempo_llegada = tiempo_llegada
         self.velocidad = uniform(0.5, 1)
         self.cordenadas_vehiculo = cordenadas
+        self.libre = True
+        self.tiempo_libre = tiempo_llegada + expovariate(1 / 40)
+        self.destino = None
+
+    def destino_taxi(self, mapa, lista_calles, esquinas):
+        posibilidades = len(lista_calles)
+        b = False
+        calle = ''
+        while b is False:
+            rand = randrange(posibilidades)
+            calle = lista_calles[rand]
+            if calle in esquinas or calle == mapa[self.cordenadas_vehiculo[0] - 1][self.cordenadas_vehiculo[1] - 1]:
+                b = False
+            else:
+                b = True
+        self.destino = calle
 
     def __repr__(self):
-        return 'Tipo vehiculo: {0}'.format(self.tipo_vehiculo)
+        return 'Tipo vehiculo: {0}'.format(self.tipo)

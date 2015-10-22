@@ -59,13 +59,18 @@ def nuevo_mapa(app):
     esquinas = encontrar_esquinas(mapa_calles, lista_calle_salida)
     return lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla_simulacion, esquinas
 
-def cantidad_calles(mapa):
-    contador=0
+
+def cantidad_calles_lista(mapa):
+    contador = 0
+    lista_calles=[]
     for i in mapa:
         for j in i:
-            if j!='':
-                contador+=1
-    return contador
+            if j != '':
+                contador += 1
+                lista_calles.append(j)
+    return contador, lista_calles
+
+
 
 def encontrar_esquinas(mapa, listas_salidas):
     esquinas = []
