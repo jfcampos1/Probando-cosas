@@ -1,28 +1,13 @@
 __author__ = 'JuanFrancisco'
 
-from collections import deque
 from random import expovariate, randrange, choice
 from _datetime import datetime
 
 from PyQt4 import QtGui
 
-from clases import Vehiculo, Semaforo,Edificios,Eventos
+from Ccalles import Vehiculo, Semaforo
+from Cevento import Edificios, Eventos
 from Leerarchivo import nuevo_mapa, cantidad_calles_lista
-
-
-class Taller:
-    def __init__(self, tipos):
-        self.tarea_actual = None
-        self.tiempo_revision = 0
-        self.tipos = tipos
-
-    def pasar_vehiculo(self, vehiculo):
-        self.tarea_actual = vehiculo
-        self.tiempo_revision = round(expovariate(self.tipos[vehiculo.tipo]) + 0.5)
-
-    @property
-    def ocupado(self):
-        return self.tarea_actual != None
 
 
 class Simulacion:
@@ -38,15 +23,15 @@ class Simulacion:
         lista_casas, mapa_calles, lista_vacios, lista_calle_entrada, lista_calle_salida, grilla, esquinas = nuevo_mapa(
             app)
         grilla.show()
-        edificios=Edificios(lista_vacios[0],lista_vacios[1],lista_vacios[2])
-        grilla.agregar_comisaria(edificios.comisaria[0],edificios.comisaria[1])
-        grilla.agregar_cuartel_bomberos(edificios.bomba[0],edificios.bomba[1])
-        grilla.agregar_hospital(edificios.clinica[0],edificios.clinica[1])
+        edificios = Edificios(lista_vacios[0], lista_vacios[1], lista_vacios[2])
+        grilla.agregar_comisaria(edificios.comisaria[0], edificios.comisaria[1])
+        grilla.agregar_cuartel_bomberos(edificios.bomba[0], edificios.bomba[1])
+        grilla.agregar_hospital(edificios.clinica[0], edificios.clinica[1])
         edificios.encontrar_calle(mapa_calles)
         lista_casas[0].tiempo_inicio_eventos()
         lista_casas[0].encontrar_calle(mapa_calles)
         print(Eventos.evento[0].tiempo)
-        print(edificios.calle_bomba,edificios.calle_clinica,edificios.calle_comisaria)
+        print(edificios.calle_bomba, edificios.calle_clinica, edificios.calle_comisaria)
         cantidad_calles, lista_calles = cantidad_calles_lista(mapa_calles)
         cantidad_vehiculos_max = cantidad_calles // 2
         entradas = len(lista_calle_entrada)
@@ -64,7 +49,7 @@ class Simulacion:
                         grilla.agregar_taxi(cordenadas[0], cordenadas[1], 90, False)
                         taxi = Vehiculo('taxi', self.tiempo_simulacion, cordenadas)
                         Vehiculo.cantidad_autos.append(taxi)
-                        lista_calle_entrada[rand].ocupado=taxi
+                        lista_calle_entrada[rand].ocupado = taxi
                     else:
                         tipo_auto = choice(['sedan', 'camioneta', 'convertible'])
                         if tipo_auto == 'sedan':
@@ -75,16 +60,16 @@ class Simulacion:
                             grilla.agregar_convertible(cordenadas[0], cordenadas[1], 90, False)
                         auto2 = Vehiculo(tipo_auto, self.tiempo_simulacion, cordenadas)
                         Vehiculo.cantidad_autos.append(auto2)
-                        lista_calle_entrada[rand].ocupado=auto2
+                        lista_calle_entrada[rand].ocupado = auto2
             semaforos.cambiar_semaforo(self.tiempo_simulacion)
             for i in Eventos.evento:
-                if i.tiempo_simulacion+i.tiempo>=self.tiempo_simulacion:
+                if i.tiempo_simulacion + i.tiempo >= self.tiempo_simulacion:
                     if i.en_proceso is True:
-                        i.mover(mapa_calles,grilla)
+                        i.mover(mapa_calles, grilla)
                     else:
-                        i.en_proceso=True
-                        i.crear_vehiculo(self.tiempo_simulacion,grilla)
-                        i.casa.cambiar_estado(grilla,i)
+                        i.en_proceso = True
+                        i.crear_vehiculo(self.tiempo_simulacion, grilla)
+                        i.casa.cambiar_estado(grilla, i)
             for i in Vehiculo.cantidad_autos:
                 if i.tiempo_llegada + i.velocidad < self.tiempo_simulacion:
                     i.tiempo_llegada += i.velocidad

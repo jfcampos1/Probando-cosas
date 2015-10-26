@@ -1,7 +1,8 @@
 __author__ = 'JuanFrancisco'
 
-from clases import Calle, Casa
+from Ccalles import Calle
 from gui.gui import GrillaSimulacion
+from Ccasa import Casa
 
 
 def nuevo_mapa(app):
@@ -62,14 +63,13 @@ def nuevo_mapa(app):
 
 def cantidad_calles_lista(mapa):
     contador = 0
-    lista_calles=[]
+    lista_calles = []
     for i in mapa:
         for j in i:
             if j != '':
                 contador += 1
                 lista_calles.append(j)
     return contador, lista_calles
-
 
 
 def encontrar_esquinas(mapa, listas_salidas):
