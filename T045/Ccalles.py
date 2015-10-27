@@ -11,22 +11,6 @@ class Calle:
         self.ocupado = False
         self.evento = False
 
-    def mostrar_tablero(self, mapa):
-        mapa = mapa
-        r = ' '
-        for i in range(len(mapa[0])):
-            r += ' ' + str(i + 1)
-        print(r)
-        for i in range(len(mapa)):
-            r = str(i + 1) + ' '
-            for j in mapa[i]:
-                if j == '':
-                    j = '0'
-                else:
-                    j = '1'
-                r += j + ' '
-            print(r)
-
     def __repr__(self):
         return 'Cordenadas calle: {0}'.format(self.cordenadas)
 
@@ -101,6 +85,7 @@ class Calle:
                                 self.cordenadas[1] - 1].ocupado is False:
                         corde = [self.cordenadas[0] + 1, self.cordenadas[1] - 1]
                         auto.stop = False
+                        espejo = True
                         auto.tiempo_llegada += 0.5
                     else:
                         auto.stop = True
@@ -825,9 +810,7 @@ class Semaforo:
             if self.vertical is True:
                 self.vertical = False
                 self.horizontal = True
-                print('cambioo verticales rojos')
             elif self.horizontal is True:
                 self.horizontal = False
                 self.vertical = True
-                print('cambio horizontales rojos')
             self.tiempo_simulacion = tiempo_actual

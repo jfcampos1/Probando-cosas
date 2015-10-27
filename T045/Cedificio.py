@@ -16,7 +16,6 @@ class Edificios:
 
     def encontrar_calle(self, mapa):
         orden = [self.clinica, self.comisaria, self.bomba]
-        calles = [self.calle_clinica, self.calle_comisaria, self.calle_bomba]
         for i in range(3):
             fijar = orden[i]
             opciones = []

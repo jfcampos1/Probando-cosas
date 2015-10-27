@@ -29,5 +29,9 @@ class Vehiculo:
                 b = True
         self.destino = calle
 
+    def borrar_imagen(self,grilla):
+        for i in Vehiculo.cantidad_autos:
+            grilla.quitar_imagen(i.cordenadas_vehiculo[0]-1,i.cordenadas_vehiculo[1]-1)
+
     def __repr__(self):
         return 'Tipo vehiculo: {0}'.format(self.tipo)
