@@ -10,6 +10,7 @@ class MainWindow(form[0], form[1]):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle("Survival Game")
         foto = QtGui.QPixmap('pasto.png')
         self.label.setPixmap(foto)
         foto2 = QtGui.QPixmap('p_arriba_q.png')
@@ -50,36 +51,36 @@ class MainWindow(form[0], form[1]):
             y = 0
             if self.puntero[0] == -1:
                 if self.puntero[1] == -1:
-                    x = self.posicion[0] + 10 * numero * cos(radians(self.angulo))
-                    y = self.posicion[1] - 10 * numero * sin(radians(self.angulo))
+                    x = self.posicion[0] + 6 * numero * cos(radians(self.angulo))
+                    y = self.posicion[1] - 6 * numero * sin(radians(self.angulo))
                     if self.angulo >= 60:
-                        x = self.posicion[0] + numero * 10
+                        x = self.posicion[0] + numero * 6
                         y = self.posicion[1]
                 elif self.puntero[1] == 1:
-                    x = self.posicion[0] - numero * 10 * cos(radians(self.angulo))
-                    y = self.posicion[1] - 10 * numero * sin(radians(self.angulo))
+                    x = self.posicion[0] - numero * 6 * cos(radians(self.angulo))
+                    y = self.posicion[1] - 6 * numero * sin(radians(self.angulo))
                     if self.angulo >= 60:
-                        x = self.posicion[0] - numero * 10
+                        x = self.posicion[0] - numero * 6
                         y = self.posicion[1]
                 if self.angulo < 30:
                     x = self.posicion[0]
-                    y = self.posicion[1] - numero * 10
+                    y = self.posicion[1] - numero * 6
             elif self.puntero[0] == 1:
                 if self.puntero[1] == -1:
-                    x = self.posicion[0] + numero * 10 * cos(radians(self.angulo))
-                    y = self.posicion[1] + 10 * numero * sin(radians(self.angulo))
+                    x = self.posicion[0] + numero * 6 * cos(radians(self.angulo))
+                    y = self.posicion[1] + 6 * numero * sin(radians(self.angulo))
                     if self.angulo >= 60:
-                        x = self.posicion[0] + 10 * numero
+                        x = self.posicion[0] + 6 * numero
                         y = self.posicion[1]
                 elif self.puntero[1] == 1:
-                    x = self.posicion[0] - numero * 10 * cos(radians(self.angulo))
-                    y = self.posicion[1] + numero * 10 * sin(radians(self.angulo))
+                    x = self.posicion[0] - numero * 6 * cos(radians(self.angulo))
+                    y = self.posicion[1] + numero * 6 * sin(radians(self.angulo))
                     if self.angulo >= 60:
-                        x = self.posicion[0] - numero * 10
+                        x = self.posicion[0] - numero * 6
                         y = self.posicion[1]
                 if self.angulo < 30:
                     x = self.posicion[0]
-                    y = self.posicion[1] + numero * 10
+                    y = self.posicion[1] + numero * 6
             self.label_2.move(x, y)
             self.posicion = [x, y]
         elif sentido == -1:
@@ -87,35 +88,35 @@ class MainWindow(form[0], form[1]):
             y = 0
             if self.puntero[0] == -1:
                 if self.puntero[1] == -1:
-                    x = self.posicion[0] + 10 * numero * cos(radians(self.angulo))
-                    y = self.posicion[1] + 10 * numero * sin(radians(self.angulo))
+                    x = self.posicion[0] + 6 * numero * cos(radians(self.angulo))
+                    y = self.posicion[1] + 6 * numero * sin(radians(self.angulo))
                     if self.angulo >= 60:
                         x = self.posicion[0]
-                        y = self.posicion[1] + numero * 10
+                        y = self.posicion[1] + numero * 6
                 elif self.puntero[1] == 1:
-                    x = self.posicion[0] + numero * 10 * cos(radians(self.angulo))
-                    y = self.posicion[1] - 10 * numero * sin(radians(self.angulo))
+                    x = self.posicion[0] + numero * 6 * cos(radians(self.angulo))
+                    y = self.posicion[1] - 6 * numero * sin(radians(self.angulo))
                     if self.angulo >= 60:
                         x = self.posicion[0]
-                        y = self.posicion[1] - numero * 10
+                        y = self.posicion[1] - numero * 6
                 if self.angulo < 30:
-                    x = self.posicion[0] + numero * 10
+                    x = self.posicion[0] + numero * 6
                     y = self.posicion[1]
             elif self.puntero[0] == 1:
                 if self.puntero[1] == -1:
-                    x = self.posicion[0] - numero * 10 * cos(radians(self.angulo))
-                    y = self.posicion[1] + 10 * numero * sin(radians(self.angulo))
+                    x = self.posicion[0] - numero * 6 * cos(radians(self.angulo))
+                    y = self.posicion[1] + 6 * numero * sin(radians(self.angulo))
                     if self.angulo >= 60:
                         x = self.posicion[0]
-                        y = self.posicion[1] + 10 * numero
+                        y = self.posicion[1] + 6 * numero
                 elif self.puntero[1] == 1:
-                    x = self.posicion[0] - numero * 10 * cos(radians(self.angulo))
-                    y = self.posicion[1] - numero * 10 * sin(radians(self.angulo))
+                    x = self.posicion[0] - numero * 6 * cos(radians(self.angulo))
+                    y = self.posicion[1] - numero * 6 * sin(radians(self.angulo))
                     if self.angulo >= 60:
                         x = self.posicion[0]
-                        y = self.posicion[1] - numero * 10
+                        y = self.posicion[1] - numero * 6
                 if self.angulo < 30:
-                    x = self.posicion[0] - numero * 10
+                    x = self.posicion[0] - numero * 6
                     y = self.posicion[1]
             if self.imagen[-1] == 'q':
                 foto2 = QtGui.QPixmap('{}{}.png'.format(self.imagen[:-1], 'd'))
