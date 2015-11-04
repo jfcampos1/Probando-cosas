@@ -24,6 +24,10 @@ class MainWindow(form[0], form[1]):
         self.angulo = 0
         self.label_2.move(300, 200)
 
+    def actualizarImagen(self, myImageEvent):
+        label = myImageEvent.image
+        label.move(myImageEvent.x, myImageEvent.y)
+
     def keyPressEvent(self, QKeyEvent):
         if QKeyEvent.key() == QtCore.Qt.Key_Return:
             print("Presionarion ENTER!")
@@ -217,9 +221,9 @@ class MainWindow(form[0], form[1]):
         #         QCloseEvent.ignore()
 
 
-if __name__ == '__main__':
-    app = QtGui.QApplication([])
-    app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
-    form = MainWindow()
-    form.show()
-    app.exec_()
+# if __name__ == '__main__':
+#     app = QtGui.QApplication([])
+#     app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
+#     form = MainWindow()
+#     form.show()
+#     app.exec_()
