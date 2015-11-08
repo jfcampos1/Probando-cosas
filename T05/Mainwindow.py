@@ -13,19 +13,49 @@ class MainWindow(form[0], form[1]):
         self.setWindowTitle("Survival Game")
         foto = QtGui.QPixmap('pasto.png')
         self.label.setPixmap(foto)
-        foto2 = QtGui.QPixmap('p_arriba_q.png')
-        self.imagen = 'p_arriba_q'
+        self.label_2.resize(50,50)
+        foto2 = QtGui.QPixmap('personaje/p_arriba_q.png')
+        self.imagen = 'personaje/p_arriba_q'
         self.label_2.setPixmap(foto2)
         puntero = QtGui.QPixmap('puntero.png')
+        mapa=[]
+        for i in range(600):
+            mapa.append(['']*800)
+        self.mapa=mapa
         self.label_3.setPixmap(puntero)
         self.label_3.move(100, 200)
         self.posicion = [300, 200]
         self.puntero = [0, 0]
         self.angulo = 0
         self.label_2.move(300, 200)
+        self.tipo='jugador'
+        self.actualizar_mapa(300,200,self)
+        self.vida=100
+        self.label_5.setText(str(self.vida))
 
+    def actualizar_mapa(self,x,y,objeto):
+        for i in range(y,y+50):
+            for n in range(x,x+50):
+                self.mapa[i][n]=objeto
+
+    def borrar_del_mapa(self,objeto,x,y):
+        for i in range(y,y+50):
+            for n in range(x,x+50):
+                if self.mapa[i][n]==objeto:
+                    self.mapa[i][n]=''
+
+    def revisar_mapa(self,x,y):
+        for i in range(y,y+50):
+            for n in range(x,x+50):
+                if self.mapa[i][n]!='':
+                    return self.mapa[i][n]
+        return True
     def actualizarImagen(self, myImageEvent):
+        foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
         label = myImageEvent.image
+        label.resize(50,50)
+        label.setPixmap(foto2)
+        label.adjustSize()
         label.move(myImageEvent.x, myImageEvent.y)
 
     def keyPressEvent(self, QKeyEvent):
@@ -36,16 +66,16 @@ class MainWindow(form[0], form[1]):
         elif QKeyEvent.key() == QtCore.Qt.Key_Escape:
             QtCore.QCoreApplication.instance().quit()
             print('Presione esc')
-        elif QKeyEvent.key() == QtCore.Qt.Key_A or QKeyEvent.key() == QtCore.Qt.Key_Left:
+        elif QKeyEvent.key() == QtCore.Qt.Key_A or QKeyEvent.key() == QtCore.Qt.Key_Left or QKeyEvent.key() == QtCore.Qt.Key_1:
             self.mover(1, 4 / 5)
             print('Presione A o izq')
-        elif QKeyEvent.key() == QtCore.Qt.Key_S or QKeyEvent.key() == QtCore.Qt.Key_Down:
+        elif QKeyEvent.key() == QtCore.Qt.Key_S or QKeyEvent.key() == QtCore.Qt.Key_Down or QKeyEvent.key() == QtCore.Qt.Key_5:
             self.mover(-1, -1 / 2)
             print('Presione S o abajo')
-        elif QKeyEvent.key() == QtCore.Qt.Key_D or QKeyEvent.key() == QtCore.Qt.Key_Right:
+        elif QKeyEvent.key() == QtCore.Qt.Key_D or QKeyEvent.key() == QtCore.Qt.Key_Right or QKeyEvent.key() == QtCore.Qt.Key_3:
             self.mover(1, -4 / 5)
             print('Presione D o derecha')
-        elif QKeyEvent.key() == QtCore.Qt.Key_W or QKeyEvent.key() == QtCore.Qt.Key_Up:
+        elif QKeyEvent.key() == QtCore.Qt.Key_W or QKeyEvent.key() == QtCore.Qt.Key_Up or QKeyEvent.key() == QtCore.Qt.Key_2:
             self.mover(-1, 1)
             print('Presione W o arriba')
 
@@ -85,8 +115,14 @@ class MainWindow(form[0], form[1]):
                 if self.angulo < 30:
                     x = self.posicion[0]
                     y = self.posicion[1] + numero * 6
-            self.label_2.move(x, y)
-            self.posicion = [x, y]
+            self.borrar_del_mapa(self,int(self.posicion[0]),int(self.posicion[1]))
+            vacio=self.revisar_mapa(int(x),int(y))
+            if vacio is True:
+                self.posicion = [x, y]
+                self.actualizar_mapa(int(x),int(y),self)
+                self.label_2.move(x, y)
+            elif vacio.tipo=='zombie':
+                self.actualizar_mapa(int(self.posicion[0]),int(self.posicion[1]),self)
         elif sentido == -1:
             x = 0
             y = 0
@@ -134,8 +170,14 @@ class MainWindow(form[0], form[1]):
                 foto2 = QtGui.QPixmap('{}{}.png'.format(self.imagen[:-1], 'q'))
                 self.imagen = self.imagen[:-1] + 'q'
                 self.label_2.setPixmap(foto2)
-            self.label_2.move(x, y)
-            self.posicion = [x, y]
+            self.borrar_del_mapa(self,int(self.posicion[0]),int(self.posicion[1]))
+            vacio=self.revisar_mapa(int(x),int(y))
+            if vacio is True:
+                self.posicion = [x, y]
+                self.actualizar_mapa(int(x),int(y),self)
+                self.label_2.move(x, y)
+            elif vacio.tipo=='zombie':
+                self.actualizar_mapa(int(self.posicion[0]),int(self.posicion[1]),self)
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.buttons() == QtCore.Qt.LeftButton:
@@ -156,58 +198,58 @@ class MainWindow(form[0], form[1]):
         if dif_x >= 0 and dif_y >= 0:
             self.puntero = [1, 1]
             if angulo > 60:
-                foto = QtGui.QPixmap('p_arriba_q.png')
-                self.imagen = 'p_arriba_q'
+                foto = QtGui.QPixmap('personaje/p_arriba_q.png')
+                self.imagen = 'personaje/p_arriba_q'
                 self.label_2.setPixmap(foto)
             elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('p_dizq_q.png')
-                self.imagen = 'p_dizq_q'
+                foto = QtGui.QPixmap('personaje/p_dizq_q.png')
+                self.imagen = 'personaje/p_dizq_q'
                 self.label_2.setPixmap(foto)
             elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('p_izq_q.png')
-                self.imagen = 'p_izq_q'
+                foto = QtGui.QPixmap('personaje/p_izq_q.png')
+                self.imagen = 'personaje/p_izq_q'
                 self.label_2.setPixmap(foto)
         elif dif_y < 0 <= dif_x:
             self.puntero = [1, -1]
             if angulo > 60:
-                foto = QtGui.QPixmap('p_abajo_q.png')
-                self.imagen = 'p_abajo_q'
+                foto = QtGui.QPixmap('personaje/p_abajo_q.png')
+                self.imagen = 'personaje/p_abajo_q'
                 self.label_2.setPixmap(foto)
             elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('p_dabajo_q.png')
-                self.imagen = 'p_dabajo_q'
+                foto = QtGui.QPixmap('personaje/p_dabajo_q.png')
+                self.imagen = 'personaje/p_dabajo_q'
                 self.label_2.setPixmap(foto)
             elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('p_izq_q.png')
-                self.imagen = 'p_izq_q'
+                foto = QtGui.QPixmap('personaje/p_izq_q.png')
+                self.imagen = 'personaje/p_izq_q'
                 self.label_2.setPixmap(foto)
         elif dif_x < 0 and dif_y < 0:
             self.puntero = [-1, -1]
             if angulo > 60:
-                foto = QtGui.QPixmap('p_abajo_q.png')
-                self.imagen = 'p_abajo_q'
+                foto = QtGui.QPixmap('personaje/p_abajo_q.png')
+                self.imagen = 'personaje/p_abajo_q'
                 self.label_2.setPixmap(foto)
             elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('p_ddere_q.png')
-                self.imagen = 'p_ddere_q'
+                foto = QtGui.QPixmap('personaje/p_ddere_q.png')
+                self.imagen = 'personaje/p_ddere_q'
                 self.label_2.setPixmap(foto)
             elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('p_dere_q.png')
-                self.imagen = 'p_dere_q'
+                foto = QtGui.QPixmap('personaje/p_dere_q.png')
+                self.imagen = 'personaje/p_dere_q'
                 self.label_2.setPixmap(foto)
         elif dif_x < 0 < dif_y:
             self.puntero = [-1, 1]
             if angulo > 60:
-                foto = QtGui.QPixmap('p_arriba_q.png')
-                self.imagen = 'p_arriba_q'
+                foto = QtGui.QPixmap('personaje/p_arriba_q.png')
+                self.imagen = 'personaje/p_arriba_q'
                 self.label_2.setPixmap(foto)
             elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('p_darriba_q.png')
-                self.imagen = 'p_darriba_q'
+                foto = QtGui.QPixmap('personaje/p_darriba_q.png')
+                self.imagen = 'personaje/p_darriba_q'
                 self.label_2.setPixmap(foto)
             elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('p_dere_q.png')
-                self.imagen = 'p_dere_q'
+                foto = QtGui.QPixmap('personaje/p_dere_q.png')
+                self.imagen = 'personaje/p_dere_q'
                 self.label_2.setPixmap(foto)
         print(self.puntero)
 
