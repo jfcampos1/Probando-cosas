@@ -7,7 +7,6 @@ from PyQt4 import QtGui, QtCore
 
 from Mainwindow import MainWindow
 
-
 class MoveMyImageEvent:
     """
     Las instancias de esta clase
@@ -21,7 +20,6 @@ class MoveMyImageEvent:
         self.image = image
         self.x = x
         self.y = y
-
 
 class Zombie:
     def __init__(self, x, y, imagen):
@@ -101,18 +99,21 @@ class Zombie:
                 y = self.posicion[1]
         parent.borrar_del_mapa(self, int(self.posicion[0]), int(self.posicion[1]))
         vacio = parent.revisar_mapa(int(x), int(y))
-        if vacio is True:
-            self.posicion = [x, y]
-            parent.actualizar_mapa(int(x), int(y), self)
-        elif vacio.tipo == 'zombie':
-            parent.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
-        elif vacio.tipo == 'jugador':
-            print('atacadoooo')
-            parent.vida -= 10
-            parent.label_5.setText(str(parent.vida))
-            self.imagen = self.imagen[:-1] + 'a'
-            parent.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
-            self.ataco = True
+        if self.vida is False:
+            self.imagen = self.imagen[:-1] + 'm'
+        else:
+            if vacio is True:
+                self.posicion = [x, y]
+                parent.actualizar_mapa(int(x), int(y), self)
+            elif vacio.tipo == 'zombie':
+                parent.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
+            elif vacio.tipo == 'jugador':
+                print('atacadoooo')
+                parent.vida -= 10
+                parent.label_5.setText(str(parent.vida))
+                self.imagen = self.imagen[:-1] + 'a'
+                parent.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
+                self.ataco = True
 
     def revisar_pie(self, imagen):
         if self.imagen == imagen:
@@ -200,6 +201,12 @@ class Character(QtCore.QThread):
         while a is True:
             time.sleep(0.1)  # con esto edito la velocidad de los zombies
             self.position = (self.numero, self.numero2)
+            if self.zombie.vida is False:
+                a=False
+                time.sleep(2)
+                self.image.close()
+                self.image.destroy()
+
 
 
 if __name__ == '__main__':

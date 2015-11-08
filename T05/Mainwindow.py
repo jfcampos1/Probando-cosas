@@ -1,7 +1,9 @@
 __author__ = 'JuanFrancisco'
 from math import atan, degrees, radians, cos, sin
-
+from Cdisparos import DisparoTread
 from PyQt4 import QtGui, uic, QtCore
+
+
 
 form = uic.loadUiType("juego.ui")
 
@@ -13,47 +15,79 @@ class MainWindow(form[0], form[1]):
         self.setWindowTitle("Survival Game")
         foto = QtGui.QPixmap('pasto.png')
         self.label.setPixmap(foto)
-        self.label_2.resize(50,50)
+        self.label_2.resize(50, 50)
         foto2 = QtGui.QPixmap('personaje/p_arriba_q.png')
         self.imagen = 'personaje/p_arriba_q'
         self.label_2.setPixmap(foto2)
         puntero = QtGui.QPixmap('puntero.png')
-        mapa=[]
+        mapa = []
         for i in range(600):
-            mapa.append(['']*800)
-        self.mapa=mapa
+            mapa.append([''] * 800)
+        self.mapa = mapa
         self.label_3.setPixmap(puntero)
         self.label_3.move(100, 200)
         self.posicion = [300, 200]
         self.puntero = [0, 0]
         self.angulo = 0
         self.label_2.move(300, 200)
-        self.tipo='jugador'
-        self.actualizar_mapa(300,200,self)
-        self.vida=100
+        self.tipo = 'jugador'
+        self.actualizar_mapa(300, 200, self)
+        self.vida = 100
         self.label_5.setText(str(self.vida))
 
-    def actualizar_mapa(self,x,y,objeto):
-        for i in range(y,y+50):
-            for n in range(x,x+50):
-                self.mapa[i][n]=objeto
+    def actualizar_mapa(self, x, y, objeto):
+        for i in range(y, y + 50):
+            for n in range(x, x + 50):
+                self.mapa[i][n] = objeto
 
-    def borrar_del_mapa(self,objeto,x,y):
-        for i in range(y,y+50):
-            for n in range(x,x+50):
-                if self.mapa[i][n]==objeto:
-                    self.mapa[i][n]=''
+    def actualizar_mapa_disparo(self, x, y, objeto,borrar):
+        for i in range(y, y + 20):
+            for n in range(x, x + 20):
+                if borrar is True:
+                    self.mapa[i][n] = ''
+                else:
+                    self.mapa[i][n] = objeto
 
-    def revisar_mapa(self,x,y):
-        for i in range(y,y+50):
-            for n in range(x,x+50):
-                if self.mapa[i][n]!='':
+    def borrar_del_mapa(self, objeto, x, y):
+        for i in range(y, y + 50):
+            for n in range(x, x + 50):
+                if i>len(self.mapa)-1 or n>len(self.mapa[0])-1 or 0>i or 0>n:
+                    pass
+                elif self.mapa[i][n] == objeto:
+                    self.mapa[i][n] = ''
+
+    def revisar_mapa(self, x, y):
+        for i in range(y, y + 50):
+            for n in range(x, x + 50):
+                if i>len(self.mapa)-1 or n>len(self.mapa[0])-1 or 0>i or 0>n:
+                    a='fuera'
+                    return a
+                elif self.mapa[i][n] != '':
                     return self.mapa[i][n]
         return True
+
+    def revisar_mapa_disparo(self, x, y):
+        for i in range(y, y + 20):
+            for n in range(x, x + 20):
+                if i>len(self.mapa)-1 or n>len(self.mapa[0])-1 or 0>i or 0>n:
+                    a='fuera'
+                    return a
+                if self.mapa[i][n] != '':
+                    return self.mapa[i][n]
+        return True
+
     def actualizarImagen(self, myImageEvent):
         foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
         label = myImageEvent.image
-        label.resize(50,50)
+        label.resize(50, 50)
+        label.setPixmap(foto2)
+        label.adjustSize()
+        label.move(myImageEvent.x, myImageEvent.y)
+
+    def actualizarImagendisparo(self, myImageEvent):
+        foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
+        label = myImageEvent.image
+        label.resize(50, 50)
         label.setPixmap(foto2)
         label.adjustSize()
         label.move(myImageEvent.x, myImageEvent.y)
@@ -115,14 +149,16 @@ class MainWindow(form[0], form[1]):
                 if self.angulo < 30:
                     x = self.posicion[0]
                     y = self.posicion[1] + numero * 6
-            self.borrar_del_mapa(self,int(self.posicion[0]),int(self.posicion[1]))
-            vacio=self.revisar_mapa(int(x),int(y))
+            self.borrar_del_mapa(self, int(self.posicion[0]), int(self.posicion[1]))
+            vacio = self.revisar_mapa(int(x), int(y))
             if vacio is True:
                 self.posicion = [x, y]
-                self.actualizar_mapa(int(x),int(y),self)
+                self.actualizar_mapa(int(x), int(y), self)
                 self.label_2.move(x, y)
-            elif vacio.tipo=='zombie':
-                self.actualizar_mapa(int(self.posicion[0]),int(self.posicion[1]),self)
+            elif vacio=='fuera':
+                self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
+            elif vacio.tipo == 'zombie':
+                self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
         elif sentido == -1:
             x = 0
             y = 0
@@ -170,17 +206,22 @@ class MainWindow(form[0], form[1]):
                 foto2 = QtGui.QPixmap('{}{}.png'.format(self.imagen[:-1], 'q'))
                 self.imagen = self.imagen[:-1] + 'q'
                 self.label_2.setPixmap(foto2)
-            self.borrar_del_mapa(self,int(self.posicion[0]),int(self.posicion[1]))
-            vacio=self.revisar_mapa(int(x),int(y))
+            self.borrar_del_mapa(self, int(self.posicion[0]), int(self.posicion[1]))
+            vacio = self.revisar_mapa(int(x), int(y))
             if vacio is True:
                 self.posicion = [x, y]
-                self.actualizar_mapa(int(x),int(y),self)
+                self.actualizar_mapa(int(x), int(y), self)
                 self.label_2.move(x, y)
-            elif vacio.tipo=='zombie':
-                self.actualizar_mapa(int(self.posicion[0]),int(self.posicion[1]),self)
+            elif vacio=='fuera':
+                self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
+            elif vacio.tipo == 'zombie':
+                self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.buttons() == QtCore.Qt.LeftButton:
+            self.bala=DisparoTread(self)
+            print('aquiiiiiiiiiiiiiiiiiii')
+            self.bala.start()
             print("Hizo click izquierdo!")
         elif QMouseEvent.buttons() == QtCore.Qt.RightButton:
             print("Hizo click derecho!")
@@ -253,7 +294,7 @@ class MainWindow(form[0], form[1]):
                 self.label_2.setPixmap(foto)
         print(self.puntero)
 
-        print(dif_x, dif_y)
+        print(int(dif_x), int(dif_y))
 
         # def closeEvent(self, QCloseEvent):
         #     ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
@@ -261,7 +302,6 @@ class MainWindow(form[0], form[1]):
         #         QCloseEvent.accept()
         #     else:
         #         QCloseEvent.ignore()
-
 
 # if __name__ == '__main__':
 #     app = QtGui.QApplication([])
