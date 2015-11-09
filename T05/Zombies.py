@@ -5,7 +5,7 @@ import time
 
 from PyQt4 import QtGui, QtCore
 
-from Mainwindow import MainWindow
+
 
 class MoveMyImageEvent:
     """
@@ -15,11 +15,12 @@ class MoveMyImageEvent:
     la posicion de la imagen
     """
 
-    def __init__(self, image, x, y, imagen):
+    def __init__(self, image, x, y, imagen,vida):
         self.imagen = imagen
         self.image = image
         self.x = x
         self.y = y
+        self.vida=vida
 
 class Zombie:
     def __init__(self, x, y, imagen):
@@ -30,6 +31,7 @@ class Zombie:
         self.vida = True
         self.tipo = 'zombie'
         self.ataco = False
+        self.vida2=True
 
     def mover(self, parent):
         if self.ataco is True:
@@ -40,7 +42,11 @@ class Zombie:
         y1 = self.jugador[1]
         dif_x = self.posicion[0] - x1
         dif_y = self.posicion[1] - y1
-        tg = abs(dif_y) / abs(dif_x)
+        tg=0
+        try:
+            tg = abs(dif_y) / abs(dif_x)
+        except ZeroDivisionError:
+            tg=0
         angulo = degrees(atan(tg))
         self.angulo = angulo
         x = 0
@@ -110,6 +116,7 @@ class Zombie:
             elif vacio.tipo == 'jugador':
                 print('atacadoooo')
                 parent.vida -= 10
+                parent.barra.setValue(parent.vida)
                 parent.label_5.setText(str(parent.vida))
                 self.imagen = self.imagen[:-1] + 'a'
                 parent.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
@@ -193,30 +200,21 @@ class Character(QtCore.QThread):
 
         # El trigger emite su senhal a la ventana
         self.trigger.emit(MoveMyImageEvent(
-            self.image, self.zombie.posicion[0], self.zombie.posicion[1], self.zombie.imagen
+            self.image, self.zombie.posicion[0], self.zombie.posicion[1], self.zombie.imagen,self.zombie.vida2
         ))
 
     def run(self):
         a = True
         while a is True:
             time.sleep(0.1)  # con esto edito la velocidad de los zombies
+            while self.ventana.tiempo!=0:
+                time.sleep(self.ventana.tiempo)
             self.position = (self.numero, self.numero2)
             if self.zombie.vida is False:
                 a=False
                 time.sleep(2)
-                self.image.close()
-                self.image.destroy()
+                self.zombie.vida2=False
+                self.position = (self.numero, self.numero2)
 
 
 
-if __name__ == '__main__':
-    app = QtGui.QApplication([])
-    ventana = MainWindow()
-    ventana.show()
-    for i in range(10):
-        personaje = Character(
-            parent=ventana,
-            path="zombie/z_arriba_q.png"
-        )
-        personaje.start()
-    app.exec_()

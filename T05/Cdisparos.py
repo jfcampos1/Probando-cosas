@@ -13,11 +13,12 @@ class MoveMyDisparoEvent:
     la posicion de la imagen
     """
 
-    def __init__(self, image, x, y, imagen):
+    def __init__(self, image, x, y, imagen,vida):
         self.imagen = imagen
         self.image = image
         self.x = x
         self.y = y
+        self.vida=vida
 
 
 class Disparo:
@@ -27,6 +28,7 @@ class Disparo:
         self.posicion = [x, y]
         self.imagen = imagen
         self.vida = True
+        self.vida2=True
         self.tipo = 'disparo'
 
     def mover(self, parent):
@@ -49,7 +51,6 @@ class Disparo:
                 x = self.posicion[0] + 10
                 y = self.posicion[1]
         elif self.puntero[0] == 1:
-            print('aquiiiiiiiiiiiiiiii')
             if self.puntero[1] == -1:
                 x = self.posicion[0] - 10 * cos(radians(self.angulo))
                 y = self.posicion[1] + 10 * sin(radians(self.angulo))
@@ -123,46 +124,46 @@ class DisparoTread(QtCore.QThread):
                 if self.angulo >= 60:
                     self.path = 'disparos/d_arriba'
                     self.numero += 25
-                    self.numero2 -= 20
+                    self.numero2 -= 0
                 elif 30 < self.angulo < 60:
                     self.path = 'disparos/d_dizq'
-                    self.numero -= 20
-                    self.numero2 -= 20
+                    self.numero -= 0
+                    self.numero2 -= 0
             elif self.direccion[1] == -1:
                 if self.angulo >= 60:
                     self.path = 'disparos/d_abajo'
                     self.numero += 25
-                    self.numero2 += 70
+                    self.numero2 += 50
                 elif 30 < self.angulo < 60:
                     self.path = 'disparos/d_dabajo'
-                    self.numero -= 20
-                    self.numero2 += 70
+                    self.numero -= 0
+                    self.numero2 += 50
             if self.angulo <= 30:
                 self.path = 'disparos/d_izq'
-                self.numero -= 20
+                self.numero -= 0
                 self.numero2 += 25
         elif self.direccion[0] == -1:
             if self.direccion[1] == 1:
                 if self.angulo >= 60:
                     self.path = 'disparos/d_arriba'
                     self.numero += 25
-                    self.numero2 -= 20
+                    self.numero2 -= 0
                 elif 30 < self.angulo < 60:
                     self.path = 'disparos/d_darriba'
-                    self.numero += 70
-                    self.numero2 -= 20
+                    self.numero += 50
+                    self.numero2 -= 0
             elif self.direccion[1] == -1:
                 if self.angulo >= 60:
                     self.path = 'disparos/d_abajo'
                     self.numero += 25
-                    self.numero2 += 70
+                    self.numero2 += 50
                 elif 30 < self.angulo < 60:
                     self.path = 'disparos/d_ddere'
-                    self.numero += 70
-                    self.numero2 += 70
+                    self.numero += 50
+                    self.numero2 += 50
             if self.angulo <= 30:
                 self.path = 'disparos/d_dere'
-                self.numero += 70
+                self.numero += 50
                 self.numero2 += 25
 
     @property
@@ -172,22 +173,21 @@ class DisparoTread(QtCore.QThread):
     @position.setter
     def position(self, value):
         self.__position = value
-        self.bala.mover(self.ventana)
+        if self.bala.vida is True:
+            self.bala.mover(self.ventana)
         # El trigger emite su senhal a la ventana
         self.trigger.emit(MoveMyDisparoEvent(
-            self.image, self.bala.posicion[0], self.bala.posicion[1], self.bala.imagen
+            self.image, self.bala.posicion[0], self.bala.posicion[1], self.bala.imagen,self.bala.vida2
         ))
 
     def run(self):
         a = True
         while a is True:
             time.sleep(0.04)  # con esto edito la velocidad de los disparos
+            while self.ventana.tiempo!=0:
+                time.sleep(self.ventana.tiempo)
             if self.bala.vida is False:
-                print('acaaaaaaa')
                 a = False
                 time.sleep(0.1)
-                self.image.close()
-                self.image.destroy()
-            else:
-                self.position = (self.numero, self.numero2)
-        print('aquiiiiiiiiiiii')
+                self.bala.vida2=False
+            self.position = (self.numero, self.numero2)

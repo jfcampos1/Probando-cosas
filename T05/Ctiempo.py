@@ -1,11 +1,7 @@
 __author__ = 'JuanFrancisco'
-from math import atan,degrees,tan ,radians
-print(degrees(atan(9/8)))
-print(tan(radians(45)))
-letra='holacomoestas'
-print(letra[:-1])
-import sys
 from PyQt4 import QtGui, QtCore
+from Zombies import Character
+import time
 
 s = 0
 m = 0
@@ -13,9 +9,10 @@ h = 0
 
 class Main(QtGui.QMainWindow):
 
-    def __init__(self):
+    def __init__(self,ventana):
         QtGui.QMainWindow.__init__(self)
         self.initUI()
+        self.ventana=ventana
 
     def initUI(self):
 
@@ -45,7 +42,7 @@ class Main(QtGui.QMainWindow):
         centralwidget.setLayout(grid)
 
         self.setCentralWidget(centralwidget)
-        self.time=''
+        self.time='0:0:0'
 
 #---------Window settings --------------------------------
 
@@ -88,11 +85,16 @@ class Main(QtGui.QMainWindow):
                 self.timer.stop()
 
         self.time = "{0}:{1}:{2}".format(h,m,s)
+        valor=self.ventana.tiempo_aparicion_zombies()
+        if valor is not False:
+            for i in range(valor):
+                self.personaje = Character(parent=self.ventana,path="zombie/z_arriba_q.png")
+                self.personaje.start()
 
         self.lcd.setDigitCount(len(self.time))
         self.lcd.display(self.time)
 
-def main():
-    main= Main()
-    return main
 
+def main(ventana):
+    main= Main(ventana)
+    return main

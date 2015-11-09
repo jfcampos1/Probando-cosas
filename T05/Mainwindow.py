@@ -1,9 +1,9 @@
 __author__ = 'JuanFrancisco'
 from math import atan, degrees, radians, cos, sin
-from Cdisparos import DisparoTread
+from Pausa import Pausa
 from PyQt4 import QtGui, uic, QtCore
-
-
+from Ctiempo import main
+from Cdisparos import DisparoTread
 
 form = uic.loadUiType("juego.ui")
 
@@ -34,13 +34,20 @@ class MainWindow(form[0], form[1]):
         self.actualizar_mapa(300, 200, self)
         self.vida = 100
         self.label_5.setText(str(self.vida))
+        self.tiempo = 0
+        self.cronometro = main(self)
+        self.cronometro.show()
+        self.cronometro.Start()
+        self.barra = self.progressBar
+        self.setGeometry(300, 100, 800, 600)
+        self.paus=Pausa(self)
 
     def actualizar_mapa(self, x, y, objeto):
         for i in range(y, y + 50):
             for n in range(x, x + 50):
                 self.mapa[i][n] = objeto
 
-    def actualizar_mapa_disparo(self, x, y, objeto,borrar):
+    def actualizar_mapa_disparo(self, x, y, objeto, borrar):
         for i in range(y, y + 20):
             for n in range(x, x + 20):
                 if borrar is True:
@@ -51,7 +58,7 @@ class MainWindow(form[0], form[1]):
     def borrar_del_mapa(self, objeto, x, y):
         for i in range(y, y + 50):
             for n in range(x, x + 50):
-                if i>len(self.mapa)-1 or n>len(self.mapa[0])-1 or 0>i or 0>n:
+                if i > len(self.mapa) - 1 or n > len(self.mapa[0]) - 1 or 0 > i or 0 > n:
                     pass
                 elif self.mapa[i][n] == objeto:
                     self.mapa[i][n] = ''
@@ -59,8 +66,8 @@ class MainWindow(form[0], form[1]):
     def revisar_mapa(self, x, y):
         for i in range(y, y + 50):
             for n in range(x, x + 50):
-                if i>len(self.mapa)-1 or n>len(self.mapa[0])-1 or 0>i or 0>n:
-                    a='fuera'
+                if i > len(self.mapa) - 1 or n > len(self.mapa[0]) - 1 or 0 > i or 0 > n:
+                    a = 'fuera'
                     return a
                 elif self.mapa[i][n] != '':
                     return self.mapa[i][n]
@@ -69,49 +76,65 @@ class MainWindow(form[0], form[1]):
     def revisar_mapa_disparo(self, x, y):
         for i in range(y, y + 20):
             for n in range(x, x + 20):
-                if i>len(self.mapa)-1 or n>len(self.mapa[0])-1 or 0>i or 0>n:
-                    a='fuera'
+                if i > len(self.mapa) - 1 or n > len(self.mapa[0]) - 1 or 0 > i or 0 > n:
+                    a = 'fuera'
                     return a
                 if self.mapa[i][n] != '':
                     return self.mapa[i][n]
         return True
 
     def actualizarImagen(self, myImageEvent):
-        foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
         label = myImageEvent.image
-        label.resize(50, 50)
-        label.setPixmap(foto2)
-        label.adjustSize()
-        label.move(myImageEvent.x, myImageEvent.y)
+        if myImageEvent.vida is True:
+            foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
+            label.resize(50, 50)
+            label.setPixmap(foto2)
+            label.adjustSize()
+            label.move(myImageEvent.x, myImageEvent.y)
+        else:
+            label.close()
+            label.destroy()
 
     def actualizarImagendisparo(self, myImageEvent):
-        foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
         label = myImageEvent.image
-        label.resize(50, 50)
-        label.setPixmap(foto2)
-        label.adjustSize()
-        label.move(myImageEvent.x, myImageEvent.y)
+        if myImageEvent.vida is True:
+            foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
+            label.resize(50, 50)
+            label.setPixmap(foto2)
+            label.adjustSize()
+            label.move(myImageEvent.x, myImageEvent.y)
+        else:
+            label.close()
+            label.destroy()
 
     def keyPressEvent(self, QKeyEvent):
         if QKeyEvent.key() == QtCore.Qt.Key_Return:
             print("Presionarion ENTER!")
-        elif QKeyEvent.key() == QtCore.Qt.Key_Space:
-            print('Presione espacio')
-        elif QKeyEvent.key() == QtCore.Qt.Key_Escape:
-            QtCore.QCoreApplication.instance().quit()
+        elif QKeyEvent.key() == QtCore.Qt.Key_Escape or QKeyEvent.key() == QtCore.Qt.Key_P or QKeyEvent.key() == QtCore.Qt.Key_Space:
+            self.esc()
             print('Presione esc')
         elif QKeyEvent.key() == QtCore.Qt.Key_A or QKeyEvent.key() == QtCore.Qt.Key_Left or QKeyEvent.key() == QtCore.Qt.Key_1:
-            self.mover(1, 4 / 5)
+            if self.tiempo == 0:
+                self.mover(1, 4 / 5)
             print('Presione A o izq')
         elif QKeyEvent.key() == QtCore.Qt.Key_S or QKeyEvent.key() == QtCore.Qt.Key_Down or QKeyEvent.key() == QtCore.Qt.Key_5:
-            self.mover(-1, -1 / 2)
+            if self.tiempo == 0:
+                self.mover(-1, -1 / 2)
             print('Presione S o abajo')
         elif QKeyEvent.key() == QtCore.Qt.Key_D or QKeyEvent.key() == QtCore.Qt.Key_Right or QKeyEvent.key() == QtCore.Qt.Key_3:
-            self.mover(1, -4 / 5)
+            if self.tiempo == 0:
+                self.mover(1, -4 / 5)
             print('Presione D o derecha')
         elif QKeyEvent.key() == QtCore.Qt.Key_W or QKeyEvent.key() == QtCore.Qt.Key_Up or QKeyEvent.key() == QtCore.Qt.Key_2:
-            self.mover(-1, 1)
+            if self.tiempo == 0:
+                self.mover(-1, 1)
             print('Presione W o arriba')
+
+    def pausa(self):
+        if self.tiempo != 0:
+            self.tiempo = 0
+        else:
+            self.tiempo = 1
 
     def mover(self, sentido, numero):
         if sentido == 1:
@@ -155,7 +178,7 @@ class MainWindow(form[0], form[1]):
                 self.posicion = [x, y]
                 self.actualizar_mapa(int(x), int(y), self)
                 self.label_2.move(x, y)
-            elif vacio=='fuera':
+            elif vacio == 'fuera':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
             elif vacio.tipo == 'zombie':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
@@ -212,96 +235,129 @@ class MainWindow(form[0], form[1]):
                 self.posicion = [x, y]
                 self.actualizar_mapa(int(x), int(y), self)
                 self.label_2.move(x, y)
-            elif vacio=='fuera':
+            elif vacio == 'fuera':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
             elif vacio.tipo == 'zombie':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.buttons() == QtCore.Qt.LeftButton:
-            self.bala=DisparoTread(self)
-            print('aquiiiiiiiiiiiiiiiiiii')
-            self.bala.start()
+            if self.tiempo == 0:
+                self.bala = DisparoTread(self)
+                self.bala.start()
             print("Hizo click izquierdo!")
         elif QMouseEvent.buttons() == QtCore.Qt.RightButton:
+            print(self.cronometro.time)
             print("Hizo click derecho!")
 
+    def tiempo_aparicion_zombies(self):
+        tiempo=self.cronometro.time.split(':')
+        minutos=int(tiempo[1])+1
+        if int(tiempo[2])%3==0:
+            return minutos
+        return False
+
     def mouseMoveEvent(self, QMouseEvent):
-        boton = QMouseEvent.buttons()
-        x = QMouseEvent.x()
-        y = QMouseEvent.y()
-        self.label_3.move(x, y)
-        dif_x = self.posicion[0] - x
-        dif_y = self.posicion[1] - y
-        tg = abs(dif_y) / abs(dif_x)
-        angulo = degrees(atan(tg))
-        self.angulo = angulo
-        if dif_x >= 0 and dif_y >= 0:
-            self.puntero = [1, 1]
-            if angulo > 60:
-                foto = QtGui.QPixmap('personaje/p_arriba_q.png')
-                self.imagen = 'personaje/p_arriba_q'
-                self.label_2.setPixmap(foto)
-            elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('personaje/p_dizq_q.png')
-                self.imagen = 'personaje/p_dizq_q'
-                self.label_2.setPixmap(foto)
-            elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('personaje/p_izq_q.png')
-                self.imagen = 'personaje/p_izq_q'
-                self.label_2.setPixmap(foto)
-        elif dif_y < 0 <= dif_x:
-            self.puntero = [1, -1]
-            if angulo > 60:
-                foto = QtGui.QPixmap('personaje/p_abajo_q.png')
-                self.imagen = 'personaje/p_abajo_q'
-                self.label_2.setPixmap(foto)
-            elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('personaje/p_dabajo_q.png')
-                self.imagen = 'personaje/p_dabajo_q'
-                self.label_2.setPixmap(foto)
-            elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('personaje/p_izq_q.png')
-                self.imagen = 'personaje/p_izq_q'
-                self.label_2.setPixmap(foto)
-        elif dif_x < 0 and dif_y < 0:
-            self.puntero = [-1, -1]
-            if angulo > 60:
-                foto = QtGui.QPixmap('personaje/p_abajo_q.png')
-                self.imagen = 'personaje/p_abajo_q'
-                self.label_2.setPixmap(foto)
-            elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('personaje/p_ddere_q.png')
-                self.imagen = 'personaje/p_ddere_q'
-                self.label_2.setPixmap(foto)
-            elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('personaje/p_dere_q.png')
-                self.imagen = 'personaje/p_dere_q'
-                self.label_2.setPixmap(foto)
-        elif dif_x < 0 < dif_y:
-            self.puntero = [-1, 1]
-            if angulo > 60:
-                foto = QtGui.QPixmap('personaje/p_arriba_q.png')
-                self.imagen = 'personaje/p_arriba_q'
-                self.label_2.setPixmap(foto)
-            elif 30 <= angulo <= 60:
-                foto = QtGui.QPixmap('personaje/p_darriba_q.png')
-                self.imagen = 'personaje/p_darriba_q'
-                self.label_2.setPixmap(foto)
-            elif 0 <= angulo <= 30:
-                foto = QtGui.QPixmap('personaje/p_dere_q.png')
-                self.imagen = 'personaje/p_dere_q'
-                self.label_2.setPixmap(foto)
-        print(self.puntero)
+        if self.tiempo == 0:
+            boton = QMouseEvent.buttons()
+            x = QMouseEvent.x()
+            y = QMouseEvent.y()
+            self.label_3.move(x, y)
+            dif_x = self.posicion[0] - x
+            dif_y = self.posicion[1] - y
+            tg = 0
+            try:
+                tg = abs(dif_y) / abs(dif_x)
+            except ZeroDivisionError:
+                tg = 0
+            angulo = degrees(atan(tg))
+            self.angulo = angulo
+            if dif_x >= 0 and dif_y >= 0:
+                self.puntero = [1, 1]
+                if angulo > 60:
+                    foto = QtGui.QPixmap('personaje/p_arriba_q.png')
+                    self.imagen = 'personaje/p_arriba_q'
+                    self.label_2.setPixmap(foto)
+                elif 30 <= angulo <= 60:
+                    foto = QtGui.QPixmap('personaje/p_dizq_q.png')
+                    self.imagen = 'personaje/p_dizq_q'
+                    self.label_2.setPixmap(foto)
+                elif 0 <= angulo <= 30:
+                    foto = QtGui.QPixmap('personaje/p_izq_q.png')
+                    self.imagen = 'personaje/p_izq_q'
+                    self.label_2.setPixmap(foto)
+            elif dif_y < 0 <= dif_x:
+                self.puntero = [1, -1]
+                if angulo > 60:
+                    foto = QtGui.QPixmap('personaje/p_abajo_q.png')
+                    self.imagen = 'personaje/p_abajo_q'
+                    self.label_2.setPixmap(foto)
+                elif 30 <= angulo <= 60:
+                    foto = QtGui.QPixmap('personaje/p_dabajo_q.png')
+                    self.imagen = 'personaje/p_dabajo_q'
+                    self.label_2.setPixmap(foto)
+                elif 0 <= angulo <= 30:
+                    foto = QtGui.QPixmap('personaje/p_izq_q.png')
+                    self.imagen = 'personaje/p_izq_q'
+                    self.label_2.setPixmap(foto)
+            elif dif_x < 0 and dif_y < 0:
+                self.puntero = [-1, -1]
+                if angulo > 60:
+                    foto = QtGui.QPixmap('personaje/p_abajo_q.png')
+                    self.imagen = 'personaje/p_abajo_q'
+                    self.label_2.setPixmap(foto)
+                elif 30 <= angulo <= 60:
+                    foto = QtGui.QPixmap('personaje/p_ddere_q.png')
+                    self.imagen = 'personaje/p_ddere_q'
+                    self.label_2.setPixmap(foto)
+                elif 0 <= angulo <= 30:
+                    foto = QtGui.QPixmap('personaje/p_dere_q.png')
+                    self.imagen = 'personaje/p_dere_q'
+                    self.label_2.setPixmap(foto)
+            elif dif_x < 0 < dif_y:
+                self.puntero = [-1, 1]
+                if angulo > 60:
+                    foto = QtGui.QPixmap('personaje/p_arriba_q.png')
+                    self.imagen = 'personaje/p_arriba_q'
+                    self.label_2.setPixmap(foto)
+                elif 30 <= angulo <= 60:
+                    foto = QtGui.QPixmap('personaje/p_darriba_q.png')
+                    self.imagen = 'personaje/p_darriba_q'
+                    self.label_2.setPixmap(foto)
+                elif 0 <= angulo <= 30:
+                    foto = QtGui.QPixmap('personaje/p_dere_q.png')
+                    self.imagen = 'personaje/p_dere_q'
+                    self.label_2.setPixmap(foto)
+            print(self.puntero)
 
-        print(int(dif_x), int(dif_y))
+            print(int(dif_x), int(dif_y))
 
-        # def closeEvent(self, QCloseEvent):
-        #     ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        #     if ans == QtGui.QMessageBox.Yes:
-        #         QCloseEvent.accept()
-        #     else:
-        #         QCloseEvent.ignore()
+    def closeEvent(self, QCloseEvent):
+        if self.tiempo == 0:
+            self.cronometro.timer.stop()
+        self.pausa()
+        ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?",
+                                         QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        if ans == QtGui.QMessageBox.Yes:
+            QtCore.QCoreApplication.instance().quit()
+        else:
+            self.cronometro.Start()
+            self.pausa()
+            QCloseEvent.ignore()
+
+    def esc(self):
+        print('apretaron salir')
+        if self.tiempo == 0:
+            self.cronometro.timer.stop()
+            self.paus.show()
+        self.pausa()
+
+
+        # if ans == QtGui.QMessageBox.Yes:
+        #     QtCore.QCoreApplication.instance().quit()
+        # else:
+        #     self.cronometro.Start()
+        #     self.pausa()
 
 # if __name__ == '__main__':
 #     app = QtGui.QApplication([])
