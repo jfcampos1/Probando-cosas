@@ -16,6 +16,7 @@ class Instrucciones(form[0], form[1]):
     def botonatras(self):
         self.hide()
         self.inicio.show()
+        self.inicio.mediaObject.play()
 
     def botonsalir(self):
         ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?",

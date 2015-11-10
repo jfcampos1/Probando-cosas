@@ -51,6 +51,10 @@ class MainWindow(form[0], form[1]):
         self.paus = Pausa(self, self.inicio, self.cronometro)
         self.prox_supply = 0
         self.prox_supply_ocupado = False
+        self.score=0
+        self.zombies_muertos=0
+        self.pushButton.clicked.connect(self.esc)
+
 
     def actualizar_mapa(self, x, y, objeto):
         for i in range(y, y + 50):
@@ -102,6 +106,7 @@ class MainWindow(form[0], form[1]):
         self.label_5.setText(str(self.vida))
         self.barra2.setValue(self.balas)
         self.label_4.setText(str(self.balas))
+        self.label_7.setText(str(self.score))
         if myImageEvent.vida is True:
             foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
             label.resize(50, 50)
@@ -109,6 +114,10 @@ class MainWindow(form[0], form[1]):
             label.adjustSize()
             label.move(myImageEvent.x, myImageEvent.y)
         else:
+            self.zombies_muertos+=1
+            tiempo = self.cronometro.time.split(':')
+            minutos = int(tiempo[1]) + 1
+            self.score=minutos*self.zombies_muertos+int(tiempo[2])*self.zombies_muertos
             label.close()
             label.destroy()
 
@@ -276,6 +285,7 @@ class MainWindow(form[0], form[1]):
     def tiempo_aparicion_zombies(self):
         tiempo = self.cronometro.time.split(':')
         minutos = int(tiempo[1]) + 1
+        self.score=minutos*self.zombies_muertos+int(tiempo[2])*self.zombies_muertos
         if int(tiempo[2]) % 3 == 0:
             return minutos
         return False

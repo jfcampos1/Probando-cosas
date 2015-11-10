@@ -27,6 +27,7 @@ class Mapa(form[0], form[1]):
     def botonatras(self):
         self.hide()
         self.inicio.show()
+        self.mediaObject.play()
 
     def botonmapa1(self):
         mapa = 'pasto.png'

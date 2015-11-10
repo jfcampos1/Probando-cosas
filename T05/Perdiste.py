@@ -9,8 +9,6 @@ class Perdiste(form[0], form[1]):
     def __init__(self,ventana,inicio,cronometro):
         super().__init__()
         self.setupUi(self)
-        # foto=QtGui.QPixmap('fondo2.png')
-        # self.label.setPixmap(foto)
         self.pushButton.setText('GAME OVER')
         self.pushButton.setStyleSheet("background-color: transparent")
         self.pushButton_2.clicked.connect(self.botonreiniciar)
@@ -21,12 +19,13 @@ class Perdiste(form[0], form[1]):
         self.inicio=inicio
         self.cronometro=cronometro
         self.setWindowTitle("GAME OVER")
+        self.label_2.setText('Score')
+        self.label.setText(str(self.ventana.score))
 
     def botonjugar(self):
         self.ventana.pausa()
         self.hide()
         self.cronometro.Start()
-        print('apretaron jugar')
 
     def botonmenu(self):
         self.ventana.hide()
@@ -34,7 +33,7 @@ class Perdiste(form[0], form[1]):
         self.cronometro.hide()
         self.cronometro.Reset()
         self.inicio.show()
-        print('apretaron instrucciones')
+        self.mediaObject.play()
 
     def botonreiniciar(self):
         self.hide()
@@ -44,7 +43,6 @@ class Perdiste(form[0], form[1]):
         self.inicio.mapa.reinicio(self.ventana.fondo)
 
     def botonsalir(self):
-        print('apretaron salir')
         ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if ans == QtGui.QMessageBox.Yes:
             QtCore.QCoreApplication.instance().quit()
@@ -53,10 +51,8 @@ class Perdiste(form[0], form[1]):
     def keyPressEvent(self, QKeyEvent):
         if QKeyEvent.key() == QtCore.Qt.Key_Space:
             self.botonreiniciar()
-            print('Presione espacio')
-        # elif QKeyEvent.key() == QtCore.Qt.Key_Escape:
-        #     self.botonsalir()
-        #     print('Presione esc')
+        elif QKeyEvent.key() == QtCore.Qt.Key_Escape:
+            self.botonsalir()
 
     def closeEvent(self, QCloseEvent):
             QCloseEvent.accept()

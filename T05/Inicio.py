@@ -1,6 +1,6 @@
 __author__ = 'JuanFrancisco'
 from PyQt4 import QtGui, uic, QtCore
-
+from PyQt4.phonon import Phonon
 from Intrucciones import Instrucciones
 from mapas import Mapa
 
@@ -18,14 +18,24 @@ class Inicio(form[0], form[1]):
         self.pushButton_2.clicked.connect(self.botonsalir)
         self.instrucciones = Instrucciones(self)
         self.mapa = Mapa(self)
+        self.playsong()
 
     def botonjugar(self):
         self.hide()
         self.mapa.show()
+        self.mediaObject.stop()
+
+    def playsong(self):
+        self.mediaObject = Phonon.MediaObject(self)
+        self.audioOutput = Phonon.AudioOutput(Phonon.MusicCategory, self)
+        Phonon.createPath(self.mediaObject, self.audioOutput)
+        self.mediaObject.setCurrentSource(Phonon.MediaSource('inicio.mp3'))
+        self.mediaObject.play()
 
     def botoninstrucciones(self):
         self.hide()
         self.instrucciones.show()
+        self.mediaObject.stop()
 
     def botonsalir(self):
         ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?",
