@@ -27,7 +27,7 @@ class Mapa(form[0], form[1]):
     def botonatras(self):
         self.hide()
         self.inicio.show()
-        self.mediaObject.play()
+        self.inicio.mediaObject.play()
 
     def botonmapa1(self):
         mapa = 'pasto.png'
@@ -35,6 +35,7 @@ class Mapa(form[0], form[1]):
         self.juego = MainWindow(mapa, self.inicio)
         self.crear_zombies_iniciales(self.juego)
         self.juego.show()
+        self.inicio.mediaObject.stop()
 
     def botonmapa2(self):
         mapa = 'fondo.png'
@@ -42,6 +43,7 @@ class Mapa(form[0], form[1]):
         self.juego = MainWindow(mapa, self.inicio)
         self.crear_zombies_iniciales(self.juego)
         self.juego.show()
+        self.inicio.mediaObject.stop()
 
     def reinicio(self, mapa):
         self.juego = MainWindow(mapa, self.inicio)

@@ -33,7 +33,7 @@ class Perdiste(form[0], form[1]):
         self.cronometro.hide()
         self.cronometro.Reset()
         self.inicio.show()
-        self.mediaObject.play()
+        self.inicio.mediaObject.play()
 
     def botonreiniciar(self):
         self.hide()

@@ -1,7 +1,7 @@
 __author__ = 'JuanFrancisco'
 from math import atan, degrees, radians, cos, sin
 from random import uniform
-
+from PyQt4.phonon import Phonon
 from PyQt4 import QtGui, uic, QtCore
 
 from Pausa import Pausa
@@ -54,6 +54,7 @@ class MainWindow(form[0], form[1]):
         self.score=0
         self.zombies_muertos=0
         self.pushButton.clicked.connect(self.esc)
+        self.playsong()
 
 
     def actualizar_mapa(self, x, y, objeto):
@@ -99,6 +100,19 @@ class MainWindow(form[0], form[1]):
                 if self.mapa[i][n] != '':
                     return self.mapa[i][n]
         return True
+    def playsong(self):
+        self.media = Phonon.MediaObject(self)
+        self.audioOutput = Phonon.AudioOutput(Phonon.MusicCategory, self)
+        Phonon.createPath(self.media, self.audioOutput)
+        self.media.setCurrentSource(Phonon.MediaSource('musicajuegos.mp3'))
+        self.media.play()
+
+    def playdisparo(self):
+        self.media2 = Phonon.MediaObject(self)
+        self.audioOutput = Phonon.AudioOutput(Phonon.MusicCategory, self)
+        Phonon.createPath(self.media2, self.audioOutput)
+        self.media2.setCurrentSource(Phonon.MediaSource('disparo.mp3'))
+        self.media2.play()
 
     def actualizarImagen(self, myImageEvent):
         label = myImageEvent.image
@@ -278,6 +292,7 @@ class MainWindow(form[0], form[1]):
         if QMouseEvent.buttons() == QtCore.Qt.LeftButton:
             if self.tiempo == 0:
                 if self.balas != 0:
+                    self.playdisparo()
                     self.bala = DisparoTread(self)
                     self.bala.start()
                     self.balas -= 1

@@ -23,7 +23,6 @@ class Inicio(form[0], form[1]):
     def botonjugar(self):
         self.hide()
         self.mapa.show()
-        self.mediaObject.stop()
 
     def playsong(self):
         self.mediaObject = Phonon.MediaObject(self)
@@ -35,7 +34,6 @@ class Inicio(form[0], form[1]):
     def botoninstrucciones(self):
         self.hide()
         self.instrucciones.show()
-        self.mediaObject.stop()
 
     def botonsalir(self):
         ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?",
