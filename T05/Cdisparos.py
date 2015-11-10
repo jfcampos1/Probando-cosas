@@ -6,19 +6,13 @@ from PyQt4 import QtGui, QtCore
 
 
 class MoveMyDisparoEvent:
-    """
-    Las instancias de esta clase
-    contienen la informacion necesaria
-    para que la ventana actualice
-    la posicion de la imagen
-    """
 
-    def __init__(self, image, x, y, imagen,vida):
+    def __init__(self, image, x, y, imagen, vida):
         self.imagen = imagen
         self.image = image
         self.x = x
         self.y = y
-        self.vida=vida
+        self.vida = vida
 
 
 class Disparo:
@@ -28,7 +22,7 @@ class Disparo:
         self.posicion = [x, y]
         self.imagen = imagen
         self.vida = True
-        self.vida2=True
+        self.vida2 = True
         self.tipo = 'disparo'
 
     def mover(self, parent):
@@ -71,34 +65,22 @@ class Disparo:
         if vacio is True:
             self.posicion = [x, y]
             parent.actualizar_mapa_disparo(int(x), int(y), self, False)
-        elif vacio=='fuera':
-            self.vida=False
+        elif vacio == 'fuera':
+            self.vida = False
             parent.actualizar_mapa_disparo(int(self.posicion[0]), int(self.posicion[1]), self, True)
+        elif vacio.tipo == 'jugador' or vacio.tipo == 'supply':
+            self.posicion = [x, y]
+            parent.actualizar_mapa_disparo(int(x), int(y), self, False)
         elif vacio.tipo == 'zombie':
-            print('diste a un zombiee')
             parent.actualizar_mapa_disparo(int(self.posicion[0]), int(self.posicion[1]), self, True)
             self.vida = False
             vacio.vida = False
 
 
-
-
 class DisparoTread(QtCore.QThread):
     trigger = QtCore.pyqtSignal(MoveMyDisparoEvent)
-    # pyqtSignal recibe *args que le indican
-    # cuales son los tipos de argumentos que seran enviados
-    # en este caso, solo se enviara un argumento:
-    #   objeto clase MoveMyImageEvent
 
     def __init__(self, parent):
-        """
-        Un Character es un QThread que movera una imagen
-        en una ventana. El __init__ recibe los parametros:
-            parent: ventana
-            x e y: posicion inicial en la ventana
-            wait: cuantos segundos esperar
-                antes de empezar a mover su imagen
-        """
         super().__init__()
         self.ventana = parent
         self.direccion = parent.puntero
@@ -177,17 +159,20 @@ class DisparoTread(QtCore.QThread):
             self.bala.mover(self.ventana)
         # El trigger emite su senhal a la ventana
         self.trigger.emit(MoveMyDisparoEvent(
-            self.image, self.bala.posicion[0], self.bala.posicion[1], self.bala.imagen,self.bala.vida2
+            self.image, self.bala.posicion[0], self.bala.posicion[1], self.bala.imagen, self.bala.vida2
         ))
 
     def run(self):
         a = True
         while a is True:
             time.sleep(0.04)  # con esto edito la velocidad de los disparos
-            while self.ventana.tiempo!=0:
+            while self.ventana.tiempo != 0:
                 time.sleep(self.ventana.tiempo)
             if self.bala.vida is False:
                 a = False
                 time.sleep(0.1)
-                self.bala.vida2=False
+                self.bala.vida2 = False
+            if self.ventana.vida == 0:
+                a = False
+                self.bala.vida2 = False
             self.position = (self.numero, self.numero2)

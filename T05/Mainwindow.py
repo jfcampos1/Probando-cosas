@@ -1,7 +1,10 @@
 __author__ = 'JuanFrancisco'
 from math import atan, degrees, radians, cos, sin
-from Pausa import Pausa
+from random import uniform
+
 from PyQt4 import QtGui, uic, QtCore
+
+from Pausa import Pausa
 from Ctiempo import main
 from Cdisparos import DisparoTread
 
@@ -9,11 +12,12 @@ form = uic.loadUiType("juego.ui")
 
 
 class MainWindow(form[0], form[1]):
-    def __init__(self):
+    def __init__(self, fondo, inicio):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Survival Game")
-        foto = QtGui.QPixmap('pasto.png')
+        self.fondo = fondo
+        foto = QtGui.QPixmap(fondo)
         self.label.setPixmap(foto)
         self.label_2.resize(50, 50)
         foto2 = QtGui.QPixmap('personaje/p_arriba_q.png')
@@ -24,8 +28,8 @@ class MainWindow(form[0], form[1]):
         for i in range(600):
             mapa.append([''] * 800)
         self.mapa = mapa
-        self.label_3.setPixmap(puntero)
-        self.label_3.move(100, 200)
+        # self.label_3.setPixmap(puntero)
+        # self.label_3.move(100, 200)
         self.posicion = [300, 200]
         self.puntero = [0, 0]
         self.angulo = 0
@@ -33,19 +37,28 @@ class MainWindow(form[0], form[1]):
         self.tipo = 'jugador'
         self.actualizar_mapa(300, 200, self)
         self.vida = 100
+        self.balas = 20
+        self.label_4.setText(str(self.balas))
         self.label_5.setText(str(self.vida))
+        self.barra2 = self.progressBar_2
         self.tiempo = 0
         self.cronometro = main(self)
         self.cronometro.show()
         self.cronometro.Start()
         self.barra = self.progressBar
         self.setGeometry(300, 100, 800, 600)
-        self.paus=Pausa(self)
+        self.inicio = inicio
+        self.paus = Pausa(self, self.inicio, self.cronometro)
+        self.prox_supply = 0
+        self.prox_supply_ocupado = False
 
     def actualizar_mapa(self, x, y, objeto):
         for i in range(y, y + 50):
             for n in range(x, x + 50):
-                self.mapa[i][n] = objeto
+                if i > len(self.mapa) - 1 or n > len(self.mapa[0]) - 1 or 0 > i or 0 > n:
+                    pass
+                else:
+                    self.mapa[i][n] = objeto
 
     def actualizar_mapa_disparo(self, x, y, objeto, borrar):
         for i in range(y, y + 20):
@@ -85,6 +98,10 @@ class MainWindow(form[0], form[1]):
 
     def actualizarImagen(self, myImageEvent):
         label = myImageEvent.image
+        self.barra.setValue(self.vida)
+        self.label_5.setText(str(self.vida))
+        self.barra2.setValue(self.balas)
+        self.label_4.setText(str(self.balas))
         if myImageEvent.vida is True:
             foto2 = QtGui.QPixmap('{}.png'.format(myImageEvent.imagen))
             label.resize(50, 50)
@@ -109,26 +126,26 @@ class MainWindow(form[0], form[1]):
 
     def keyPressEvent(self, QKeyEvent):
         if QKeyEvent.key() == QtCore.Qt.Key_Return:
-            print("Presionarion ENTER!")
-        elif QKeyEvent.key() == QtCore.Qt.Key_Escape or QKeyEvent.key() == QtCore.Qt.Key_P or QKeyEvent.key() == QtCore.Qt.Key_Space:
+            pass
+        elif QKeyEvent.key() == QtCore.Qt.Key_Escape or QKeyEvent.key() == QtCore.Qt.Key_P or \
+                        QKeyEvent.key() == QtCore.Qt.Key_Space:
             self.esc()
-            print('Presione esc')
-        elif QKeyEvent.key() == QtCore.Qt.Key_A or QKeyEvent.key() == QtCore.Qt.Key_Left or QKeyEvent.key() == QtCore.Qt.Key_1:
+        elif QKeyEvent.key() == QtCore.Qt.Key_A or QKeyEvent.key() == QtCore.Qt.Key_Left or \
+                        QKeyEvent.key() == QtCore.Qt.Key_1:
             if self.tiempo == 0:
                 self.mover(1, 4 / 5)
-            print('Presione A o izq')
-        elif QKeyEvent.key() == QtCore.Qt.Key_S or QKeyEvent.key() == QtCore.Qt.Key_Down or QKeyEvent.key() == QtCore.Qt.Key_5:
+        elif QKeyEvent.key() == QtCore.Qt.Key_S or QKeyEvent.key() == QtCore.Qt.Key_Down or \
+                        QKeyEvent.key() == QtCore.Qt.Key_5:
             if self.tiempo == 0:
                 self.mover(-1, -1 / 2)
-            print('Presione S o abajo')
-        elif QKeyEvent.key() == QtCore.Qt.Key_D or QKeyEvent.key() == QtCore.Qt.Key_Right or QKeyEvent.key() == QtCore.Qt.Key_3:
+        elif QKeyEvent.key() == QtCore.Qt.Key_D or QKeyEvent.key() == QtCore.Qt.Key_Right or \
+                        QKeyEvent.key() == QtCore.Qt.Key_3:
             if self.tiempo == 0:
                 self.mover(1, -4 / 5)
-            print('Presione D o derecha')
-        elif QKeyEvent.key() == QtCore.Qt.Key_W or QKeyEvent.key() == QtCore.Qt.Key_Up or QKeyEvent.key() == QtCore.Qt.Key_2:
+        elif QKeyEvent.key() == QtCore.Qt.Key_W or QKeyEvent.key() == QtCore.Qt.Key_Up or \
+                        QKeyEvent.key() == QtCore.Qt.Key_2:
             if self.tiempo == 0:
                 self.mover(-1, 1)
-            print('Presione W o arriba')
 
     def pausa(self):
         if self.tiempo != 0:
@@ -180,6 +197,10 @@ class MainWindow(form[0], form[1]):
                 self.label_2.move(x, y)
             elif vacio == 'fuera':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
+            elif vacio.tipo == 'supply':
+                self.posicion = [x, y]
+                self.actualizar_mapa(int(x), int(y), self)
+                self.label_2.move(x, y)
             elif vacio.tipo == 'zombie':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
         elif sentido == -1:
@@ -237,32 +258,40 @@ class MainWindow(form[0], form[1]):
                 self.label_2.move(x, y)
             elif vacio == 'fuera':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
+            elif vacio.tipo == 'supply':
+                self.posicion = [x, y]
+                self.actualizar_mapa(int(x), int(y), self)
+                self.label_2.move(x, y)
             elif vacio.tipo == 'zombie':
                 self.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.buttons() == QtCore.Qt.LeftButton:
             if self.tiempo == 0:
-                self.bala = DisparoTread(self)
-                self.bala.start()
-            print("Hizo click izquierdo!")
-        elif QMouseEvent.buttons() == QtCore.Qt.RightButton:
-            print(self.cronometro.time)
-            print("Hizo click derecho!")
+                if self.balas != 0:
+                    self.bala = DisparoTread(self)
+                    self.bala.start()
+                    self.balas -= 1
 
     def tiempo_aparicion_zombies(self):
-        tiempo=self.cronometro.time.split(':')
-        minutos=int(tiempo[1])+1
-        if int(tiempo[2])%3==0:
+        tiempo = self.cronometro.time.split(':')
+        minutos = int(tiempo[1]) + 1
+        if int(tiempo[2]) % 3 == 0:
             return minutos
         return False
+
+    def aparicion_suplementos(self):
+        if self.prox_supply_ocupado is False:
+            siguiente_tiempo = int(uniform(5, 20))
+            self.prox_supply += siguiente_tiempo
+            self.prox_supply_ocupado = True
 
     def mouseMoveEvent(self, QMouseEvent):
         if self.tiempo == 0:
             boton = QMouseEvent.buttons()
             x = QMouseEvent.x()
             y = QMouseEvent.y()
-            self.label_3.move(x, y)
+            # self.label_3.move(x, y)
             dif_x = self.posicion[0] - x
             dif_y = self.posicion[1] - y
             tg = 0
@@ -328,9 +357,6 @@ class MainWindow(form[0], form[1]):
                     foto = QtGui.QPixmap('personaje/p_dere_q.png')
                     self.imagen = 'personaje/p_dere_q'
                     self.label_2.setPixmap(foto)
-            print(self.puntero)
-
-            print(int(dif_x), int(dif_y))
 
     def closeEvent(self, QCloseEvent):
         if self.tiempo == 0:
@@ -346,22 +372,7 @@ class MainWindow(form[0], form[1]):
             QCloseEvent.ignore()
 
     def esc(self):
-        print('apretaron salir')
         if self.tiempo == 0:
             self.cronometro.timer.stop()
             self.paus.show()
         self.pausa()
-
-
-        # if ans == QtGui.QMessageBox.Yes:
-        #     QtCore.QCoreApplication.instance().quit()
-        # else:
-        #     self.cronometro.Start()
-        #     self.pausa()
-
-# if __name__ == '__main__':
-#     app = QtGui.QApplication([])
-#     app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
-#     form = MainWindow()
-#     form.show()
-#     app.exec_()

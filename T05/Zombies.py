@@ -6,7 +6,6 @@ import time
 from PyQt4 import QtGui, QtCore
 
 
-
 class MoveMyImageEvent:
     """
     Las instancias de esta clase
@@ -15,12 +14,13 @@ class MoveMyImageEvent:
     la posicion de la imagen
     """
 
-    def __init__(self, image, x, y, imagen,vida):
+    def __init__(self, image, x, y, imagen, vida):
         self.imagen = imagen
         self.image = image
         self.x = x
         self.y = y
-        self.vida=vida
+        self.vida = vida
+
 
 class Zombie:
     def __init__(self, x, y, imagen):
@@ -31,7 +31,7 @@ class Zombie:
         self.vida = True
         self.tipo = 'zombie'
         self.ataco = False
-        self.vida2=True
+        self.vida2 = True
 
     def mover(self, parent):
         if self.ataco is True:
@@ -42,11 +42,11 @@ class Zombie:
         y1 = self.jugador[1]
         dif_x = self.posicion[0] - x1
         dif_y = self.posicion[1] - y1
-        tg=0
+        tg = 0
         try:
             tg = abs(dif_y) / abs(dif_x)
         except ZeroDivisionError:
-            tg=0
+            tg = 0
         angulo = degrees(atan(tg))
         self.angulo = angulo
         x = 0
@@ -111,13 +111,14 @@ class Zombie:
             if vacio is True:
                 self.posicion = [x, y]
                 parent.actualizar_mapa(int(x), int(y), self)
+            elif vacio.tipo == 'supply':
+                self.posicion = [x, y]
+                parent.actualizar_mapa(int(x), int(y), self)
             elif vacio.tipo == 'zombie':
                 parent.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
             elif vacio.tipo == 'jugador':
-                print('atacadoooo')
-                parent.vida -= 10
-                parent.barra.setValue(parent.vida)
-                parent.label_5.setText(str(parent.vida))
+                if parent.vida > 0:
+                    parent.vida -= 10
                 self.imagen = self.imagen[:-1] + 'a'
                 parent.actualizar_mapa(int(self.posicion[0]), int(self.posicion[1]), self)
                 self.ataco = True
@@ -136,20 +137,8 @@ class Zombie:
 
 class Character(QtCore.QThread):
     trigger = QtCore.pyqtSignal(MoveMyImageEvent)
-    # pyqtSignal recibe *args que le indican
-    # cuales son los tipos de argumentos que seran enviados
-    # en este caso, solo se enviara un argumento:
-    #   objeto clase MoveMyImageEvent
 
     def __init__(self, parent, path):
-        """
-        Un Character es un QThread que movera una imagen
-        en una ventana. El __init__ recibe los parametros:
-            parent: ventana
-            x e y: posicion inicial en la ventana
-            wait: cuantos segundos esperar
-                antes de empezar a mover su imagen
-        """
         super().__init__()
         self.ventana = parent
         self.image = QtGui.QLabel(parent)
@@ -196,25 +185,24 @@ class Character(QtCore.QThread):
     def position(self, value):
         self.__position = value
         self.zombie.mover(self.ventana)
-
-
         # El trigger emite su senhal a la ventana
         self.trigger.emit(MoveMyImageEvent(
-            self.image, self.zombie.posicion[0], self.zombie.posicion[1], self.zombie.imagen,self.zombie.vida2
+            self.image, self.zombie.posicion[0], self.zombie.posicion[1], self.zombie.imagen, self.zombie.vida2
         ))
 
     def run(self):
         a = True
         while a is True:
             time.sleep(0.1)  # con esto edito la velocidad de los zombies
-            while self.ventana.tiempo!=0:
+            while self.ventana.tiempo != 0:
                 time.sleep(self.ventana.tiempo)
             self.position = (self.numero, self.numero2)
             if self.zombie.vida is False:
-                a=False
+                a = False
                 time.sleep(2)
-                self.zombie.vida2=False
+                self.zombie.vida2 = False
                 self.position = (self.numero, self.numero2)
-
-
-
+            if self.ventana.vida <= 0:
+                a = False
+                self.zombie.vida2 = False
+                self.position = (self.numero, self.numero2)
