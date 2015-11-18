@@ -44,6 +44,7 @@ class Pausa(form[0], form[1]):
         ans = QtGui.QMessageBox.question(self, "Zombie", "Salir del juego?",
                                          QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if ans == QtGui.QMessageBox.Yes:
+            self.ventana.media.stop()
             QtCore.QCoreApplication.instance().quit()
 
     def keyPressEvent(self, QKeyEvent):

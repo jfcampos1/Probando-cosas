@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>797</width>
-    <height>600</height>
+    <width>820</width>
+    <height>712</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -47,28 +47,6 @@
       <width>50</width>
       <height>50</height>
      </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>170</y>
-      <width>21</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>ArrowCursor</cursorShape>
     </property>
     <property name="mouseTracking">
      <bool>true</bool>
@@ -196,12 +174,25 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>510</y>
-      <width>71</width>
+      <x>0</x>
+      <y>592</y>
+      <width>800</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>725</x>
+      <y>632</y>
+      <width>61</width>
       <height>31</height>
      </rect>
     </property>
@@ -212,48 +203,49 @@
       <bold>true</bold>
      </font>
     </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Score</string>
+     <string>0</string>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>540</y>
-      <width>71</width>
+      <x>725</x>
+      <y>602</y>
+      <width>61</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
+      <pointsize>15</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+border-color: rgb(255, 0, 0);</string>
     </property>
     <property name="text">
-     <string>0</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <string>Score</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>550</y>
-      <width>81</width>
+      <y>640</y>
+      <width>75</width>
       <height>31</height>
      </rect>
     </property>
@@ -267,7 +259,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>797</width>
+     <width>820</width>
      <height>21</height>
     </rect>
    </property>

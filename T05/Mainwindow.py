@@ -23,13 +23,12 @@ class MainWindow(form[0], form[1]):
         foto2 = QtGui.QPixmap('personaje/p_arriba_q.png')
         self.imagen = 'personaje/p_arriba_q'
         self.label_2.setPixmap(foto2)
-        puntero = QtGui.QPixmap('puntero.png')
+        barra = QtGui.QPixmap('black.png')
         mapa = []
         for i in range(600):
             mapa.append([''] * 800)
         self.mapa = mapa
-        # self.label_3.setPixmap(puntero)
-        # self.label_3.move(100, 200)
+        self.label_3.setPixmap(barra)
         self.posicion = [300, 200]
         self.puntero = [0, 0]
         self.angulo = 0
@@ -46,7 +45,7 @@ class MainWindow(form[0], form[1]):
         self.cronometro.show()
         self.cronometro.Start()
         self.barra = self.progressBar
-        self.setGeometry(300, 100, 800, 600)
+        self.setGeometry(300, 50, 800, 700)
         self.inicio = inicio
         self.paus = Pausa(self, self.inicio, self.cronometro)
         self.prox_supply = 0
@@ -54,7 +53,6 @@ class MainWindow(form[0], form[1]):
         self.score=0
         self.zombies_muertos=0
         self.pushButton.clicked.connect(self.esc)
-        self.playsong()
 
 
     def actualizar_mapa(self, x, y, objeto):
@@ -132,6 +130,7 @@ class MainWindow(form[0], form[1]):
             tiempo = self.cronometro.time.split(':')
             minutos = int(tiempo[1]) + 1
             self.score=minutos*self.zombies_muertos+int(tiempo[2])*self.zombies_muertos
+            label.deleteLater()
             label.close()
             label.destroy()
 
@@ -316,7 +315,6 @@ class MainWindow(form[0], form[1]):
             boton = QMouseEvent.buttons()
             x = QMouseEvent.x()
             y = QMouseEvent.y()
-            # self.label_3.move(x, y)
             dif_x = self.posicion[0] - x
             dif_y = self.posicion[1] - y
             tg = 0

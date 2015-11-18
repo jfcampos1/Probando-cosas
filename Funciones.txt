@@ -2,7 +2,7 @@ Strings:
 p.split("r")#quita lo r en el string, retorna lista con el resto
 len(p)
 p.join(q)
-p.find(q)# q esta en p?retorna la primera posicion en la que esta
+p.find(q)# q esta en p? retorna la primera posicion en la que esta o -1 en caso contrario
 p.replace("chao","hola")#reemplaza chao por hola si esta en el string
 p.strip()# quita espacios extra
 p.upper()
@@ -20,6 +20,7 @@ c=p[5:] #me da una lista con los valores de p[5] hasta p[len(p)]
 p.remove("r") #remueve la primera aparicion de r en la lista
 del p[i] #remueve el valor en la posicion i de la lista
 p.index("r") #retorna la primera posicion de r en p
+len(p)
 
 Dic:(dic=p)
 listakeys=list(p.keys())

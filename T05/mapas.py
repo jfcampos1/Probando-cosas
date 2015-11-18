@@ -36,6 +36,7 @@ class Mapa(form[0], form[1]):
         self.crear_zombies_iniciales(self.juego)
         self.juego.show()
         self.inicio.mediaObject.stop()
+        self.juego.playsong()
 
     def botonmapa2(self):
         mapa = 'fondo.png'
@@ -44,6 +45,7 @@ class Mapa(form[0], form[1]):
         self.crear_zombies_iniciales(self.juego)
         self.juego.show()
         self.inicio.mediaObject.stop()
+        self.juego.playsong()
 
     def reinicio(self, mapa):
         self.juego = MainWindow(mapa, self.inicio)
