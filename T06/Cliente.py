@@ -3,12 +3,13 @@ __author__ = 'JuanFrancisco'
 import socket
 import threading
 import sys
-from PyQt4 import QtGui,QtCore
+
+from PyQt4 import QtGui
+
 from Gui import Login
 
 
 class Cliente:
-
     def __init__(self, usuario):
         self.usuario = usuario
         self.host = 'Juanfra'
@@ -17,7 +18,7 @@ class Cliente:
         self.connection = True
         try:
             # Un cliente se puede conectar solo a un servidor.
-            self.s_cliente.connect((self.host, self.port)) # El cliente revisa que el servidor esté disponible
+            self.s_cliente.connect((self.host, self.port))  # El cliente revisa que el servidor esté disponible
             # Una vez que se establece la conexión, se pueden recibir mensajes
             recibidor = threading.Thread(target=self.recibir_mensajes, args=())
             recibidor.daemon = True
@@ -39,10 +40,12 @@ class Cliente:
                 self.login.label_4.setText('Usuario o clave incorrectos')
             elif mensaje.split(': ')[1] == '002':
                 print('Usuario y clave correctos')
+                self.login.label_4.setText('Usuario y clave correctos')
             elif mensaje.split(': ')[1] == '004':
                 self.login.nueva.label_4.setText('Usuario ya existe')
             elif mensaje.split(': ')[1] == '006':
-                self.login.nueva.botonatras()
+                self.login.nueva.hide()
+                self.login.show()
                 self.login.label_4.setText('Cuenta creada, has log-in')
             print(mensaje)
 
@@ -56,15 +59,10 @@ class Cliente:
         print(self.connection)
         self.s_cliente.close()
         sys.exit()
+
+
 if __name__ == '__main__':
     app = QtGui.QApplication([])
     nombre = input("Ingrese el nombre del usuario: ")
     client = Cliente(nombre)
-    # while client.connection:
-        # texto = input()
-        # if texto == 'quit':
-        #     client.enviar('quit')
-        #     client.desconectar()
-        # else:
-        #     client.enviar(texto)
     app.exec_()

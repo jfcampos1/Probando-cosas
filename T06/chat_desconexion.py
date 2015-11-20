@@ -1,13 +1,14 @@
 import socket
 import threading
-import sys
+import hashlib
+import uuid
 
+from serializar import crear_persona, get_persona, existe_persona, make_dir
 
 
 class Servidor:
-
-    def __init__(self, usuario, num_clients=1):
-        self.usuario = usuario
+    def __init__(self, num_clients=1):
+        self.usuario = 'Server'
         self.host = socket.gethostname()
         self.port = 3491
         self.s_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,7 +18,6 @@ class Servidor:
         self.s_servidor.listen(num_clients)
         self.clientes = []
         self.connection = True
-        self.dic_clientes={}
 
         # No hacemos self.aceptar()
 
@@ -26,43 +26,45 @@ class Servidor:
         thread_aceptar.start()
 
     def recibir_mensajes(self, cliente):
-        while self.connection:
+        salir = True
+        while self.connection and salir is True:
+            print('En recibir mensajes')
             data = cliente.recv(1024)
             mensaje = data.decode('utf-8')
-            if cliente in self.clientes:
-                if mensaje.split(': ')[1] == 'quit':
-                    self.clientes.remove(cliente)
-                print(mensaje)
-                print('conectado')
-            else:
-                self.dic_clientes[cliente]=True
-                print('Primera coneccion')
+            if mensaje.split(': ')[1] == 'quit':
+                self.clientes.remove(cliente)
+                salir = False
+            print(mensaje)
+            print('conectado')
 
     def aceptar(self):
         while True:
             cliente_nuevo, address = self.s_servidor.accept()
             print(address)
             self.clientes.append(cliente_nuevo)
-            self.cliente=[cliente_nuevo, False]
+            self.cliente = [cliente_nuevo, False]
             thread_mensajes = threading.Thread(target=self.identificar, args=(self.cliente,))
             thread_mensajes.daemon = True
             thread_mensajes.start()
             self.enviar('-1,ingresa usuario y clave separados por dos puntos:')
 
-    def identificar(self,cliente):
+    def identificar(self, cliente):
         while cliente[1] is False:
             while self.connection and cliente[1] is False:
                 data = cliente[0].recv(1024)
                 mensaje = data.decode('utf-8')
                 if mensaje.split(': ')[1] == 'quit':
-                    self.clientes.remove(cliente)
+                    self.clientes.remove(cliente[0])
+                    cliente[1] = True
                 else:
-                    s_cliente,codigo,usuario,clave=mensaje.split(':')
+                    s_cliente, codigo, usuario, clave = mensaje.split(':')
                     if codigo == ' 005':
                         print('aqui')
-                        if usuario in self.dic_clientes:
-                            if self.dic_clientes[usuario]==clave:
-                                cliente[1]=True
+                        if existe_persona(usuario):
+                            persona = get_persona(usuario)
+                            password, salt = persona.clave.split(':')
+                            if password == hashlib.sha256(salt.encode() + clave.encode()).hexdigest():
+                                cliente[1] = True
                                 print('clave correcta')
                                 thread_mensajes = threading.Thread(target=self.recibir_mensajes, args=(cliente[0],))
                                 thread_mensajes.daemon = True
@@ -75,12 +77,15 @@ class Servidor:
                             self.enviar('-1,001')
                     elif codigo == ' 003':
                         print('Creando')
-                        if usuario in self.dic_clientes:
+                        if existe_persona(usuario):
                             self.enviar('-1,004')
                         else:
-                            self.dic_clientes[usuario] = clave
+                            salt = uuid.uuid4().hex
+                            # salt = str(os.urandom(16))
+                            clave_encriptada = hashlib.sha256(salt.encode() + clave.encode()).hexdigest() + ':' + salt
+                            crear_persona(usuario, usuario, clave_encriptada)
                             self.enviar('-1,006')
-
+        print('Acaa')
 
     def enviar(self, mensaje):
         c, mensaje = mensaje.split(',')
@@ -94,10 +99,9 @@ class Servidor:
         self.s_servidor.close()
 
 
-
 if __name__ == "__main__":
-    nombre = 'Server'
-    server = Servidor(nombre, num_clients=2)
+    make_dir()
+    server = Servidor(num_clients=2)
     while server.connection:
         texto = input()
         if texto == 'quit':
