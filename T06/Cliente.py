@@ -3,10 +3,11 @@ __author__ = 'JuanFrancisco'
 import socket
 import threading
 import sys
-
+from Gui_cliente import Cuenta
 from PyQt4 import QtGui
-
-from Gui import Login
+from Tescuchar import EscucharTread
+from Gui import Login,NuevaCuenta
+from serializar import make_dir
 
 
 class Cliente:
@@ -23,15 +24,20 @@ class Cliente:
             recibidor = threading.Thread(target=self.recibir_mensajes, args=())
             recibidor.daemon = True
             recibidor.start()
-            self.login = Login(self)
+            self.nueva = NuevaCuenta(self)
+            self.login = Login(self,self.nueva)
             self.login.show()
+            self.gucliente=Cuenta(self)
+            # escuchar=EscucharTread(self.login,self)
+            # escuchar.start()
             print('Conectado')
         except socket.error:
             print("No fue posible realizar la conexión")
             sys.exit()
 
     def recibir_mensajes(self):
-        while self.connection:
+        codigo=''
+        while self.connection and codigo=='':
             data = self.s_cliente.recv(1024)
             mensaje = data.decode('utf-8')
             if mensaje.split(': ')[1] == 'quit':
@@ -40,14 +46,25 @@ class Cliente:
                 self.login.label_4.setText('Usuario o clave incorrectos')
             elif mensaje.split(': ')[1] == '002':
                 print('Usuario y clave correctos')
+                escuchar=EscucharTread(self.login,self,'002')
+                escuchar.start()
                 self.login.label_4.setText('Usuario y clave correctos')
             elif mensaje.split(': ')[1] == '004':
-                self.login.nueva.label_4.setText('Usuario ya existe')
+                self.nueva.label_4.setText('Usuario ya existe')
             elif mensaje.split(': ')[1] == '006':
-                self.login.nueva.hide()
-                self.login.show()
+                escuchar=EscucharTread(self.login,self,'006')
+                escuchar.start()
                 self.login.label_4.setText('Cuenta creada, has log-in')
             print(mensaje)
+        # self.nuevo_escuchar(codigo)
+
+    def nuevo_escuchar(self,codigo):
+        if codigo=='002':
+            self.login.hide()
+            self.gucliente.show()
+        elif codigo=='006':
+            self.nueva.hide()
+            self.login.show()
 
     def enviar(self, mensaje):
         msj_final = self.usuario + ": " + mensaje

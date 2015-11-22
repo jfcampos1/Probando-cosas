@@ -3,7 +3,7 @@ import threading
 import hashlib
 import uuid
 
-from serializar import crear_persona, get_persona, existe_persona, make_dir
+from serializar import crear_persona, get_persona, existe_persona, make_dir,write_persona
 
 
 class Servidor:
@@ -34,6 +34,16 @@ class Servidor:
             if mensaje.split(': ')[1] == 'quit':
                 self.clientes.remove(cliente)
                 salir = False
+            else:
+                posicion=self.clientes.index(cliente)
+                s_cliente, codigo, padre,usuario, archivo = mensaje.split(':')
+                if codigo == ' 009':
+                    persona=get_persona(usuario)
+                    archivos=persona.archivos
+                    nuevo_id=get_persona('contadorid')
+                    archivos.agregar_nodo(nuevo_id.cant_guardado,valor=archivo,id_padre=padre)
+                    write_persona(nuevo_id)
+                    print('nuevo archivo')
             print(mensaje)
             print('conectado')
 

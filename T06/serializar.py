@@ -8,13 +8,13 @@ from Arbol import Arbol
 
 
 class Persona:
-    def __init__(self, id, nombre, clave):
+    def __init__(self, id, nombre, clave, carpeta):
         self.nombre = nombre
         self.id = id
-        contador = get_persona('contadorid')
+        contador = get_persona('contadorid', carpeta)
         print(contador.cant_guardado)
         self.archivos = Arbol(contador.cant_guardado)
-        write_persona(contador)
+        write_persona(contador, carpeta)
         self.persona_favorita = ''
         self.cant_guardado = 0
         self.clave = clave
@@ -28,62 +28,62 @@ class Persona:
         return nueva
 
 
-def existe_persona(_id):
-    lista = os.listdir('Servidor')
+def existe_persona(_id, carpeta):
+    lista = os.listdir(str(carpeta))
     for i in lista:
         if _id + '.drop' == i:
             return True
     return False
 
 
-def get_persona(_id):
-    if existe_persona(_id):
-        lista = os.listdir('Servidor')
+def get_persona(_id, carpeta):
+    if existe_persona(_id, carpeta):
+        lista = os.listdir(str(carpeta))
         for i in lista:
             if _id + '.drop' == i:
-                with open("Servidor/{}".format(i), 'rb') as file:
+                with open("{}/{}".format(str(carpeta), i), 'rb') as file:
                     mi_persona = pickle.load(file)
                     return mi_persona
 
 
-def write_persona(persona):
+def write_persona(persona, carpeta):
     person = persona
     id = person.id
-    with open("Servidor/{}.drop".format(id), 'wb') as file:
+    with open("{}/{}.drop".format(str(carpeta), id), 'wb') as file:
         pickle.dump(person, file)
 
 
-def crear_persona(_id, nombre_completo, clave):
-    if not existe_persona(_id):
-        person = Persona(_id, nombre_completo, clave)
-        write_persona(person)
+def crear_persona(_id, nombre_completo, clave, carpeta):
+    if not existe_persona(_id, carpeta):
+        person = Persona(_id, nombre_completo, clave,carpeta)
+        write_persona(person, carpeta)
 
 
-def agregar_amigo(id_1, id_2):
-    if existe_persona(id_1) and existe_persona(id_2):
-        id1 = get_persona(id_1)
-        id2 = get_persona(id_2)
+def agregar_amigo(id_1, id_2, carpeta):
+    if existe_persona(id_1, carpeta) and existe_persona(id_2, carpeta):
+        id1 = get_persona(id_1, carpeta)
+        id2 = get_persona(id_2, carpeta)
         if id_2 not in id1.amigos and id_1 not in id2.amigos:
             id1.amigos.append(id_2)
             id2.amigos.append(id_1)
-            write_persona(id1)
-            write_persona(id2)
+            write_persona(id1, carpeta)
+            write_persona(id2, carpeta)
 
 
-def set_persona_favorita(_id, id_favorito):
-    if existe_persona(_id) and existe_persona(id_favorito):
-        id1 = get_persona(_id)
+def set_persona_favorita(_id, id_favorito, carpeta):
+    if existe_persona(_id, carpeta) and existe_persona(id_favorito, carpeta):
+        id1 = get_persona(_id, carpeta)
         id1.persona_favorita = id_favorito
-        write_persona(id1)
+        write_persona(id1, carpeta)
 
 
-def get_persona_mas_favorita():
+def get_persona_mas_favorita(carpeta):
     lista_favoritos = []
-    lista = os.listdir('Servidor')
+    lista = os.listdir(str(carpeta))
     for i in lista:
         id = i.split('.')
         id = id[0]
-        persona = get_persona(id)
+        persona = get_persona(id, carpeta)
         persona = persona.persona_favorita
         for n in lista_favoritos:
             if persona in n[0]:
@@ -100,7 +100,7 @@ def get_persona_mas_favorita():
         if i[1] > a:
             a = i[1]
             id = i[0]
-    nombre1 = get_persona(id)
+    nombre1 = get_persona(id, carpeta)
     nombre = nombre1.nombre
     return (nombre, a)
 
@@ -121,30 +121,33 @@ def print_data(persona):
 
 # Metodo que sirve para crear el directorio Servidor si no existia #
 
-def make_dir():
-    if not os.path.exists("./Servidor"):
-        os.makedirs("./Servidor")
-        crear_persona("contadorid", "server", '')
+def make_dir(carpeta):
+    if not os.path.exists("./{}".format(str(carpeta))):
+        os.makedirs("./{}".format(str(carpeta)))
+        if carpeta == 'Server':
+            crear_persona("contadorid", "server", '', carpeta)
+        else:
+            crear_persona("contadorid", '{}'.format(carpeta.lower()), '', carpeta)
 
 
-    # if __name__ == '__main__':
-    #     make_dir()
-    # crear_persona("jecastro1", "Jaime Castro")
-    # crear_persona("bcsaldias", "Belen Saldias")
-    # crear_persona("kpb", "Karim Pichara")
-    # set_persona_favorita("jecastro1", "bcsaldias")
-    # set_persona_favorita("bcsaldias", "kpb")
-    # set_persona_favorita("kpb", "kpb")
-    # agregar_amigo("kpb", "jecastro1")
-    # agregar_amigo("kpb", "bcsaldias")
-    # agregar_amigo("jecastro1", "bcsaldias")
-    #
-    # jecastro1 = get_persona("jecastro1")
-    # bcsaldias = get_persona("bcsaldias")
-    # kpb = get_persona("kpb")
-    #
-    # print_data(jecastro1)
-    # print_data(bcsaldias)
-    # print_data(kpb)
-    #
-    # print(get_persona_mas_favorita())
+            # if __name__ == '__main__':
+            #     make_dir()
+            # crear_persona("jecastro1", "Jaime Castro")
+            # crear_persona("bcsaldias", "Belen Saldias")
+            # crear_persona("kpb", "Karim Pichara")
+            # set_persona_favorita("jecastro1", "bcsaldias")
+            # set_persona_favorita("bcsaldias", "kpb")
+            # set_persona_favorita("kpb", "kpb")
+            # agregar_amigo("kpb", "jecastro1")
+            # agregar_amigo("kpb", "bcsaldias")
+            # agregar_amigo("jecastro1", "bcsaldias")
+            #
+            # jecastro1 = get_persona("jecastro1")
+            # bcsaldias = get_persona("bcsaldias")
+            # kpb = get_persona("kpb")
+            #
+            # print_data(jecastro1)
+            # print_data(bcsaldias)
+            # print_data(kpb)
+            #
+            # print(get_persona_mas_favorita())

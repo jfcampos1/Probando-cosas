@@ -1,7 +1,9 @@
 __author__ = 'JuanFrancisco'
 from math import atan, degrees, radians, cos, sin
 from random import uniform
+
 from PyQt4.phonon import Phonon
+
 from PyQt4 import QtGui, uic, QtCore
 
 from Pausa import Pausa
@@ -50,10 +52,9 @@ class MainWindow(form[0], form[1]):
         self.paus = Pausa(self, self.inicio, self.cronometro)
         self.prox_supply = 0
         self.prox_supply_ocupado = False
-        self.score=0
-        self.zombies_muertos=0
+        self.score = 0
+        self.zombies_muertos = 0
         self.pushButton.clicked.connect(self.esc)
-
 
     def actualizar_mapa(self, x, y, objeto):
         for i in range(y, y + 50):
@@ -98,6 +99,7 @@ class MainWindow(form[0], form[1]):
                 if self.mapa[i][n] != '':
                     return self.mapa[i][n]
         return True
+
     def playsong(self):
         self.media = Phonon.MediaObject(self)
         self.audioOutput = Phonon.AudioOutput(Phonon.MusicCategory, self)
@@ -126,11 +128,10 @@ class MainWindow(form[0], form[1]):
             label.adjustSize()
             label.move(myImageEvent.x, myImageEvent.y)
         else:
-            self.zombies_muertos+=1
+            self.zombies_muertos += 1
             tiempo = self.cronometro.time.split(':')
             minutos = int(tiempo[1]) + 1
-            self.score=minutos*self.zombies_muertos+int(tiempo[2])*self.zombies_muertos
-            label.deleteLater()
+            self.score = minutos * self.zombies_muertos + int(tiempo[2]) * self.zombies_muertos
             label.close()
             label.destroy()
 
@@ -299,7 +300,7 @@ class MainWindow(form[0], form[1]):
     def tiempo_aparicion_zombies(self):
         tiempo = self.cronometro.time.split(':')
         minutos = int(tiempo[1]) + 1
-        self.score=minutos*self.zombies_muertos+int(tiempo[2])*self.zombies_muertos
+        self.score = minutos * self.zombies_muertos + int(tiempo[2]) * self.zombies_muertos
         if int(tiempo[2]) % 3 == 0:
             return minutos
         return False
