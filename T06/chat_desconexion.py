@@ -1,15 +1,72 @@
 import socket
 import threading
-import hashlib
-import uuid
+import sys
+import pickle
 
-from serializar import crear_persona, get_persona, existe_persona, make_dir,write_persona
+class Archivo:
+    def __init__(self,archivo):
+        self.archivo=archivo
+
+
+class Cliente:
+
+    def __init__(self, usuario):
+        self.usuario = usuario
+        self.host = '127.0.0.1'
+        self.port = 3491
+        self.s_cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connection = True
+        try:
+            # Un cliente se puede conectar solo a un servidor.
+            self.s_cliente.connect((self.host, self.port)) # El cliente revisa que el servidor esté disponible
+            # Una vez que se establece la conexión, se pueden recibir mensajes
+            recibidor = threading.Thread(target=self.recibir_mensajes, args=())
+            recibidor.daemon = True
+            recibidor.start()
+        except socket.error:
+            print("No fue posible realizar la conexión")
+            sys.exit()
+
+    def recibir_mensajes(self):
+        while self.connection:
+            data = self.s_cliente.recv(1024)
+            mensaje = data.decode('utf-8')
+            if mensaje.split(': ')[1] == 'quit':
+                self.desconectar()
+                print('El servidor se ha desconectado')
+                print(self.connection)
+            elif mensaje.split(': ')[1] == '009':
+                cliente,codigo,nombre,archivo=mensaje.split(':')
+                with open("Cliente/{}".format(nombre), 'wb') as file:
+                    file.write(archivo)
+            print(mensaje)
+
+    def enviar(self, mensaje):
+        if mensaje == '009':
+            with open("./water-drop.png", 'rb') as file:
+                archivo=file.read()
+                nuevo_archivo=Archivo(archivo)
+            codigo='009'
+            nombre='water-drop.png'
+            msj_final = [self.usuario,codigo,nombre,nuevo_archivo]
+            pick=pickle.dumps(msj_final)
+            print(len(pick))
+            self.s_cliente.sendall('009:{}'.format(len(pick)).encode('utf-8'))
+            self.s_cliente.sendall(pick)
+        else:
+            msj_final = self.usuario + ": " + mensaje
+            self.s_cliente.sendall(msj_final.encode('utf-8'))
+
+    def desconectar(self):
+        self.connection = False
+        self.s_cliente.close()
 
 
 class Servidor:
-    def __init__(self, num_clients=1):
-        self.usuario = 'Server'
-        self.host = socket.gethostname()
+
+    def __init__(self, usuario, num_clients=1):
+        self.usuario = usuario
+        self.host = '127.0.0.1'
         self.port = 3491
         self.s_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Debemos hacer el setup para poder escuchar a los clientes que se quieran conectar
@@ -26,76 +83,33 @@ class Servidor:
         thread_aceptar.start()
 
     def recibir_mensajes(self, cliente):
-        salir = True
-        while self.connection and salir is True:
-            print('En recibir mensajes')
+        while self.connection:
             data = cliente.recv(1024)
+            print('aqui')
             mensaje = data.decode('utf-8')
-            if mensaje.split(': ')[1] == 'quit':
+            if mensaje.split(',')[0] == 'quit':
                 self.clientes.remove(cliente)
-                salir = False
-            else:
-                posicion=self.clientes.index(cliente)
-                s_cliente, codigo, padre,usuario, archivo = mensaje.split(':')
-                if codigo == ' 009':
-                    persona=get_persona(usuario)
-                    archivos=persona.archivos
-                    nuevo_id=get_persona('contadorid')
-                    archivos.agregar_nodo(nuevo_id.cant_guardado,valor=archivo,id_padre=padre)
-                    write_persona(nuevo_id)
-                    print('nuevo archivo')
+            elif mensaje.split(',')[0] == '009':
+                data = b''
+                l = int(mensaje.split(',')[1])
+                while l > 0:
+                    d = cliente.recv(l)
+                    l -= len(d)
+                    data += d
+                mensaje = pickle.loads(data)
+                client,codigo,nombre,archivo=mensaje
+                print(cliente,codigo,nombre,archivo)
+                with open("./Cliente/{}".format(nombre), 'wb') as file:
+                    file.write(archivo.archivo)
             print(mensaje)
-            print('conectado')
 
     def aceptar(self):
         while True:
             cliente_nuevo, address = self.s_servidor.accept()
-            print(address)
             self.clientes.append(cliente_nuevo)
-            self.cliente = [cliente_nuevo, False]
-            thread_mensajes = threading.Thread(target=self.identificar, args=(self.cliente,))
+            thread_mensajes = threading.Thread(target=self.recibir_mensajes, args=(cliente_nuevo,))
             thread_mensajes.daemon = True
             thread_mensajes.start()
-            self.enviar('-1,ingresa usuario y clave separados por dos puntos:')
-
-    def identificar(self, cliente):
-        while cliente[1] is False:
-            while self.connection and cliente[1] is False:
-                data = cliente[0].recv(1024)
-                mensaje = data.decode('utf-8')
-                if mensaje.split(': ')[1] == 'quit':
-                    self.clientes.remove(cliente[0])
-                    cliente[1] = True
-                else:
-                    s_cliente, codigo, usuario, clave = mensaje.split(':')
-                    if codigo == ' 005':
-                        print('aqui')
-                        if existe_persona(usuario):
-                            persona = get_persona(usuario)
-                            password, salt = persona.clave.split(':')
-                            if password == hashlib.sha256(salt.encode() + clave.encode()).hexdigest():
-                                cliente[1] = True
-                                print('clave correcta')
-                                thread_mensajes = threading.Thread(target=self.recibir_mensajes, args=(cliente[0],))
-                                thread_mensajes.daemon = True
-                                thread_mensajes.start()
-                                self.enviar('-1,002')
-                            else:
-                                self.enviar('-1,001')
-                                print('clave incorrecta')
-                        else:
-                            self.enviar('-1,001')
-                    elif codigo == ' 003':
-                        print('Creando')
-                        if existe_persona(usuario):
-                            self.enviar('-1,004')
-                        else:
-                            salt = uuid.uuid4().hex
-                            # salt = str(os.urandom(16))
-                            clave_encriptada = hashlib.sha256(salt.encode() + clave.encode()).hexdigest() + ':' + salt
-                            crear_persona(usuario, usuario, clave_encriptada)
-                            self.enviar('-1,006')
-        print('Acaa')
 
     def enviar(self, mensaje):
         c, mensaje = mensaje.split(',')
@@ -109,12 +123,28 @@ class Servidor:
         self.s_servidor.close()
 
 
+
 if __name__ == "__main__":
-    make_dir()
-    server = Servidor(num_clients=2)
-    while server.connection:
-        texto = input()
-        if texto == 'quit':
-            server.desconectar()
-        else:
-            server.enviar(texto)
+
+    pick = input("Ingrese S si quiere ser servidor o C si desea ser cliente: ")
+    if pick == "S":
+        nombre = input("Ingrese el nombre del usuario: ")
+        server = Servidor(nombre, num_clients=2)
+        while server.connection:
+            texto = input()
+            if texto == 'quit':
+                server.desconectar()
+            else:
+                server.enviar(texto)
+    else:
+        nombre = input("Ingrese el nombre del usuario: ")
+        client = Cliente(nombre)
+        while client.connection:
+            texto = input()
+            if texto == 'quit':
+                client.enviar('quit')
+                client.desconectar()
+            else:
+                client.enviar(texto)
+
+

@@ -1,5 +1,14 @@
 __author__ = 'JuanFrancisco'
+import pickle
+
 from PyQt4 import QtGui, uic, QtCore
+
+
+class Archivo:
+    def __init__(self, archivo, nombre):
+        self.archivo = archivo
+        self.nombre = nombre
+
 
 form = uic.loadUiType("log-in.ui")
 
@@ -28,8 +37,20 @@ class Cuenta(form[0], form[1]):
             self.cliente.enviar('009:' + usuario + ':' + clave)
 
     def botonnueva(self):
-        fileName = QtGui.QFileDialog.getOpenFileNames(self, 'Dialog Title', '/path/to/default/directory') #getExistingDirectory
+        fileName = QtGui.QFileDialog.getOpenFileNames(self, 'Escoger Archivos',
+                                                      '/path/to/default/directory')  # getExistingDirectory
         if fileName:
+            for i in range(len(fileName)):
+                nombre = fileName[i].split('\\')
+                with open("{}".format(fileName[i]), 'rb') as file:
+                    archivo = file.read()
+                    nuevo_archivo = Archivo(archivo, nombre)
+                codigo = '009'
+                msj_final = [self.cliente.usuario, codigo, nuevo_archivo]
+                pick = pickle.dumps(msj_final)
+                print(len(pick))
+                self.cliente.s_cliente.sendall('{}: 009:{}'.format(self.cliente.usuario, len(pick)).encode('utf-8'))
+                self.cliente.s_cliente.sendall(pick)
             print(fileName)
 
     def botonsalir(self):

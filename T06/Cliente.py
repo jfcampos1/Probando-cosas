@@ -11,8 +11,8 @@ from serializar import make_dir
 
 
 class Cliente:
-    def __init__(self, usuario):
-        self.usuario = usuario
+    def __init__(self):
+        self.usuario = ''
         self.host = 'Juanfra'
         self.port = 3491
         self.s_cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,6 +46,8 @@ class Cliente:
                 self.login.label_4.setText('Usuario o clave incorrectos')
             elif mensaje.split(': ')[1] == '002':
                 print('Usuario y clave correctos')
+                self.usuario=mensaje.split(': ')[2]
+                print(self.usuario)
                 escuchar=EscucharTread(self.login,self,'002')
                 escuchar.start()
                 self.login.label_4.setText('Usuario y clave correctos')
@@ -80,6 +82,5 @@ class Cliente:
 
 if __name__ == '__main__':
     app = QtGui.QApplication([])
-    nombre = input("Ingrese el nombre del usuario: ")
-    client = Cliente(nombre)
+    client = Cliente()
     app.exec_()
