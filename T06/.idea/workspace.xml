@@ -2,18 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a2d00006-cb07-48df-87de-958bac54b8d0" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/maspruebas.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/otra prueba.py" />
-      <change type="DELETED" beforePath="C:\Users\JuanFrancisco\Documents\universidad\Probando-cosas\T06\Servidor\holas.drop" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\JuanFrancisco\Documents\universidad\Probando-cosas\T06\Servidor\holas1.drop" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\JuanFrancisco\Documents\universidad\Probando-cosas\T06\Servidor\hom.drop" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\JuanFrancisco\Documents\universidad\Probando-cosas\T06\Servidor\jfcampos1.drop" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\JuanFrancisco\Documents\universidad\Probando-cosas\T06\Servidor\quwer.drop" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\JuanFrancisco\Documents\universidad\Probando-cosas\T06\Servidor\sdf.drop" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Cuenta.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/log-in.ui" afterPath="$PROJECT_DIR$/log-in.ui" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Arbol.py" afterPath="$PROJECT_DIR$/Arbol.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cliente.py" afterPath="$PROJECT_DIR$/Cliente.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gui.py" afterPath="$PROJECT_DIR$/Gui.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gui_cliente.py" afterPath="$PROJECT_DIR$/Gui_cliente.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/chat_desconexion.py" afterPath="$PROJECT_DIR$/chat_desconexion.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server.py" afterPath="$PROJECT_DIR$/Server.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tescuchar.py" afterPath="$PROJECT_DIR$/Tescuchar.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/maspruebas.py" afterPath="$PROJECT_DIR$/maspruebas.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/otra prueba.py" afterPath="$PROJECT_DIR$/otra prueba.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pruebas.py" afterPath="$PROJECT_DIR$/pruebas.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/serializar.py" afterPath="$PROJECT_DIR$/serializar.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="T06.iws" />
@@ -39,10 +39,20 @@
         <entry file="file://$PROJECT_DIR$/Cliente.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+              <caret line="89" column="18" selection-start-line="89" selection-start-column="18" selection-end-line="89" selection-end-column="18" />
               <folding>
                 <element signature="e#44#57#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tescuchar.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tescuchar.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="31" column="49" selection-start-line="31" selection-start-column="49" selection-end-line="31" selection-end-column="49" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -51,7 +61,7 @@
         <entry file="file://$PROJECT_DIR$/serializar.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="44" column="44" selection-start-line="44" selection-start-column="44" selection-end-line="44" selection-end-column="44" />
+              <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
               <folding>
                 <element signature="e#44#53#0" expanded="true" />
               </folding>
@@ -59,11 +69,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Server.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Server.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6892523">
-              <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="138" column="40" selection-start-line="138" selection-start-column="40" selection-end-line="138" selection-end-column="40" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -75,7 +85,7 @@
         <entry file="file://$PROJECT_DIR$/Arbol.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -85,7 +95,7 @@
         <entry file="file://$PROJECT_DIR$/Gui.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
+              <caret line="92" column="44" selection-start-line="92" selection-start-column="44" selection-end-line="92" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -95,7 +105,7 @@
         <entry file="file://$PROJECT_DIR$/Gui_cliente.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="53" column="27" selection-start-line="53" selection-start-column="27" selection-end-line="53" selection-end-column="27" />
+              <caret line="15" column="31" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
               <folding>
                 <element signature="e#29#42#0" expanded="true" />
               </folding>
@@ -103,35 +113,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chat_desconexion.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chat_desconexion.py">
+      <file leaf-file-name="Cuenta.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Cuenta.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="7" column="28" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
+            <state vertical-scroll-proportion="4.6372094">
+              <caret line="128" column="10" selection-start-line="128" selection-start-column="10" selection-end-line="128" selection-end-column="10" />
               <folding>
-                <element signature="e#0#13#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pruebas.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pruebas.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="276" column="12" selection-start-line="276" selection-start-column="12" selection-end-line="276" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="maspruebas.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/maspruebas.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="132" column="0" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
-              <folding>
-                <element signature="e#2244#2254#0" expanded="true" />
+                <element signature="e#44#70#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -141,10 +129,20 @@
         <entry file="file://$PROJECT_DIR$/otra prueba.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="102" column="0" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
+              <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
               <folding>
-                <element signature="e#2593#2624#0" expanded="true" />
+                <element signature="e#44#54#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pruebas.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pruebas.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -175,19 +173,20 @@
         <option value="$PROJECT_DIR$/../../jfcampos1-repo/Actividades/AC23/main.py" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/../../jfcampos1-repo/Actividades/AC26/main.py" />
-        <option value="$PROJECT_DIR$/Arbol.py" />
         <option value="$PROJECT_DIR$/../T05/Mainwindow.py" />
         <option value="$PROJECT_DIR$/Cmensajes.py" />
-        <option value="$PROJECT_DIR$/Tescuchar.py" />
-        <option value="$PROJECT_DIR$/Gui.py" />
         <option value="$PROJECT_DIR$/chat_desconexion.py" />
-        <option value="$PROJECT_DIR$/otra prueba.py" />
         <option value="$PROJECT_DIR$/maspruebas.py" />
+        <option value="$PROJECT_DIR$/Arbol.py" />
         <option value="$PROJECT_DIR$/Gui_cliente.py" />
-        <option value="$PROJECT_DIR$/Cliente.py" />
+        <option value="$PROJECT_DIR$/Gui.py" />
+        <option value="$PROJECT_DIR$/otra prueba.py" />
         <option value="$PROJECT_DIR$/serializar.py" />
-        <option value="$PROJECT_DIR$/Server.py" />
         <option value="$PROJECT_DIR$/pruebas.py" />
+        <option value="$PROJECT_DIR$/Server.py" />
+        <option value="$PROJECT_DIR$/Tescuchar.py" />
+        <option value="$PROJECT_DIR$/Cliente.py" />
+        <option value="$PROJECT_DIR$/Cuenta.py" />
       </list>
     </option>
   </component>
@@ -223,6 +222,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -257,7 +257,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -266,7 +265,7 @@
     <property name="recentsLimit" value="5" />
     <property name="FullScreen" value="false" />
   </component>
-  <component name="RunManager" selected="Python.pruebas">
+  <component name="RunManager" selected="Python.Cliente">
     <configuration default="false" name="pruebas" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -280,23 +279,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="T06" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pruebas.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
-    <configuration default="false" name="maspruebas" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="T06" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/maspruebas.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -348,6 +330,23 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="T06" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Cliente.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Cuenta" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="T06" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Cuenta.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -476,18 +475,18 @@
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.pruebas" />
-      <item index="1" class="java.lang.String" itemvalue="Python.maspruebas" />
-      <item index="2" class="java.lang.String" itemvalue="Python.otra prueba" />
-      <item index="3" class="java.lang.String" itemvalue="Python.Server" />
-      <item index="4" class="java.lang.String" itemvalue="Python.Cliente" />
+      <item index="1" class="java.lang.String" itemvalue="Python.otra prueba" />
+      <item index="2" class="java.lang.String" itemvalue="Python.Server" />
+      <item index="3" class="java.lang.String" itemvalue="Python.Cliente" />
+      <item index="4" class="java.lang.String" itemvalue="Python.Cuenta" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.pruebas" />
-        <item index="1" class="java.lang.String" itemvalue="Python.Cliente" />
-        <item index="2" class="java.lang.String" itemvalue="Python.Server" />
+        <item index="0" class="java.lang.String" itemvalue="Python.Cliente" />
+        <item index="1" class="java.lang.String" itemvalue="Python.Server" />
+        <item index="2" class="java.lang.String" itemvalue="Python.pruebas" />
         <item index="3" class="java.lang.String" itemvalue="Python.otra prueba" />
-        <item index="4" class="java.lang.String" itemvalue="Python.maspruebas" />
+        <item index="4" class="java.lang.String" itemvalue="Python.Cuenta" />
       </list>
     </recent_temporary>
   </component>
@@ -508,13 +507,14 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24963397" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24963397" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28188977" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27874017" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -524,7 +524,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -761,13 +760,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Servidor/hola.drop">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../jfcampos1-repo/Actividades/AC27/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.08401977">
@@ -796,14 +788,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tescuchar.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="24" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../jfcampos1-repo/Actividades/AC26/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-1.3300734">
@@ -815,7 +799,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.6285046">
           <caret line="43" column="26" selection-start-line="43" selection-start-column="26" selection-end-line="43" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -823,7 +806,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.87383175">
           <caret line="23" column="58" selection-start-line="23" selection-start-column="58" selection-end-line="23" selection-end-column="58" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -831,7 +813,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -839,64 +820,23 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-2.932243">
           <caret line="14" column="18" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#23#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/chat_desconexion.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
+        <state vertical-scroll-proportion="0.15813954">
           <caret line="7" column="28" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Arbol.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gui.py">
+    <entry file="file://$PROJECT_DIR$/maspruebas.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gui_cliente.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="53" column="27" selection-start-line="53" selection-start-column="27" selection-end-line="53" selection-end-column="27" />
+        <state vertical-scroll-proportion="2.4511628">
+          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
           <folding>
-            <element signature="e#29#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Cliente.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding>
-            <element signature="e#44#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/serializar.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="44" column="44" selection-start-line="44" selection-start-column="44" selection-end-line="44" selection-end-column="44" />
-          <folding>
-            <element signature="e#44#53#0" expanded="true" />
+            <element signature="e#2244#2254#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -904,19 +844,19 @@
     <entry file="file://$PROJECT_DIR$/otra prueba.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="102" column="0" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
+          <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
           <folding>
-            <element signature="e#2593#2624#0" expanded="true" />
+            <element signature="e#44#54#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/maspruebas.py">
+    <entry file="file://$PROJECT_DIR$/serializar.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="132" column="0" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
+          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
           <folding>
-            <element signature="e#2244#2254#0" expanded="true" />
+            <element signature="e#44#53#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -924,17 +864,71 @@
     <entry file="file://$PROJECT_DIR$/pruebas.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="276" column="12" selection-start-line="276" selection-start-column="12" selection-end-line="276" selection-end-column="12" />
+          <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Arbol.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6892523">
-          <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="138" column="40" selection-start-line="138" selection-start-column="40" selection-end-line="138" selection-end-column="40" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="92" column="44" selection-start-line="92" selection-start-column="44" selection-end-line="92" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gui_cliente.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="15" column="31" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
+          <folding>
+            <element signature="e#29#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tescuchar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="49" selection-start-line="31" selection-start-column="49" selection-end-line="31" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cliente.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="89" column="18" selection-start-line="89" selection-start-column="18" selection-end-line="89" selection-end-column="18" />
+          <folding>
+            <element signature="e#44#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cuenta.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.6372094">
+          <caret line="128" column="10" selection-start-line="128" selection-start-column="10" selection-end-line="128" selection-end-column="10" />
+          <folding>
+            <element signature="e#44#70#0" expanded="true" />
           </folding>
         </state>
       </provider>

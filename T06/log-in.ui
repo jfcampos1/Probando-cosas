@@ -20,7 +20,7 @@
       <x>0</x>
       <y>0</y>
       <width>300</width>
-      <height>400</height>
+      <height>380</height>
      </rect>
     </property>
     <property name="text">
@@ -43,7 +43,7 @@
      <string>Usuario :</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -59,7 +59,7 @@
      <string>Clave :</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit">
@@ -101,7 +101,7 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>170</x>
       <y>240</y>
       <width>75</width>
       <height>23</height>
@@ -114,9 +114,9 @@
    <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>90</x>
       <y>280</y>
-      <width>101</width>
+      <width>111</width>
       <height>23</height>
      </rect>
     </property>
@@ -124,6 +124,9 @@
      <font>
       <pointsize>7</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(22, 110, 250);</string>
     </property>
     <property name="text">
      <string>Crear nueva cuenta</string>
@@ -140,11 +143,11 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>7</pointsize>
+      <pointsize>8</pointsize>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 0, 0);</string>
+     <string notr="true">color: rgb(22, 110, 250);</string>
     </property>
     <property name="text">
      <string/>

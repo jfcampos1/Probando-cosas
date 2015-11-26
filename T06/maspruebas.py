@@ -103,6 +103,8 @@ class Window(QWidget):
             parent.appendRow(item)
             if elements[text]:
                 self.addItems(item, elements[text])
+    def hola(self):
+        print('hola')
 
     def openMenu(self, position):
 
@@ -113,16 +115,37 @@ class Window(QWidget):
             while index.parent().isValid():
                 index = index.parent()
                 level += 1
-
+        ver_status = QAction(QIcon(None), '&Cambiar Status', self)
+        ver_status.setStatusTip('Este es un item de prueba')
+        ver_status.triggered.connect(self.hola)
+        ver_status2 = QAction(QIcon(None), '&Cambiar Status2', self)
+        ver_status2.setStatusTip('Este es un item de prueba2')
+        ver_status2.triggered.connect(self.hola)
         menu = QMenu()
         if level == 0:
-            menu.addAction(self.tr("Edit person"))
+            menu.addAction(ver_status)
+            menu.addAction(ver_status2)
         elif level == 1:
             menu.addAction(self.tr("Edit object/container"))
         elif level == 2:
             menu.addAction(self.tr("Edit object"))
 
         menu.exec_(self.treeView.viewport().mapToGlobal(position))
+
+    def botonsalir(self):
+        ans = QMessageBox.question(self, "Salir", "Salir de dropbox?",
+                                         QMessageBox.Yes | QMessageBox.No)
+        if ans == QMessageBox.Yes:
+            # self.cliente.enviar('quit')
+            QCoreApplication.instance().quit()
+
+    # def keyPressEvent(self, QKeyEvent):
+    #     if QKeyEvent.key() == Qt.Key_Return:
+    #         self.botonaceptar()
+    #     elif QKeyEvent.key() == Qt.Key_Escape:
+    #         self.botonsalir()
+
+
 
 
 if __name__ == "__main__":

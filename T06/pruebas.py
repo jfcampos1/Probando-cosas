@@ -1,9 +1,12 @@
 __author__ = 'JuanFrancisco'
-lista = [1]
+import Cuenta
+lista = [1,2,3,5]
 print(lista[int('-1')])
+print(lista.index(5))
 strin = 'hola'
 print(strin.find('u'))
 print(type(strin.find('u')))
+print(type(Cuenta.Archivo(lista,strin)))
 # app = QtGui.QApplication([])
 # client = Cuenta('hola')
 # client.show()

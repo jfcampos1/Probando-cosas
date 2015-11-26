@@ -1,187 +1,313 @@
 __author__ = 'JuanFrancisco'
 # coding=utf-8
-# import sys
-# from PyQt4.QtCore import *
-# from PyQt4.QtGui import *
-#
-# def clickable(widget):
-#
-#     class Filter(QObject):
-#
-#         clicked = pyqtSignal()
-#
-#         def eventFilter(self, obj, event):
-#
-#             if obj == widget:
-#                 if event.type() == QEvent.MouseButtonRelease:
-#                     if obj.rect().contains(event.pos()):
-#                         self.clicked.emit()
-#                         # The developer can opt for .emit(obj) to get the object within the slot.
-#                         return True
-#
-#             return False
-#
-#     filter = Filter(widget)
-#     widget.installEventFilter(filter)
-#     return filter.clicked
-#
-# class Window(QWidget):
-#
-#     def __init__(self, parent = None):
-#
-#         QWidget.__init__(self, parent)
-#
-#         label1 = QLabel(self.tr("Hello world!"))
-#         label2 = QLabel(self.tr("ABC DEF GHI"))
-#         label3 = QLabel(self.tr("Hello PyQt!"))
-#
-#         clickable(label1).connect(self.showText1)
-#         clickable(label2).connect(self.showText2)
-#         clickable(label3).connect(self.showText3)
-#
-#         layout = QHBoxLayout(self)
-#         layout.addWidget(label1)
-#         layout.addWidget(label2)
-#         layout.addWidget(label3)
-#
-#     def showText1(self):
-#         print ("Label 1 clicked")
-#
-#     def showText2(self):
-#         print( "Label 2 clicked")
-#
-#     def showText3(self):
-#         print ("Label 3 clicked")
-#
-#
-# if __name__ == "__main__":
-#
-#     app = QApplication(sys.argv)
-#     window = Window()
-#     window.show()
-#     sys.exit(app.exec_())
-# import sys
-# from PyQt4.QtGui import *
-#
-# class Window(QWidget):
-#
-#     def __init__(self, parent = None):
-#
-#         QWidget.__init__(self, parent)
-#
-#         label1 = QLabel(self.tr("Hello world!"))
-#         label2 = QLabel(self.tr("ABC DEF GHI"))
-#         label3 = QLabel(self.tr("Hello PyQt!"))
-#
-#         label1.mouseReleaseEvent = self.showText1
-#         label2.mouseReleaseEvent = self.showText2
-#         label3.mouseReleaseEvent = self.showText3
-#
-#         layout = QHBoxLayout(self)
-#         layout.addWidget(label1)
-#         layout.addWidget(label2)
-#         layout.addWidget(label3)
-#
-#     def showText1(self, event):
-#         print("Label 1 clicked")
-#
-#     def showText2(self, event):
-#         print("Label 2 clicked")
-#
-#     def showText3(self, event):
-#         print("Label 3 clicked")
-#
-#
-# if __name__ == "__main__":
-#
-#     app = QApplication(sys.argv)
-#     window = Window()
-#     window.show()
-#     sys.exit(app.exec_())
+import sys
+import os
+from copy import deepcopy
+import pickle
+
 from PyQt4 import QtGui, QtCore
-from maspruebas import Window
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
 
 
-class MainForm(QtGui.QMainWindow):
+class TreeItem(object):
+    def __init__(self, name, parent=None):
+
+        self.name = QtCore.QString(name)
+        self.parent = parent
+        self.children = []
+        self.setParent(parent)
+
+    def setParent(self, parent):
+        if parent != None:
+            self.parent = parent
+            self.parent.appendChild(self)
+        else:
+            self.parent = None
+
+    def appendChild(self, child):
+        self.children.append(child)
+
+    def childAtRow(self, row):
+        if len(self.children) > row:
+            return self.children[row]
+
+    def rowOfChild(self, child):
+        for i, item in enumerate(self.children):
+            if item == child:  return i
+        return -1
+
+    def removeChild(self, row):
+        value = self.children[row]
+        self.children.remove(value)
+        return True
+
+    def __len__(self):
+        return len(self.children)
+
+
+class TreeModel(QtCore.QAbstractItemModel):
     def __init__(self):
-        super().__init__()
 
-        # Configura geometría de la ventana
-        self.setWindowTitle('Ventana con Boton')
-        self.setGeometry(200, 100, 300, 250)
+        QtCore.QAbstractItemModel.__init__(self)
 
-        # Definición de acciones
-        ver_status = QtGui.QAction(QtGui.QIcon(None), '&Cambiar Status', self)
-        ver_status.setStatusTip('Este es un ítem de prueba')
-        ver_status.triggered.connect(self.cambiar_status_bar)
+        self.columns = 1
+        self.clickedItem = None
 
-        salir = QtGui.QAction(QtGui.QIcon(None), '&Salir', self)
-        salir.setShortcut('Ctrl+Q') # permite usar combinación de teclas para ejecutar comandos
-        salir.setStatusTip('Terminar la aplicación') # muestra en la barra de estados la descripción del comando
-        salir.triggered.connect(QtGui.qApp.quit) # conecta la señal con el slot que manejará este evento
+        self.root = TreeItem('root', None)
+        levelA = TreeItem('levelA', self.root)
+        levelB = TreeItem('levelB', levelA)
+        levelC1 = TreeItem('levelC1', levelB)
+        levelC2 = TreeItem('levelC2', levelB)
+        levelC3 = TreeItem('levelC3', levelB)
+        levelD = TreeItem('levelD', levelC3)
+
+        levelE = TreeItem('levelE', levelD)
+        levelF = TreeItem('levelF', levelE)
+
+    def nodeFromIndex(self, index):
+        return index.internalPointer() if index.isValid() else self.root
+
+    def index(self, row, column, parent):
+        node = self.nodeFromIndex(parent)
+        return self.createIndex(row, column, node.childAtRow(row))
+
+    def parent(self, child):
+        # print '\n parent(child)', child  # PyQt4.QtCore.QModelIndex
+        if not child.isValid():  return QModelIndex()
+        node = self.nodeFromIndex(child)
+        if node is None:   return QModelIndex()
+        parent = node.parent
+        if parent is None:      return QModelIndex()
+        grandparent = parent.parent
+
+        if grandparent == None:    return QModelIndex()
+
+        row = grandparent.rowOfChild(parent)
+        assert row != - 1
+
+        return self.createIndex(row, 0, parent)
+
+    def rowCount(self, parent):
+        node = self.nodeFromIndex(parent)
+        if node is None: return 0
+        return len(node)
+
+    def columnCount(self, parent):
+        return self.columns
+
+    def data(self, index, role):
+        if role == Qt.DecorationRole:
+            return QVariant()
+        if role == Qt.TextAlignmentRole:
+            return QVariant(int(Qt.AlignTop | Qt.AlignLeft))
+        if role != Qt.DisplayRole:
+            return QVariant()
+        node = self.nodeFromIndex(index)
+        if index.column() == 0:
+            return QVariant(node.name)
+        elif index.column() == 1:
+            return QVariant(node.state)
+        elif index.column() == 2:
+            return QVariant(node.description)
+        else:
+            return QVariant()
+
+    def supportedDropActions(self):
+        return Qt.CopyAction | Qt.MoveAction
+
+    def flags(self, index):
+        defaultFlags = QAbstractItemModel.flags(self, index)
+        if index.isValid():
+            return Qt.ItemIsEditable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled | defaultFlags
+        else:
+            return Qt.ItemIsDropEnabled | defaultFlags
+
+    def setData(self, index, value, role):
+        if role == Qt.EditRole:
+            if value.toString() and len(value.toString()) > 0:
+                self.nodeFromIndex(index).name = value.toString()
+                self.dataChanged.emit(index, index)
+            return True
+
+    def mimeTypes(self):
+        return ['bstream', 'text/xml']
+
+    def mimeData(self, indexes):
+
+        mimedata = QtCore.QMimeData()
+        bstream = pickle.dumps(self.nodeFromIndex(indexes[0]))
+        mimedata.setData('bstream', bstream)
+        return mimedata
+
+    def dropMimeData(self, mimedata, action, row, column, parentIndex):
+
+        if action == Qt.IgnoreAction: return True
+
+        droppedNode = pickle.loads(str(mimedata.data('bstream')))
+
+        droppedIndex = self.createIndex(row, column, droppedNode)
+
+        parentNode = self.nodeFromIndex(parentIndex)
+
+        newNode = deepcopy(droppedNode)
+        newNode.setParent(parentNode)
+
+        self.insertRow(len(parentNode) - 1, parentIndex)
+
+        self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), parentIndex, parentIndex)
+
+        return True
+
+    def insertRow(self, row, parent):
+        return self.insertRows(row, 1, parent)
+
+    def insertRows(self, row, count, parent):
+        self.beginInsertRows(parent, row, (row + (count - 1)))
+        self.endInsertRows()
+        return True
+
+    def removeRow(self, row, parentIndex):
+        return self.removeRows(row, 1, parentIndex)
+
+    def removeRows(self, row, count, parentIndex):
+        self.beginRemoveRows(parentIndex, row, row)
+        node = self.nodeFromIndex(parentIndex)
+        node.removeChild(row)
+        self.endRemoveRows()
+        return True
 
 
-        # Creación de la barra de menús y de los menús
-        menubar = self.menuBar()
+class GUI(QtGui.QDialog):
+    def build(self, myWindow):
+        myWindow.resize(600, 400)
+        self.myWidget = QWidget(myWindow)
+        self.boxLayout = QtGui.QVBoxLayout(self.myWidget)
 
-        # primero menú
-        archivo_menu = menubar.addMenu('&Archivo')
-        archivo_menu.addAction(ver_status)
-        archivo_menu.addAction(salir)
+        self.treeView = QtGui.QTreeView()
 
-        # segundo menú
-        otro_menu = menubar.addMenu('&Otro Menú')
+        self.treeModel = TreeModel()
+        self.treeView.setModel(self.treeModel)
+        self.treeView.expandAll()
+        self.treeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        self.treeView.connect(self.treeView.model(), SIGNAL("dataChanged(QModelIndex,QModelIndex)"), self.onDataChanged)
+        QtCore.QObject.connect(self.treeView, QtCore.SIGNAL("clicked (QModelIndex)"), self.treeItemClicked)
+        self.boxLayout.addWidget(self.treeView)
 
-        # Incluye la barra de estado'''
-        self.statusBar().showMessage('Listo')
+        self.PrintButton = QtGui.QPushButton("Print")
+        self.PrintButton.clicked.connect(self.PrintOut)
+        self.boxLayout.addWidget(self.PrintButton)
 
-        # Configura como Widget Central el formulario creado anteriormente.
-        self.form = Window()
-        self.setCentralWidget(self.form)
+        self.DeleteButton = QtGui.QPushButton("Delete")
+        self.DeleteButton.clicked.connect(self.DeleteLevel)
+        self.boxLayout.addWidget(self.DeleteButton)
 
-    def cambiar_status_bar(self):
-        self.statusBar().showMessage('Cambié el Status')
+        self.insertButton = QtGui.QPushButton("Insert")
+        self.insertButton.clicked.connect(self.insertLevel)
+        self.boxLayout.addWidget(self.insertButton)
 
+        self.duplicateButton = QtGui.QPushButton("Duplicate")
+        self.duplicateButton.clicked.connect(self.duplicateLevel)
+        self.boxLayout.addWidget(self.duplicateButton)
 
-class MiFormulario(QtGui.QWidget):
-    def __init__(self):
-        super().__init__()
-        self.init_GUI()
+        myWindow.setCentralWidget(self.myWidget)
 
-    def init_GUI(self):
-        # Este método inicializa la interfaz y sus elementos
+    def make_dirs_from_dict(self, dirDict, current_dir='/'):
+        for key, val in dirDict.items():
+            # os.mkdir(os.path.join(current_dir, key))
+            print("\t\t Creating directory: ", os.path.join(current_dir, key))
+            if type(val) == dict:
+                self.make_dirs_from_dict(val, os.path.join(current_dir, key))
 
-        self.label1 = QtGui.QLabel('Texto:', self)
-        self.label1.move(10, 15)
+    def PrintOut(self):
+        result_dict = {}
+        for a1 in self.treeView.model().root.children:
+            result_dict[str(a1.name)] = {}
+            for a2 in a1.children:
+                result_dict[str(a1.name)][str(a2.name)] = {}
+                for a3 in a2.children:
+                    result_dict[str(a1.name)][str(a2.name)][str(a3.name)] = {}
+                    for a4 in a3.children:
+                        result_dict[str(a1.name)][str(a2.name)][str(a3.name)][str(a4.name)] = {}
+                        for a5 in a4.children:
+                            result_dict[str(a1.name)][str(a2.name)][str(a3.name)][str(a4.name)][str(a5.name)] = {}
+                            for a6 in a5.children:
+                                result_dict[str(a1.name)][str(a2.name)][str(a3.name)][str(a4.name)][str(a5.name)][
+                                    str(a6.name)] = {}
+                                for a7 in a6.children:
+                                    result_dict[str(a1.name)][str(a2.name)][str(a3.name)][str(a4.name)][str(a5.name)][
+                                        str(a6.name)][str(a7.name)] = {}
 
-        self.label2 = QtGui.QLabel('Aqui se escribe la respuesta', self)
-        self.label2.move(10, 50)
+        self.make_dirs_from_dict(result_dict)
 
-        self.label3 = QtGui.QLabel('Origen de la señal: ', self)
-        self.label3.move(10, 180)
+    def DeleteLevel(self):
+        if len(self.treeView.selectedIndexes()) == 0: return
 
-        self.edit1 = QtGui.QLineEdit('', self)
-        self.edit1.setGeometry(45, 15, 100, 20)
+        currentIndex = self.treeView.selectedIndexes()[0]
+        currentRow = currentIndex.row()
+        currentColumn = currentIndex.column()
+        currentNode = currentIndex.internalPointer()
 
-        self.boton1 = QtGui.QPushButton('&Procesar', self)
-        self.boton1.resize(self.boton1.sizeHint())
-        self.boton1.move(5, 70)
-        self.boton1.clicked.connect(self.boton1_callback)
-        self.boton1.clicked.connect(self.boton_presionado)
+        parentNode = currentNode.parent
+        parentIndex = self.treeView.model().createIndex(currentRow, currentColumn, parentNode)
+        print('\n\t\t\t CurrentNode:', currentNode.name, ', ParentNode:', currentNode.parent.name, ', currentColumn:',
+              currentColumn, ', currentRow:', currentRow)
 
-    def boton_presionado(self):
-        sender = self.sender()
-        self.label3.setText('Origen de la señal: {0}'.format(sender.text()))
-        self.label3.resize(self.label3.sizeHint())
+        # self.treeView.model().removeRow(len(parentNode)-1, parentIndex)
 
-    def boton1_callback(self):
-        self.label2.setText('{}'.format(self.edit1.text()))
-        self.label2.resize(self.label2.sizeHint())
+        self.treeView.model().removeRows(currentRow, 1, parentIndex)
+
+        # self.treeView.model().removeRow(len(parentNode), parentIndex)
+        # self.treeView.model().emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), parentIndex, parentIndex)
+
+    def insertLevel(self):
+        if len(self.treeView.selectedIndexes()) == 0: return
+
+        currentIndex = self.treeView.selectedIndexes()[0]
+        currentNode = currentIndex.internalPointer()
+        newItem = TreeItem('Brand New', currentNode)
+        self.treeView.model().insertRow(len(currentNode) - 1, currentIndex)
+        self.treeView.model().emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), currentIndex, currentIndex)
+
+    def duplicateLevel(self):
+        if len(self.treeView.selectedIndexes()) == 0: return
+
+        currentIndex = self.treeView.selectedIndexes()[0]
+        currentRow = currentIndex.row()
+        currentColumn = currentIndex.column()
+        currentNode = currentIndex.internalPointer()
+
+        parentNode = currentNode.parent
+        parentIndex = self.treeView.model().createIndex(currentRow, currentColumn, parentNode)
+        parentRow = parentIndex.row()
+        parentColumn = parentIndex.column()
+
+        newNode = deepcopy(currentNode)
+        newNode.setParent(parentNode)
+
+        self.treeView.model().insertRow(len(parentNode) - 1, parentIndex)
+        self.treeView.model().emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), parentIndex, parentIndex)
+
+        print('\n\t\t\t CurrentNode:', currentNode.name, ', ParentNode:', parentNode.name, ', currentColumn:',
+              currentColumn, ', currentRow:', currentRow, ', parentColumn:', parentColumn, ', parentRow:', parentRow)
+        self.treeView.update()
+        self.treeView.expandAll()
+
+    def treeItemClicked(self, index):
+        print("\n clicked item ----------->", index.internalPointer().name)
+
+    def onDataChanged(self, indexA, indexB):
+        print("\n onDataChanged NEVER TRIGGERED! ####################### \n ", indexB.internalPointer().name)
+        self.treeView.update(indexA)
+        self.treeView.expandAll()
+        self.treeView.expanded()
+
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtGui.QApplication(sys.argv)
 
-    # Se crea una ventana descendiente de QMainWindows
-    form = MainForm()
-    form.show()
-    app.exec_()
+    myWindow = QMainWindow()
+    myGui = GUI()
+    myGui.build(myWindow)
+    myWindow.show()
+    sys.exit(app.exec_())

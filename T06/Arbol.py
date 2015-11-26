@@ -18,12 +18,14 @@ class Arbol:
         if self.id_nodo == id_padre:
             # Si el nodo es el nodo padre, entonces actualizamos el diccionario con los hijos
             self.hijos.update({id_nodo: Arbol(id_nodo, nombre, valor, id_padre)})
+            print('padre igual self')
         else:
             for hijo in self.hijos.values():
                 hijo.agregar_nodo(id_nodo, nombre, valor, id_padre)
 
     def obtener_nodo(self, id_nodo):
         # recursivamente obtenemos el nodo siempre y cuando exista la posicion.
+        print(self.id_nodo,id_nodo)
         if self.id_nodo == id_nodo:
             return self
         else:

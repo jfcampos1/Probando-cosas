@@ -47,13 +47,33 @@ class Servidor:
                         data += d
                     mensaje = pickle.loads(data)
                     client, codigo, archivo = mensaje
-                    padre=0
                     persona = get_persona(client, 'Servidor')
                     archi = persona.archivos
+                    camino=persona.camino_archivos
+                    print(archi)
+                    print(archi.id_nodo)
                     nuevo_id = get_persona('contadorid', 'Servidor')
-                    archi.agregar_nodo(nuevo_id.cant_guardado, valor=archivo, id_padre=padre)
+                    ultimo_numero=nuevo_id.cant_guardado
+                    archi.agregar_nodo(nuevo_id.cant_guardado,archivo.nombre,valor=archivo, id_padre=archi.id_nodo)
+                    camino.agregar_nodo(nuevo_id.cant_guardado,archivo.nombre,valor='012', id_padre=archi.id_nodo)
+                    write_persona(persona,'Servidor')
                     write_persona(nuevo_id, 'Servidor')
                     print('nuevo archivo')
+                    # probar que mande archivo de vuelta
+                    persona1 = get_persona(client, 'Servidor')
+                    print(persona1)
+                    print(persona1.archivos)
+                    archivo=persona1.archivos.obtener_nodo(ultimo_numero)
+                    print(archivo)
+                    msj_final = [self.usuario, '010', archivo]
+                    pick = pickle.dumps(msj_final)
+                    c = self.clientes.index(cliente)
+                    print(c)
+                    self.clientes[int(c)].sendall('{}: 010:{}'.format(self.usuario, str(len(pick))).encode('utf-8'))
+                    self.clientes[int(c)].sendall(pick)
+                    print('{}: 010:{}'.format(self.usuario, len(pick)))
+                elif codigo==' 011':
+                    pass
             print(mensaje)
             print('conectado')
 
@@ -88,32 +108,41 @@ class Servidor:
                                 thread_mensajes = threading.Thread(target=self.recibir_mensajes, args=(cliente[0],))
                                 thread_mensajes.daemon = True
                                 thread_mensajes.start()
-                                self.enviar('-1,002: {}'.format(usuario))
+                                persona=get_persona(usuario,'Servidor')
+                                camino=persona.camino_archivos
+                                msj_final = [self.usuario, '014', camino]
+                                pick = pickle.dumps(msj_final)
+                                c = self.clientes.index(cliente[0])
+                                print(c)
+                                mandar=self.clientes[int(c)]
+                                self.clientes[int(c)].sendall('{}: 014:{}'.format(self.usuario, str(len(pick))).encode('utf-8'))
+                                self.clientes[int(c)].sendall(pick)
+                                self.enviar(cliente[0],'002: {}'.format(usuario))
                             else:
-                                self.enviar('-1,001')
+                                self.enviar(cliente[0],'001')
                                 print('clave incorrecta')
                         else:
-                            self.enviar('-1,001')
+                            self.enviar(cliente[0],'001')
                     elif codigo == ' 003':
                         print('Creando')
                         if existe_persona(usuario, 'Servidor'):
-                            self.enviar('-1,004')
+                            self.enviar(cliente[0],'004')
                         else:
                             salt = uuid.uuid4().hex
                             # salt = str(os.urandom(16))
                             clave_encriptada = hashlib.sha256(salt.encode() + clave.encode()).hexdigest() + ':' + salt
                             crear_persona(usuario, usuario, clave_encriptada, 'Servidor')
-                            self.enviar('-1,006')
+                            self.enviar(cliente[0],'006')
         print('Acaa')
 
-    def enviar(self, mensaje):
-        c, mensaje = mensaje.split(',')
+    def enviar(self, cliente,mensaje):
+        c = self.clientes.index(cliente)
         msj_final = self.usuario + ": " + mensaje
-        self.clientes[int(c)].send(msj_final.encode('utf-8'))
+        self.clientes[int(c)].sendall(msj_final.encode('utf-8'))
 
     def desconectar(self):
         for i in range(len(self.clientes)):
-            self.enviar(str(i) + ',quit')
+            self.enviar(self.clientes[i] , 'quit')
         self.connection = False
         self.s_servidor.close()
 

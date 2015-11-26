@@ -44,11 +44,12 @@ class Cuenta(form[0], form[1]):
                 nombre = fileName[i].split('\\')
                 with open("{}".format(fileName[i]), 'rb') as file:
                     archivo = file.read()
-                    nuevo_archivo = Archivo(archivo, nombre)
+                    nuevo_archivo = Archivo(archivo, nombre[-1])
                 codigo = '009'
                 msj_final = [self.cliente.usuario, codigo, nuevo_archivo]
+                print(nuevo_archivo.archivo)
                 pick = pickle.dumps(msj_final)
-                print(len(pick))
+                print(len(pick),nuevo_archivo, nuevo_archivo.archivo)
                 self.cliente.s_cliente.sendall('{}: 009:{}'.format(self.cliente.usuario, len(pick)).encode('utf-8'))
                 self.cliente.s_cliente.sendall(pick)
             print(fileName)
