@@ -8,25 +8,26 @@ class MoveMySupEvent:
         self.texto = texto
         self.accion = accion
 
-class ActualizarLayaut:
-    def __init__(self,camino):
-        self.camino=camino
+
+class ActualizarLayout:
+    def __init__(self, camino):
+        self.camino = camino
 
 
 class EscucharTread(QtCore.QThread):
     trigger = QtCore.pyqtSignal(MoveMySupEvent)
-    trigger2= QtCore.pyqtSignal(ActualizarLayaut)
+    trigger2 = QtCore.pyqtSignal(ActualizarLayout)
 
     def __init__(self, login, cliente, mensaje):
         super().__init__()
         self.cliente = cliente
         self.ventana = login
-        self.mensaje=mensaje
+        self.mensaje = mensaje
         self.numero = 0
         self.numero2 = 0
         self.texto = ''
         self.accion = ''
-        if mensaje!='014':
+        if mensaje != '014':
             self.trigger.connect(login.actualizarimagen)
         else:
             self.trigger2.connect(login.init_GUI)
@@ -41,8 +42,8 @@ class EscucharTread(QtCore.QThread):
     def position(self, value):
         self.__position = value
         # El trigger emite su senal a la ventana
-        if self.mensaje=='014':
-            self.trigger2.emit(ActualizarLayaut(self.mensaje))
+        if self.mensaje == '014' or self.mensaje == '017':
+            self.trigger2.emit(ActualizarLayout(self.mensaje))
         else:
             self.trigger.emit(MoveMySupEvent(self.texto, self.accion))
 
@@ -63,6 +64,5 @@ class EscucharTread(QtCore.QThread):
         elif mensaje == '006':
             self.texto = 'Cuenta creada, has log-in'
             self.accion = '006'
-
         print(mensaje)
         self.position = (self.numero, self.numero2)

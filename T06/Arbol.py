@@ -24,15 +24,21 @@ class Arbol:
                 hijo.agregar_nodo(id_nodo, nombre, valor, id_padre)
 
     def obtener_nodo(self, id_nodo):
-        # recursivamente obtenemos el nodo siempre y cuando exista la posicion.
-        print(self.id_nodo,id_nodo)
         if self.id_nodo == id_nodo:
             return self
         else:
             for hijo in self.hijos.values():
                 nodo = hijo.obtener_nodo(id_nodo)
                 if nodo:
-                    # retorna el nodo si es que existe en el árbol
+                    return nodo
+
+    def obtener_nodo_nombre(self, nombre):
+        if self.nombre == nombre:
+            return self
+        else:
+            for hijo in self.hijos.values():
+                nodo = hijo.obtener_nodo_nombre(nombre)
+                if nodo:
                     return nodo
 
     def recorrer_arbol(self, raiz):  # por lineas
@@ -60,6 +66,7 @@ class Arbol:
                 self.ret += "id-nodo: {} -> id_padre: {} -> valor: {}\n".format(hijo.id_nodo, hijo.id_padre, hijo.valor)
                 recorrer_arbol(hijo)
             return self
+
         self.ret = 'RAIZ:\nroot-id: {} -> valor: {}\n\nHIJOS:\n'.format(self.id_nodo, self.valor)
         recorrer_arbol(self)
         return self.ret

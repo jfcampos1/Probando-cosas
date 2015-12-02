@@ -11,7 +11,7 @@ class Persona:
     def __init__(self, id, nombre, clave, carpeta):
         self.nombre = nombre
         self.id = id
-        if id!='contadorid':
+        if id != 'contadorid':
             contador = get_persona('contadorid', carpeta)
             print(contador.cant_guardado)
             self.archivos = Arbol(contador.cant_guardado)
@@ -19,7 +19,7 @@ class Persona:
             print(self.archivos)
             write_persona(contador, carpeta)
         else:
-            self.archivos= Arbol('0')
+            self.archivos = Arbol('0')
         self.persona_favorita = ''
         self.cant_guardado = 0
         self.clave = clave
@@ -60,7 +60,7 @@ def write_persona(persona, carpeta):
 
 def crear_persona(_id, nombre_completo, clave, carpeta):
     if not existe_persona(_id, carpeta):
-        person = Persona(_id, nombre_completo, clave,carpeta)
+        person = Persona(_id, nombre_completo, clave, carpeta)
         write_persona(person, carpeta)
 
 
@@ -129,10 +129,7 @@ def print_data(persona):
 def make_dir(carpeta):
     if not os.path.exists("./{}".format(str(carpeta))):
         os.makedirs("./{}".format(str(carpeta)))
-        if carpeta == 'Servidor':
-            crear_persona("contadorid", "Servidor", '', carpeta)
-        # else:
-        #     crear_persona("contadorid", '{}'.format(carpeta.lower()), '', carpeta)
+        crear_persona("contadorid", '{}'.format(carpeta), '', carpeta)
 
 
             # if __name__ == '__main__':

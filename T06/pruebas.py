@@ -1,68 +1,35 @@
 __author__ = 'JuanFrancisco'
 import Cuenta
 lista = [1,2,3,5]
+lista2=[6,7,8,9,10]
+print(lista+lista2)
 print(lista[int('-1')])
 print(lista.index(5))
-strin = 'hola'
-print(strin.find('u'))
-print(type(strin.find('u')))
-print(type(Cuenta.Archivo(lista,strin)))
-# app = QtGui.QApplication([])
-# client = Cuenta('hola')
-# client.show()
-# app.exec_()
-# import sys
-#
-# from PyQt4.QtGui import (QApplication, QColumnView, QFileSystemModel,
-#                          QSplitter, QTreeView)
-# from PyQt4.QtCore import QDir, Qt
-#
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     # Splitter to show 2 views in same widget easily.
-#     splitter = QSplitter()
-#     # The model.
-#     model = QFileSystemModel()
-#     # You can setRootPath to any path.
-#     model.setRootPath(QDir.rootPath())
-#     # List of views.
-#     views = []
-#     for ViewType in (QColumnView, QTreeView):
-#         # Create the view in the splitter.
-#         view = ViewType(splitter)
-#         # Set the model of the view.
-#         view.setModel(model)
-#         # Set the root index of the view as the user's home directory.
-#         view.setRootIndex(model.index('./'))
-#     # Show the splitter.
-#     splitter.show()
-#     # Maximize the splitter.
-#     splitter.setWindowState(Qt.WindowMaximized)
-#     # Start the main loop.
-#     sys.exit(app.exec_())
-#
-# class Main(QtGui.QTreeView):
-#
-#   def __init__(self):
-#
-#     QtGui.QTreeView.__init__(self)
-#     model = QtGui.QFileSystemModel()
-#     model.setRootPath( QtCore.QDir.currentPath() )
-#     self.setModel(model)
-#     QtCore.QObject.connect(self.selectionModel(), QtCore.SIGNAL('selectionChanged(QItemSelection, QItemSelection)'), self.test)
-#
-#   @QtCore.pyqtSlot("QItemSelection, QItemSelection")
-#   def test(self, selected, deselected):
-#       print("hello!")
-#       print(selected)
-#       print(deselected)
-#
-# if __name__ == '__main__':
-#     import sys
-#     app = QtGui.QApplication(sys.argv)
-#     w = Main()
-#     w.show()
-#     sys.exit(app.exec_())
+strin = 'h o l a como estasa estas estas'.replace('estas','')
+print(lista[:-2])
+print(strin)
+print(list)
+import sys
+from PyQt4 import QtGui
+
+class Window(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        layout = QtGui.QVBoxLayout(self)
+        self.button = QtGui.QPushButton('Test')
+        self.edit = QtGui.QTextEdit()
+        layout.addWidget(self.edit)
+        layout.addWidget(self.button)
+        self.button.clicked.connect(self.handleTest)
+
+    def handleTest(self):
+        self.edit.append('spam: spam spam spam spam\na')
+
+if __name__ == '__main__':
+    app = QtGui.QApplication(sys.argv)
+    win = Window()
+    win.show()
+    sys.exit(app.exec_())
 #
 # class MainWindow(QtGui.QMainWindow):
 #     def __init__(self, parent=None):

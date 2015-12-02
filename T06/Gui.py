@@ -1,28 +1,29 @@
 __author__ = 'JuanFrancisco'
 from PyQt4 import QtGui, uic, QtCore
 
-
 form = uic.loadUiType("log-in.ui")
 
 
 class Login(form[0], form[1]):
-    def __init__(self, cliente,nueva):
+    def __init__(self, cliente, nueva):
         super().__init__()
         self.setupUi(self)
         foto = QtGui.QPixmap('fondo-blanco.png')
         self.label.setPixmap(foto)
+        foto = QtGui.QPixmap('dropbox-imagen.png')
+        self.label_5.setPixmap(foto)
         self.pushButton.clicked.connect(self.botonsalir)
         self.pushButton_2.clicked.connect(self.botonaceptar)
         self.pushButton_3.clicked.connect(self.botonnueva)
         self.pushButton_3.setStyleSheet("background-color: transparent;color: rgb(22, 110, 250);")
         self.cliente = cliente
-        self.nueva=nueva
+        self.nueva = nueva
         self.setWindowTitle("DrobPox")
         self.setGeometry(500, 200, 300, 400)
 
-    def actualizarimagen(self,actualizar):
+    def actualizarimagen(self, actualizar):
         mensaje = actualizar.texto
-        accion=actualizar.accion
+        accion = actualizar.accion
         if accion == '001':
             self.label_4.setText(mensaje)
         elif accion == '002':
@@ -76,6 +77,7 @@ class Login(form[0], form[1]):
         self.botonsalir()
         QCloseEvent.ignore()
 
+
 form1 = uic.loadUiType("nueva-cuenta.ui")
 
 
@@ -85,6 +87,8 @@ class NuevaCuenta(form1[0], form1[1]):
         self.setupUi(self)
         foto = QtGui.QPixmap('fondo-blanco.png')
         self.label.setPixmap(foto)
+        foto = QtGui.QPixmap('dropbox-imagen.png')
+        self.label_6.setPixmap(foto)
         self.pushButton.clicked.connect(self.botonsalir)
         self.pushButton_2.clicked.connect(self.botonaceptar)
         self.pushButton_3.clicked.connect(self.botonatras)
@@ -96,10 +100,10 @@ class NuevaCuenta(form1[0], form1[1]):
         if self.lineEdit.text() != '' and self.lineEdit_2.text() != '' and self.lineEdit_3.text() != '':
             usuario = self.lineEdit.text()
             clave = self.lineEdit_2.text()
-            reclave= self.lineEdit_3.text()
+            reclave = self.lineEdit_3.text()
             if usuario.find(':') != -1 or clave.find(':') != -1:
                 self.label_4.setText('Usuario o clave no pueden contener dos puntos ":"')
-            elif clave!=reclave:
+            elif clave != reclave:
                 self.label_4.setText('Claves no coinciden')
             else:
                 self.cliente.enviar('003:' + usuario + ':' + clave)
@@ -114,9 +118,9 @@ class NuevaCuenta(form1[0], form1[1]):
         self.hide()
         self.cliente.login.show()
 
-    def actualizarimagen(self,actualizar):
+    def actualizarimagen(self, actualizar):
         mensaje = actualizar.texto
-        accion=actualizar.accion
+        accion = actualizar.accion
         if accion == '001':
             self.label_4.setText(mensaje)
         elif accion == '002':
