@@ -1,5 +1,6 @@
 __author__ = 'JuanFrancisco'
 # coding=utf-8
+import copy
 
 
 class Arbol:
@@ -14,7 +15,6 @@ class Arbol:
         if self.id_nodo == id_padre:
             # Si el nodo es el nodo padre, entonces actualizamos el diccionario con los hijos
             self.hijos.update({id_nodo: Arbol(id_nodo, nombre, valor, id_padre)})
-            print('padre igual self')
         else:
             for hijo in self.hijos.values():
                 hijo.agregar_nodo(id_nodo, nombre, valor, id_padre)
@@ -22,7 +22,6 @@ class Arbol:
     def borrar_nodo(self, id_padre, id_nodo):
         if self.id_nodo == id_padre:
             del self.hijos[id_nodo]
-            print('Borrando nodo')
         else:
             for hijo in self.hijos.values():
                 hijo.borrar_nodo(id_padre, id_nodo)
@@ -45,8 +44,30 @@ class Arbol:
                 if nodo:
                     return nodo
 
+    def obtener_donde_no_esta_nodo(self, nombre):
+        if self.nombre != nombre and nombre not in self.hijos:
+            return self
+        else:
+            for hijo in self.hijos.values():
+                nodo = hijo.obtener_nodo_nombre(nombre)
+                if nodo:
+                    return nodo
+
+    def sacar_nodo(self, nodo):
+        nodo_padre = self.obtener_nodo(nodo.id_padre)
+        aux = copy.copy(nodo)
+        del nodo_padre.hijos[nodo.id_nodo]
+        return aux
+
+    def agregando_a_arbol(self, arbol, path):
+        id_padre = path
+        id_nodo = path + '/' + self.nombre
+        arbol.agregar_nodo(id_nodo=id_nodo, valor=self.valor, id_padre=id_padre, nombre=self.nombre)
+        for i in self.hijos.values():
+            i.agregando_a_arbol(arbol, id_nodo)
+
     def __repr__(self):
-        # Para visualizar el arbol redefinimos el método __repr__ para recorrer recursivamente todos los nodos del árbol.
+        # Para visualizar el arbol redefinimos el método __repr__ para recorrer recursivamente todos los nodos del árbol
         def recorrer_arbol(raiz):
             for hijo in raiz.hijos.values():
                 self.ret += "id-nodo: {} -> id_padre: {} -> valor: {}\n".format(hijo.id_nodo, hijo.id_padre, hijo.valor)

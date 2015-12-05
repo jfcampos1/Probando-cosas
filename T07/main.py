@@ -1,39 +1,29 @@
 __author__ = 'JuanFrancisco'
-import dropbox
+import sys
+
 from PyQt4 import QtGui
+from dropbox import DropboxOAuth2FlowNoRedirect
+from dropbox import Dropbox
 
 from Gui import MainForm
 
-client = dropbox.Dropbox('oZIp7HD8K0MAAAAAAAAAmmL1RtALYhBpWvXWvnHMkB62Zxgig0etOSEOgaVNEinV')
-print('linked account: ', client.sharing_list_folders())
-print(client.users_get_current_account())
-hey = client.users_get_current_account()
-print(hey.name.display_name)
-# client.files_list_folder(path='/path/in/Dropbox')
-for entry in client.files_list_folder('').entries:
-    print(entry)
-    # if type(entry)==FolderMetadata:
-    #     for i in client.files_list_folder(entry.path_lower).entries:
-    #         print(i)
-# path='C:\\Users\\JuanFrancisco\\Downloads\\dropbox-planes.jpg'
-# with open("{}".format(path), 'rb') as file:
-#             archivo = file.read()
-# print(client.files_list_folder('').entries)
-# client.files_upload(archivo,path='/dropbox-planes.jpg',mute=True)
+APP_KEY = 'cbm74gzdx3jn00g'
+APP_SECRET = 'chq2mprrc8ldtfg'
+auth_flow = DropboxOAuth2FlowNoRedirect(APP_KEY, APP_SECRET)
+
+authorize_url = auth_flow.start()
+print("1. Go to: " + authorize_url)
+print("2. Click \"Allow\" (you might have to log in first).")
+print("3. Copy the authorization code.")
+auth_code = input("Enter the authorization code here: ").strip()
+
+try:
+    access_token, user_id = auth_flow.finish(auth_code)
+except Exception as e:
+    print('Error: %s' % (e,))
+
+client = Dropbox(access_token)
 app = QtGui.QApplication([])
 ventana = MainForm(client)
 ventana.show()
-app.exec_()
-
-# f = open('working-draft.txt', 'rb')
-# response = client.put_file('/magnum-opus.txt', f)
-# print ('uploaded: ', response)
-#
-# folder_metadata = client.metadata('/')
-# print ('metadata: ', folder_metadata)
-#
-# f, metadata = client.get_file_and_metadata('/magnum-opus.txt')
-# out = open('magnum-opus.txt', 'wb')
-# out.write(f.read())
-# out.close()
-# print(metadata)
+sys.exit(app.exec_())
